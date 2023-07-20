@@ -648,37 +648,7 @@ wc -l ZNF143_functional_summit_140window.bed
 # what comparison comparison set of regions can we use as a control?
 ```
 
-<!--
-# make a barchart for fraction of peaks with motifs 
 
-```{r engine='bash', eval=F, echo=TRUE}
-#input for barchart
-
-rm barchart.txt
-for i in quantile*.bed
-do
-	name=$(echo $i | awk -F"quantile" '{print $NF}' | awk -F".bed" '{print $1}')
-	sort -k1,1 -k2,2n $i > tmp.bed
-	echo $name 
-	intersectBed -u -wa -a tmp.bed -b fimo_ZNF143.bed fimo_ZNF143_motif2.bed > overlap_${name}_znf143.bed
-	num=`wc -l overlap_${name}_znf143.bed | cut -f1 -d 'o'`
-	tot=`wc -l $i | cut -f1 -d 'q'`
-	echo ${num} pos ${name} ZNF143 >> barchart.txt
-	neg=$(expr ${tot} - ${num})
-	echo ${neg} neg ${name} ZNF143 >> barchart.txt
-done
-
-
-```
-
-
--->
-
-# Jinhong: To do
-
-## run through the entire vignette and add context paragraphs and include figures
-
-## make a composite PSWM of motif 1 and motif 2 from the functional peaks
 
 ## make a composite FIMO motif signal at peak summits
 
@@ -687,12 +657,6 @@ done
 ## Calculate the fraction of reads in peaks (FRiP) score for:
 
 ### the full set of ZNF143 narrowPeaks
-
-### functional peaks (use narrowPeaks file)
-
-### other (non-func) peaks (use narrowPeaks file)
-
-<!--
 
 ```{r engine='R', eval=F, echo=TRUE}
 
