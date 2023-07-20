@@ -61,7 +61,7 @@ family) is directly affected by the condition. For instance, we can
 treat cells with a drug for a short period of time (20 minutes) and
 perform ATAC-seq. If the drug affects the function of a transcription
 factor, then the motif that the TF recognizes will be specifically
-enriched in the differntial ATAC peaks. A classic example is to treat
+enriched in the differential ATAC peaks. A classic example is to treat
 breast cancer cells with estrogen for 10 minutes and perform a before
 and after ATAC. The Estrogen Receptor binding motif is specifically
 enriched in ATAC peaks that increase accessibility. 
@@ -81,18 +81,16 @@ Figure S1 here:
 also deviate from many ATAC-seq workflows because we perform size
 selection. We are most interested in defining open regions of
 chromatin and not nucleosome mapping (larger fragments can be used for
-this purpose). An overview of our ATAC experimental worflow can be
+this purpose). We would perform MNase-seq if we wanted to map nucleosomes. An overview of our ATAC experimental workflow can be
 found here: [ATAC experimental workflow](https://genome.cshlp.org/content/33/3/314.full#sec-16).
 
 # ATAC-seq analysis
 
 ## Cut off the adapter with `cutadapt`
 
-We previously used the depricated `fastx_toolkit` because it is easy
-and the functions are specialized without too many options and the
-verbose option is helpful. In our daily workflow in hte lab we use
-`cutadapt`. The options we use below are `-j` for the number of cores
-to use, `-m` specifies the minimal lenght of a read to keep after
+In our daily workflow we use
+`cutadapt` to remove adapter sequences. The options we use below are `-j` for the number of cores
+to use, `-m` specifies the minimal length of a read to keep after
 adapter sequence removal, and `-O` is the number of bases to trim off the
 end of the read if it overlaps with the adapter sequence. If the
 genome is 25% of each base, then you would expect one quarter of the
@@ -104,8 +102,8 @@ matches to longer trailing k-mers (in this case 19-mers) would be
 removed first, then 18-mer matches removed, etcetera... The `-a` and `-A`
 options are the adapter sequences of the PE1 and PE2 reads.  The
 output file is `-o` (PE1) and `-p` PE2. The last two positional
-areguments are the input `fastq` files. Of course we save the output
-to a log file
+areguments are the input `fastq` files. We save the output
+to a log file.
 
 
 ```{r engine='bash', eval=F, echo=TRUE}
@@ -116,7 +114,7 @@ cutadapt -a CTGTCTCTTATACACATCT -A CTGTCTCTTATACACATCT -j 8 -m 10 -O 1 -o ${name
 ```
 
 ## Align the the mitochondrial chromosome with `bowtie2`
-We perform alignments just as we have previously in the class, but
+We perform alignments just as we have previously, but
 with many modifications. Mitochondrial DNA is preferentially
 targeted by transposase because it is more accessible, so we first
 align to `chrM`. However, we only need to align the PE1 read to `chrM`
@@ -130,7 +128,10 @@ module load samtools
 
 #Align to chrM first and remove aligned reads
 #if you need to build it:
-cp /home/FCAM/meds5420/genomes/chroms/chrM.fa ./
+
+#wget https://hgdownload.cse.ucsc.edu/goldenpath/hg38/chromosomes/chrM.fa.gz
+curl -O https://hgdownload.cse.ucsc.edu/goldenpath/hg38/chromosomes/chrM.fa.gz
+gunzip chrM.fa.gz
 bowtie2-build chrM.fa chrM
 
 bowtie2 -p 8 -x chrM -U ${name}_PE1_no_adapt.fastq | samtools sort -n - | samtools fastq -f 0x4 - > ${name}_PE1.chrM.fastq 2>&1 | tee ${name}_chrM_alignment.log
@@ -179,7 +180,7 @@ pipe to `markdup`.
 ```{r engine='bash', eval=F, echo=TRUE}
 #Align to the hg38 genome and remove duplicates
 
-genome_index=/home/FCAM/meds5420/genomes/hg38_bt2/hg38
+genome_index=/path/to/indiceis/hg38_bt2
 bowtie2 -p 8 --maxins 800 -x $genome_index -1 ${name}_PE1.chrM.fastq.paired.fq -2 ${name}_PE2_no_adapt.fastq.paired.fq | samtools view -bS - | samtools sort -n - | samtools fixmate -m - - | samtools sort - | samtools markdup -s -r - ${name}.hg38.bam 2>&1 | tee ${name}_bowtie2_hg38.log
 
 ```
@@ -188,7 +189,7 @@ bowtie2 -p 8 --maxins 800 -x $genome_index -1 ${name}_PE1.chrM.fastq.paired.fq -
 ## Convert aligned data to a `bed` file
 
 We could convert the data to a bed file using `bedtools`, but the
-software `seqOutBias` has some desirable options. FIrst `seqOutBias`
+software `seqOutBias` has some desirable options. First `seqOutBias`
 was designed to account for enzymatic sequence bias in chromatin
 accessibility assays, but we will not use this feature, hence the
 `--no-scale` flag. `seqOutBias` does allow for custom shifting of the
@@ -209,16 +210,14 @@ module load genometools/1.5.10
 module load rust/1.64.0
 module load ucsc_genome/2012.05.22
 
-# this seqOutBias linux binary was downloaded from the github page
-seqOutBias=/home/FCAM/meds5420/software/seqOutBias_v1.4.0.bin.linux.x86_64/seqOutBias
+# mappability tallymer files were pregenerated using this command:
 
-# mappability tallymer files were pregenerated
-# these can only be used for 62 base reads and hg38, but if you 
-# move them to your current directory to save time 
-cp /home/FCAM/meds5420/data/atac/tallymer/hg38* ./
+NEED TO DO THIS
+
+# these can only be used for 40 base reads and hg38, but if you 
 
 #Convert BAM to bed for counting (previously created the tallymer with `seqOutBias seqtable`)
-seqOutBias /home/FCAM/meds5420/genomes/hg38.fa ${name}.hg38.bam --no-scale --custom-shift=4,-4 --read-size=62 2>&1 | tee ${name}_seqOutBias.log
+seqOutBias hg38.fa ${name}.hg38.bam --no-scale --custom-shift=4,-4 --read-size=62 2>&1 | tee ${name}_seqOutBias.log
 ```
 
 ## Making a scaled `bedGraph` for the browser
@@ -226,9 +225,9 @@ seqOutBias /home/FCAM/meds5420/genomes/hg38.fa ${name}.hg38.bam --no-scale --cus
 Now we are read depth normalizing each replicate and making a 201 base
 window centered on the transposase insertion site to smooth the data
 for visualization. The data is first smoothed with
-`slopBed` s that overlapping windows smooth the data. Then we combine
+`slopBed`. Then we combine
 overlapping interval signal with `genomeCoverageBed`. We calculate the read depth by summing up
-the 5th column of the original `bed` file  . Then we divide this number by 10 million because the
+the 5th column of the original `bed` file . Then we divide this number by 10 million because the
 normalized values will be 1 for a single read if there are 10 million
 reads in a library. Usually libraries have between 10 and 100 million
 aligned reads, so with this normalization the y-axis does not span extreme values. We round
@@ -251,130 +250,12 @@ echo $scaled
 
 awk -v scaled="$scaled" '{OFS="\t";} {print $1, $2, $3, $4*scaled}' ${name}.bedGraph > ${name}_normalized.bedGraph
 
-wigToBigWig -clip ${name}_normalized.bedGraph $sizes ${name}.bigWig
-```
+    awk -v var="$name" 'BEGIN {  print "browser position chr11:5,289,521-5,291,937"; print "track type=bedGraph name=\"" var "\" description=\"" var "_bedGraph\" visibility=full autoScale=on alwaysZero=on color=0,125,0 windowingFunction=maximum"}  { print $0}' ${name}_normalized.bedGraph > ${name}_ucsc.bedGraph
 
-# Running this workflow in parallel with `sbatch`
-
-Recall that earlier in the semster we were writing a loop to perform the processes
-on each file (or file set for PE data) in series. However, when yo
-uhave many files you can submit mnay jobs in parallel by making a
-template `sbatch` script, then reproducing the script for each file
-set and submittign all the `sbatch` scripts in parallel.  
-
-## Making a template `sbatch` script
-
-The following code chunk contains all the processing steps for each
-file. The variable `name=XXXXXXX` can be changed to the
-experiment/replicate name. This assumes that your files are named
-`EXPERIMENT_CONDITIONSrep1_PE1.fastq.gz`. We can submit each of these
-`sbatch` scripts to Xanadu in parallel to speed things up. Recall that
-earlier in the semster we were writing a loop to perform the processes
-on each file (or file set for PE data) in series. 
-
-```{r engine='bash', eval=F, echo=TRUE}
-#! /bin/sh
-
-#SBATCH --job-name=atac_workflow1_XXXXXXX.sh     # name for job
-#SBATCH -N 1                  
-#SBATCH -n 1                 
-#SBATCH -c 32                  
-#SBATCH -p general           
-#SBATCH --qos=general       
-#SBATCH --mem=32G               
-#SBATCH --mail-type=ALL 
-#SBATCH --mail-user=guertin@uchc.edu
-#SBATCH -o atac_workflow_XXXXXXX.sh_%j.out
-#SBATCH -e atac_workflow_XXXXXXX.sh_%j.err
-
-hostname
-
-name=XXXXXXX
-ncore=30
-genome_index=/home/FCAM/meds5420/genomes/hg38_bt2/hg38
-seqOutBias=/home/FCAM/meds5420/software/seqOutBias_v1.4.0.bin.linux.x86_64/seqOutBias
-sizes=/home/FCAM/meds5420/genomes/hg38.chrom.sizes
-genome=/home/FCAM/meds5420/genomes/hg38.fa
-
-module load cutadapt
-module load bowtie2
-module load samtools/1.16.1
-module load fastq-pair/1.0
-module load genometools/1.5.10
-module load rust/1.64.0
-module load ucsc_genome/2012.05.22
-module load bedtools
-
-gunzip ${name}_PE1.fastq.gz
-gunzip ${name}_PE2.fastq.gz
-
-cutadapt -a CTGTCTCTTATACACATCT -A CTGTCTCTTATACACATCT -j $ncore -m 10 -O 1 -o ${name}_PE1_no_adapt.fastq -p ${name}_PE2_no_adapt.fastq ${name}_PE1.fastq ${name}_PE2.fastq 2>&1 | tee ${name}_cutadapt.log
-
-bowtie2 -p $ncore -x chrM -U ${name}_PE1_no_adapt.fastq | samtools sort -@ $ncore -o ${name}.bam
-
-samtools fastq -@ $ncore -f 0x4 ${name}.bam > ${name}_PE1.chrM.fastq
-
-fastq_pair -t 1000000 ${name}_PE1.chrM.fastq ${name}_PE2_no_adapt.fastq 2>&1 | tee ${name}_fastq_pair.log
-
-bowtie2 -p $ncore --maxins 800 -x $genome_index -1 ${name}_PE1.chrM.fastq.paired.fq -2 ${name}_PE2_no_adapt.fastq.paired.fq | samtools sort -@ $ncore -n -o ${name}.bw.bam
-
-samtools fixmate -m ${name}.bw.bam - | samtools sort -@ $ncore - | samtools markdup -s -r - ${name}.hg38.bam
-
-seqOutBias ${genome} ${name}.hg38.bam --no-scale --custom-shift=4,-4 --read-size=62 2>&1 | tee ${name}_seqOutBias.log
-
-slopBed -i ${name}.hg38_not_scaled.bed -g ${sizes} -l 100 -r 100 | sort -k1,1 -k2,2n > ${name}_window.bed
-
-genomeCoverageBed -bg -i ${name}_window.bed -g $sizes > ${name}.bedGraph
-
-depth=`awk -F'\t' '{sum+=$5;}END{print sum;}' ${name}.hg38_not_scaled.bed`
-scaled=$(bc <<< "scale=3 ; 10000000 / $depth")
-
-awk -v scaled="$scaled" '{OFS="\t";} {print $1, $2, $3, $4*scaled}' ${name}.bedGraph > ${name}_normalized.bedGraph
+gzip ${name}_ucsc.bedGraph
 
 wigToBigWig -clip ${name}_normalized.bedGraph $sizes ${name}.bigWig
-
-gzip ${name}_PE1.fastq 
-gzip ${name}_PE2.fastq
-
-rm ${name}.bw.bam
-rm ${name}_PE*.fastq.*.fq
-
-mkdir ${name}_files
-
 ```
-
-## Finalizing and submitting each `sbatch` script 
-
-You can run the following loop interactively. The first step is to
-move all the relevant files to your local directory. The variable
-`$file` is the template script from the previous subsection. The only
-new utility that we introduce here is `sed`, which performs a find of
-`XXXXXXX` and replaces it with the `EXPERIMENT_CONDITIONS` name in the
-file (everything that precedes `_PE1.fastq.gz`.  Each `sbatch` script
-will run as resources become available on the cluster. 
-
-```{r engine='bash', eval=F, echo=TRUE}
-module load bowtie2
-
-cp /home/FCAM/meds5420/genomes/chroms/chrM.fa ./
-bowtie2-build chrM.fa chrM
-cp /home/FCAM/meds5420/data/atac/tallymer/hg38* ./
-
-file=atac_workflow1.sh
-
-for i in *PE1.fastq.gz
-do
-    nm=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1.fastq.gz" '{print $1}')
-    fq=$(echo $i | rev | cut -f 1 -d '/' | rev)
-    echo $nm
-    echo $fq
-    sed -e "s/XXXXXXX/${nm}/g" "$file" > atac_workflow1_${nm}.sh
-    sbatch atac_workflow1_${nm}.sh
-    sleep 1
-done
-
-```
-
 
 # Combining replicates for the genome browser
 
@@ -434,7 +315,7 @@ module load macs3
 
 cp */*.hg38.bam ./
 mkdir temp_macs
-macs3 callpeak --call-summits -t *.hg38.bam -n TRPS1_degron_ATAC -g hs -q 0.01 --keep-dup all -f BAM --nomodel --shift -100 --extsize 200 --tempdir temp_macs
+macs3 callpeak --call-summits -t *.hg38.bam -n ZNF143_degron_ATAC -g hs -q 0.01 --keep-dup all -f BAM --nomodel --shift -100 --extsize 200 --tempdir temp_macs
 rm *.hg38.bam
 ```
 
@@ -453,7 +334,7 @@ wget https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.b
 gunzip hg38-blacklist.v2.bed.gz
 blacklist=hg38-blacklist.v2.bed
 sizes=/home/FCAM/meds5420/genomes/hg38.chrom.sizes
-name=TRPS1_degron_ATAC
+name=ZNF143_degron_ATAC
 
 grep -v "random" ${name}_summits.bed | grep -v "chrUn" | grep -v "chrEBV" | grep -v "chrM" | grep -v "alt" | intersectBed -v -a stdin -b $blacklist > ${name}_tmp.txt
 
@@ -473,7 +354,7 @@ and genomic interval named rows.
 
 ```{r engine='bash', eval=F, echo=TRUE}
 module load bedtools
-name=TRPS1_degron_ATAC
+name=ZNF143_degron_ATAC
 
 cp */*_not_scaled.bed ./
 
@@ -509,12 +390,8 @@ R
 
 # Differential accessibility 
 
-Recall that this version of `R` on Xanadu has many of our libraries
-preinstalled. 
 
 ```{r engine='bash', eval=F, echo=TRUE}
-module load R/4.1.2
-
 R
 ```
 
@@ -634,7 +511,7 @@ deseq.counts.table
 dds = DESeq(deseq.counts.table)
 dds
 
-normalized.counts.rna = counts(dds, normalized=TRUE)
+normalized.counts = counts(dds, normalized=TRUE)
 
 		
 rld = rlog(dds, blind=TRUE)
@@ -654,42 +531,42 @@ head(DE.results)
 
 DE.results.lattice = 
     categorize.deseq.df(DE.results, 
-                        fdr = 0.1, log2fold = 0.0, treat = 'TRPS1_degron_30min')
+                        fdr = 0.1, log2fold = 0.0, treat = 'ZNF143_degron_30min')
 
 head(DE.results.lattice)
 
 
-activated.all = DE.results.lattice[DE.results.lattice$response == 
-                                             'TRPS1_degron_30min Activated',]
+repressed.all = DE.results.lattice[DE.results.lattice$response == 
+                                             'ZNF143_degron_30min Repressed',]
 
-dim(activated.all)
+dim(repressed.all)
 
 
-ma.plot.lattice(DE.results.lattice, filename = '30min_TRPS1_degradation', 
+ma.plot.lattice(DE.results.lattice, filename = '30min_ZNF143_degradation', 
         title.main = "Differential Accessibility")		
 		
 #we are not ranking by fold change, so no need for shrinkage
 
 #lets export a smaller genomic interval for each region for subsequent motif analysis
 
-chr = sapply(strsplit(rownames(activated.all), ":"), "[", 1)
-rnge = sapply(strsplit(rownames(activated.all), ":"), "[", 2)
+chr = sapply(strsplit(rownames(repressed.all), ":"), "[", 1)
+rnge = sapply(strsplit(rownames(repressed.all), ":"), "[", 2)
 start =	as.numeric(sapply(strsplit(rnge, "-"), "[", 1)) + 100
 end = as.numeric(sapply(strsplit(rnge, "-"), "[", 2)) - 100
 
-write.table(cbind(chr, start, end), file = "ATAC_increase_TRPS1_degron.bed", quote = FALSE,
+write.table(cbind(chr, start, end), file = "ATAC_decrease_ZNF143_degron.bed", quote = FALSE,
 col.names =FALSE, row.names=FALSE, sep = "\t")
 
 
 unchanged.all = DE.results.lattice[DE.results.lattice$response == 
-                                             'TRPS1_degron_30min Unchanged',]
+                                             'ZNF143_degron_30min Unchanged',]
 											 
 chr.un = sapply(strsplit(rownames(unchanged.all), ":"), "[", 1)
 rnge.un = sapply(strsplit(rownames(unchanged.all), ":"), "[", 2)
 start.un =	as.numeric(sapply(strsplit(rnge.un, "-"), "[", 1)) + 100
 end.un = as.numeric(sapply(strsplit(rnge.un, "-"), "[", 2)) - 100
 
-write.table(cbind(chr.un, start.un, end.un), file = "ATAC_unchanged_TRPS1_degron.bed", quote = FALSE,
+write.table(cbind(chr.un, start.un, end.un), file = "ATAC_unchanged_ZNF143_degron.bed", quote = FALSE,
 col.names =FALSE, row.names=FALSE, sep = "\t")
 
 ```
@@ -713,57 +590,32 @@ Lastly, we perform _de novo_ motif analysis as we have previously with
 `meme`. We can also determine the fraction of regions with immediate
 increases in accessibility have the underlying motif. However, this
 value is meaningless without a comparison. We could compare to
-`TRPS1_degron_30min Unchanged` region set.
+`ZNF143_degron_30min Unchanged` region set.
 
 ```{r engine='bash', eval=F, echo=TRUE}
 module load bedtools
 module load meme/5.4.1
 genome=/home/FCAM/meds5420/genomes/hg38.fa
 
-fastaFromBed -fi $genome -bed ATAC_increase_TRPS1_degron.bed -fo ATAC_increase_TRPS1_degron.fasta
-fastaFromBed -fi $genome -bed ATAC_unchanged_TRPS1_degron.bed -fo ATAC_unchanged_TRPS1_degron.fasta
+fastaFromBed -fi $genome -bed ATAC_increase_ZNF143_degron.bed -fo ATAC_increase_ZNF143_degron.fasta
+fastaFromBed -fi $genome -bed ATAC_unchanged_ZNF143_degron.bed -fo ATAC_unchanged_ZNF143_degron.fasta
 
-meme -oc TRPS1.meme_output -objfun classic -evt 0.01 -searchsize 0 -minw 5 -maxw 10 -revcomp -dna -markov_order 2 -maxsize 100000000 ATAC_increase_TRPS1_degron.fasta
+meme -oc ZNF143.meme_output -objfun classic -evt 0.01 -searchsize 0 -minw 5 -maxw 10 -revcomp -dna -markov_order 2 -maxsize 100000000 ATAC_increase_ZNF143_degron.fasta
 
-mast TRPS1.meme_output/meme.txt -mt 0.001 -hit_list ATAC_increase_TRPS1_degron.fasta > mast_hits_increase.txt
-mast TRPS1.meme_output/meme.txt -mt 0.001 -hit_list ATAC_unchanged_TRPS1_degron.fasta > mast_hits_unchanged.txt
+mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ATAC_increase_ZNF143_degron.fasta > mast_hits_increase.txt
+mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ATAC_unchanged_ZNF143_degron.fasta > mast_hits_unchanged.txt
 
 cut -f 1 -d " " mast_hits_increase.txt | sort | uniq | grep -v "#" > unique_mast_hits_increase.txt 
 wc -l unique_mast_hits_increase.txt
-wc -l ATAC_increase_TRPS1_degron.bed
+wc -l ATAC_increase_ZNF143_degron.bed
 
 cut -f 1 -d " " mast_hits_unchanged.txt | sort | uniq | grep -v "#" | wc -l
-wc -l  ATAC_unchanged_TRPS1_degron.bed
+wc -l  ATAC_unchanged_ZNF143_degron.bed
 ```
 
-<!-- 
-awk '{OFS=""};{print $1, ":", $2, "-", $3}' ATAC_increase_TRPS1_degron.bed > chr_start_end_increase.txt
-
-grep -v -f unique_mast_hits_increase.txt chr_start_end_increase.txt > peaks_wout_motif.txt
-
-cut -f 1 -d ":" peaks_wout_motif.txt > chr.txt
-cut -f 2 -d ":" peaks_wout_motif.txt | cut -f 1 -d "-" > start.txt
-cut -f 2 -d ":" peaks_wout_motif.txt | cut -f 2 -d "-" > end.txt
-paste -d'\t' chr.txt start.txt end.txt > peaks_wout_motif.bed
-
-fastaFromBed -fi $genome -bed peaks_wout_motif.bed -fo peaks_wout_motif.fasta
-
-meme -oc TRPS1_2.meme_output -objfun classic -evt 0.01 -searchsize 0 -minw 5 -maxw 10 -revcomp -dna -maxsize 100000000 peaks_wout_motif.fasta
-
-for i in TRPS1_2.meme_output/*
-do
-	name=$(echo $i | awk -F"/" '{print $NF}')
-	mv $i TRPS1_2_${name}
-done
-cut -f 1 -d ":" peaks_wout_motif.txt > chr.txt
-cut -f 2 -d ":" peaks_wout_motif.txt | cut -f 1 -d "-" > start.txt
-cut -f 2 -d ":" peaks_wout_motif.txt | cut -f 2 -d "-" > end.txt
--->
 
 
-
-
-```{r  out.width = "60%", echo=F, fig.align = "center", fig.cap="TRPS1 motif"}
+```{r  out.width = "60%", echo=F, fig.align = "center", fig.cap="ZNF143 motif"}
 library(knitr)
 knitr::include_graphics("logo_rc1.png") 
 ```
