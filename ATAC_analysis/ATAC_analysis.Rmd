@@ -99,7 +99,7 @@ trimmed. Likewise, approximately 1/16 of the remaining
 reads without the adapter will have the final two bases
 trimmed. Technically these values are not exact, because the reads with
 matches to longer trailing k-mers (in this case 19-mers) would be
-removed first, then 18-mer matches removed, etcetera... The `-a` and `-A`
+removed first, then 18-mer matches removed, etcetera. The `-a` and `-A`
 options are the adapter sequences of the PE1 and PE2 reads.  The
 output file is `-o` (PE1) and `-p` PE2. The last two positional
 areguments are the input `fastq` files. We save the output
