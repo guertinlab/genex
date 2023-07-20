@@ -131,30 +131,6 @@ do
 done
 ```
 
-## Run the previous chunk in parallel 
-
-```{r engine='bash', eval=F, echo=TRUE}
-module load bowtie2
-
-cp /home/FCAM/meds5420/genomes/chroms/chrM.fa ./
-bowtie2-build chrM.fa chrM
-cp /home/FCAM/meds5420/data/atac/tallymer/hg38* ./
-
-file=chip_alignment.sh
-
-for i in *IgG*_PE1.fastq.gz
-do
-    nm=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1.fastq.gz" '{print $1}')
-    fq=$(echo $i | rev | cut -f 1 -d '/' | rev)
-    echo $nm
-    echo $fq
-    sed -e "s/XXXXXXX/${nm}/g" "$file" > chip_alignment6_${nm}.sh
-    sbatch chip_alignment6_${nm}.sh
-    sleep 1
-done
-
-```
-
 # Combining replicates for the genome browser
 
 Usually we combine replicates into a single track for visualization
