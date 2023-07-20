@@ -24,13 +24,11 @@ available.
 
 # ChIP-seq experimental design
 
-We perform an IgG IP as
-a control. 
+We performed ChIp-seq of HA-tagged ZNF143 in HEK-293T cells with mock IP (no antibody) as a control. 
 
 # ChIP-seq analysis
 
-First we name the experiments with the trailing name being `PE1` or
-`PE2` for paired end data. 
+First, we name the experiments with the trailing name being `PE1` or `PE2` for paired end data. 
 
 ```{r engine='bash', eval=F, echo=TRUE}
 for i in *_S*R1_001.fastq.gz
@@ -42,7 +40,6 @@ do
 	mv ${two}R2_001.fastq.gz ${nm}_PE2.fastq.gz
 done
 ```
-
 
 ## Cut off the adapter with `cutadapt`
 
@@ -102,50 +99,36 @@ browser tracks, which is accomplished by converted the paired-end
 
 
 ```{r engine='bash', eval=F, echo=TRUE}
-#! /bin/sh
+sizes=/path/to/sizes/hg38.chrom.sizes
+genome=/path/to/fasta/hg38.fa
+ncore=2
+readLength=40
+bowtie2-build hg38.fa hg38_bt2
 
-#SBATCH --job-name=chip_alignment1_XXXXXXX.sh     # name for job
-#SBATCH -N 1                  
-#SBATCH -n 1                 
-#SBATCH -c 32                  
-#SBATCH -p general           
-#SBATCH --qos=general       
-#SBATCH --mem=32G               
-#SBATCH --mail-type=ALL 
-#SBATCH --mail-user=guertin@uchc.edu
-#SBATCH -o chip_alignment_XXXXXXX.sh_%j.out
-#SBATCH -e chip_alignment_XXXXXXX.sh_%j.err
+genome_index=/path/to/indicies/hg38_bt2
 
-hostname
-
-name=XXXXXXX
-seqOutBias=/home/FCAM/meds5420/software/seqOutBias_v1.4.0.bin.linux.x86_64/seqOutBias
-module load samtools/1.16.1
-module load genometools/1.5.10
-module load ucsc_genome/2012.05.22
-module load rust
-module load bowtie2
-module load bedtools
-sizes=/home/FCAM/meds5420/genomes/hg38.chrom.sizes
-genome=/home/FCAM/meds5420/genomes/hg38.fa
-genome_index=/home/FCAM/meds5420/genomes/hg38_bt2/hg38
-ncore=30
-bowtie2 -p $ncore --maxins 800 -x $genome_index -1 ${name}_PE1_no_adapt.fastq -2 ${name}_PE2_no_adapt.fastq | samtools sort -@ $ncore -n -o ${name}.bw.bam
-gzip ${name}_PE1_no_adapt.fastq
-gzip ${name}_PE2_no_adapt.fastq
-gzip ${name}_PE2.fastq
-gzip ${name}_PE1.fastq
-samtools fixmate -m ${name}.bw.bam - | samtools sort -@ $ncore - | samtools markdup -s -r - ${name}.hg38.bam
-seqOutBias ${genome} ${name}.hg38.bam --shift-counts --no-scale --bw=${name}.bigWig --read-size=42 2>&1 | tee ${name}_seqOutBias.log
-samtools sort -@ $ncore -n -o ${name}.sorted.bam ${name}.hg38.bam
-bedtools bamtobed -i ${name}.sorted.bam -bedpe > ${name}_bed12.bed
-awk '$1==$4 {print $0}' ${name}_bed12.bed | awk '{OFS="\t";} {print $1, $2, $6}' | awk '$1!="." && $3>$2 && (($3 - $2)<2000) {print $0}' | sort -k1,1 -k2,2n > ${name}_read_span.bed
-genomeCoverageBed -bg -i ${name}_read_span.bed -g $sizes > ${name}.bedGraph
-depth=`awk -F'\t' '{sum+=$5;}END{print sum;}' ${name}.hg38_not_scaled.bed`
-scaled=$(bc <<< "scale=3 ; 10000000 / $depth")
-echo $scaled
-awk -v scaled="$scaled" '{OFS="\t";} {print $1, $2, $3, $4*scaled}' ${name}.bedGraph > ${name}_normalized.bedGraph
-wigToBigWig -clip ${name}_normalized.bedGraph $sizes ${name}_normalized.bigWig
+for i in *_PE1_no_adapt.fastq
+do
+	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1" '{print $1}')
+    	echo $name	
+	bowtie2 -p $ncore --maxins 800 -x $genome_index -1 ${name}_PE1_no_adapt.fastq -2 ${name}_PE2_no_adapt.fastq | samtools sort -@ $ncore -n -o ${name}.bw.bam
+    	gzip ${name}_PE1_no_adapt.fastq
+	gzip ${name}_PE2_no_adapt.fastq
+	gzip ${name}_PE2.fastq
+	gzip ${name}_PE1.fastq
+	samtools fixmate -m ${name}.bw.bam - | samtools sort -@ $ncore - | samtools markdup -s -r - ${name}.hg38.bam
+	seqOutBias ${genome} ${name}.hg38.bam --shift-counts --no-scale --bw=${name}.bigWig --read-size=$readLength 2>&1 | tee ${name}_seqOutBias.log
+	samtools sort -@ $ncore -n -o ${name}.sorted.bam ${name}.hg38.bam
+	bedtools bamtobed -i ${name}.sorted.bam -bedpe > ${name}_bed12.bed
+	awk '$1==$4 {print $0}' ${name}_bed12.bed | awk '{OFS="\t";} {print $1, $2, $6}' | awk '$1!="." && $3>$2 && (($3 - $2)<2000) {print $0}' | sort -k1,1 -k2,2n > ${name}_read_span.bed
+	genomeCoverageBed -bg -i ${name}_read_span.bed -g $sizes > ${name}.bedGraph
+	depth=`awk -F'\t' '{sum+=$5;}END{print sum;}' ${name}.hg38_not_scaled.bed`
+	scaled=$(bc <<< "scale=3 ; 10000000 / $depth")
+	echo $scaled
+	awk -v scaled="$scaled" '{OFS="\t";} {print $1, $2, $3, $4*scaled}' ${name}.bedGraph > ${name}_normalized.bedGraph
+	awk -v var="$name" 'BEGIN {  print "browser position chr11:5,289,521-5,291,937"; print "track type=bedGraph name=\"" var "\" description=\"" var "_bedGraph\" visibility=full autoScale=on alwaysZero=on color=0,125,0 windowingFunction=maximum"}  { print $0}' ${name}_normalized.bedGraph > ${name}_ucsc.bedGraph
+	wigToBigWig -clip ${name}_normalized.bedGraph $sizes ${name}_normalized.bigWig
+done
 ```
 
 ## Run the previous chunk in parallel 
