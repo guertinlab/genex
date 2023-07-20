@@ -15,7 +15,6 @@ fontsize: 14pt
 geometry: margin=1in
 ---
 
-
 # ATAC-seq experiments
 
 ATAC-seq is an assay that measures chromatin accessibility. In short,
