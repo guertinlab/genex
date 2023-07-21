@@ -841,9 +841,15 @@ considered PCR amplicon duplicates. The <code>fixmate</code> step is necessary t
 pipe to <code>markdup</code>. We use the entire DNA fragment for making the
 browser tracks, which is accomplished by converted the paired-end
 <code>bam</code> file to a <code>bed12</code> and taking out discordant reads. We are defining discordant as the two ends of the DNA fragments being greater that 2kb away from one another. This is unlikely given the size of or sonicated DNA and the Illumina sequencing platform. Then we normalize to read depth, add a trackline so we can upload into the UCSC genome browser, and make a <code>bigWig</code> file, which is very similar to a <code>bedGraph</code>, but it binary and not human-readable.</p>
+<p>The software <code>seqOutBias</code> software incorporates whether a read is uniquely mappable when converting a <code>bam</code> file to a <code>bed</code> and <code>bigWig</code>. This requires a compute-intensive task of looking at all k-mers (sequencing read length, here it is 40 bases) in the genome and determining if they are unique. Since this takes a bit of time, we performed this task for you and the resultant files are within the <code>~/genex/genomes/</code> directory.</p>
+<pre class="bash"><code># generate mappability file
+seqOutBias seqtable hg38.fa --read-size=40</code></pre>
+<p>The following is the alignment and processing code that you will execute:</p>
 <pre class="bash"><code>sizes=~/genex/genomes/hg38.chrom.sizes
 genome=~/genex/genomes/hg38.fa
 genome_index=~/genex/genomes/hg38_bt2
+tallymer=~/genex/genomes/hg38.tal_40.gtTxt.gz
+
 ncore=4
 readLength=40
 
@@ -858,7 +864,7 @@ do
     gzip ${name}_PE2.fastq
     gzip ${name}_PE1.fastq
     samtools fixmate -m ${name}.bw.bam - | samtools sort -@ $ncore - | samtools markdup -s -r - ${name}.hg38.bam
-    seqOutBias ${genome} ${name}.hg38.bam --shift-counts --no-scale --bw=${name}.bigWig --read-size=$readLength 2&gt;&amp;1 | tee ${name}_seqOutBias.log
+    seqOutBias ${genome} ${name}.hg38.bam --shift-counts --no-scale --tallymer=$tallymer --bw=${name}.bigWig --read-size=$readLength 2&gt;&amp;1 | tee ${name}_seqOutBias.log
     samtools sort -@ $ncore -n -o ${name}.sorted.bam ${name}.hg38.bam
     bedtools bamtobed -i ${name}.sorted.bam -bedpe &gt; ${name}_bed12.bed
     awk &#39;$1==$4 {print $0}&#39; ${name}_bed12.bed | awk &#39;{OFS=&quot;\t&quot;;} {print $1, $2, $6}&#39; | awk &#39;$1!=&quot;.&quot; &amp;&amp; $3&gt;$2 &amp;&amp; (($3 - $2)&lt;2000) {print $0}&#39; | sort -k1,1 -k2,2n &gt; ${name}_read_span.bed
