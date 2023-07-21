@@ -63,7 +63,7 @@ trimmed. Likewise, approximately 1/16 of the remaining
 reads without the adapter will have the final two bases
 trimmed. Technically these values are not exact, because the reads with
 matches to longer trailing k-mers (in this case 19-mers) would be
-removed first, then 18-mer matches removed, etcetera... 
+removed first, then 18-mer matches removed, etc. Each group has two sets of files: the experimental and the control. We can process these both in series using a loop that determines the output file names from the processed input files and performs the same operation on each set of files.  
 
 
 ```{r engine='bash', eval=F, echo=TRUE}
@@ -82,7 +82,37 @@ done
 
 ## Align to the human genome
 
-Now we are aligning to the `hg38.fa` genome, note that the libraries are paired end. The `-1` and
+Now we are aligning to the `hg38.fa` genome. We first need to "build" a set of index files for the hg38 genome. These files are necessary so the `bowtie2` software can efficiently search the genome for the input sequences. You can Google and click around the UCSC genome browser website to find genome files, but the code to download from the Terminal (on a Mac) is shown below. We also need a file that has all the information about chromosome sizes later in the vignette, so we will download that as well. Next, we make a `genex` folder in the home directory and a `genomes` file in the `genex` directory, then move these files the files to the `genomes` folder and navigate to this directory. Finally, we can build the indicies with `bowtie2-build`. This takes a bit of time and we only need to perform these actions once per genome, so we already did this for you. You will have a chance to build the mitochondrial DNA chromosome alignment indicies later when you analyze ATAC data.
+
+
+```{r engine='bash', eval=F, echo=TRUE}
+# download the genome files
+curl -O https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
+
+#unzip
+gunzip hg38.fa.gz
+
+#download a file that lists the size of chrs
+curl -O https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
+
+# make a directory for the class
+mkdir ~/genex
+
+# now for the genome files
+
+mkdir ~/genex/genomes
+
+mv hg38.fa ~/genex/genomes
+mv hg38.chrom.size ~/genex/genomes
+
+#navigate to this directory 
+cd ~/genex/genomes
+
+# build indicies
+bowtie2-build hg38.fa hg38_bt2
+```
+
+Note that the libraries are paired end. The `-1` and
 `-2` options are for the respective paired-end `fastq` files. There is no
 need to save the output `sam` file, so the output is piped to
 `samtools` to convert to `bam`, then sorted by name (`-n`) so paired
@@ -97,15 +127,12 @@ pipe to `markdup`. We use the entire DNA fragment for making the
 browser tracks, which is accomplished by converted the paired-end
 `bam` file to a `bed12` and taking out discordant reads. The final step is normalizing to read depth. 
 
-
 ```{r engine='bash', eval=F, echo=TRUE}
-sizes=/path/to/sizes/hg38.chrom.sizes
-genome=/path/to/fasta/hg38.fa
-ncore=2
+sizes=~/genex/genomes/hg38.chrom.sizes
+genome=~/genex/genomes/hg38.fa
+genome_index=~/genex/genomes/hg38_bt2
+ncore=4
 readLength=40
-bowtie2-build hg38.fa hg38_bt2
-
-genome_index=/path/to/indicies/hg38_bt2
 
 for i in *_PE1_no_adapt.fastq
 do
