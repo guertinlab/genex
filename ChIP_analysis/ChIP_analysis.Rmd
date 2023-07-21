@@ -127,10 +127,21 @@ pipe to `markdup`. We use the entire DNA fragment for making the
 browser tracks, which is accomplished by converted the paired-end
 `bam` file to a `bed12` and taking out discordant reads. We are defining discordant as the two ends of the DNA fragments being greater that 2kb away from one another. This is unlikely given the size of or sonicated DNA and the Illumina sequencing platform. Then we normalize to read depth, add a trackline so we can upload into the UCSC genome browser, and make a `bigWig` file, which is very similar to a `bedGraph`, but it binary and not human-readable. 
 
+
+The software `seqOutBias` software incorporates whether a read is uniquely mappable when converting a `bam` file to a `bed` and `bigWig`. This requires a compute-intensive task of looking at all k-mers (sequencing read length, here it is 40 bases) in the genome and determining if they are unique. Since this takes a bit of time, we performed this task for you and the resultant files are within the `~/genex/genomes/` directory.  
+
+```{r engine='bash', eval=F, echo=TRUE}
+# generate mappability file
+seqOutBias seqtable hg38.fa --read-size=40
+```
+
+The following is the alignment and processing code that you will execute:
 ```{r engine='bash', eval=F, echo=TRUE}
 sizes=~/genex/genomes/hg38.chrom.sizes
 genome=~/genex/genomes/hg38.fa
 genome_index=~/genex/genomes/hg38_bt2
+tallymer=~/genex/genomes/hg38.tal_40.gtTxt.gz
+
 ncore=4
 readLength=40
 
@@ -145,7 +156,7 @@ do
 	gzip ${name}_PE2.fastq
 	gzip ${name}_PE1.fastq
 	samtools fixmate -m ${name}.bw.bam - | samtools sort -@ $ncore - | samtools markdup -s -r - ${name}.hg38.bam
-	seqOutBias ${genome} ${name}.hg38.bam --shift-counts --no-scale --bw=${name}.bigWig --read-size=$readLength 2>&1 | tee ${name}_seqOutBias.log
+	seqOutBias ${genome} ${name}.hg38.bam --shift-counts --no-scale --tallymer=$tallymer --bw=${name}.bigWig --read-size=$readLength 2>&1 | tee ${name}_seqOutBias.log
 	samtools sort -@ $ncore -n -o ${name}.sorted.bam ${name}.hg38.bam
 	bedtools bamtobed -i ${name}.sorted.bam -bedpe > ${name}_bed12.bed
 	awk '$1==$4 {print $0}' ${name}_bed12.bed | awk '{OFS="\t";} {print $1, $2, $6}' | awk '$1!="." && $3>$2 && (($3 - $2)<2000) {print $0}' | sort -k1,1 -k2,2n > ${name}_read_span.bed
