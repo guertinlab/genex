@@ -24,7 +24,7 @@ available.
 
 # ChIP-seq experimental design
 
-We performed ChIp-seq of HA-tagged ZNF143 in HEK-293T cells with mock IP (no antibody) as a control. 
+We performed ChIP-seq of HA-tagged ZNF143 in HEK-293T cells with mock IP (no antibody) as a control. 
 
 # ChIP-seq analysis
 
