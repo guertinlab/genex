@@ -239,35 +239,6 @@ do
 done
 ```
 
-# Size factors from library 
-
-
-
-```{r engine='bash', eval=F, echo=TRUE}
-#size factors
-
-module load samtools/1.12
-for i in HA
-do
-  echo $i
-  > ${i}_header.txt
-  > ${i}_reads.txt
-  for j in *_${i}_*.bam
-  do
-    echo $j
-    name=$(echo $j | awk -F".sorted.bam" '{print $1}')
-    echo $name | paste ${i}_header.txt - > ${i}_tmp.txt 
-    mv ${i}_tmp.txt ${i}_header.txt
-    reads=`samtools view -c -f 0x3 $j`
-    echo $reads | paste ${i}_reads.txt - > ${i}_tmp.txt 
-    mv ${i}_tmp.txt ${i}_reads.txt
-  done  
-  cat ${i}_header.txt ${i}_reads.txt > ${i}_tmp.txt
-  mv ${i}_tmp.txt ${i}_reads.txt
-  rm ${i}_header.txt
-done 
-```
-
 ## Differential binding and read count in peaks
 
 Recall that this version of `R` on Xanadu has many of our libraries
