@@ -180,7 +180,7 @@ data is weighted twice as much in the final visualization. We will perform this 
 #!/bin/bash
 sizes=~/genex/genomes/hg38.chrom.sizes
 
-for i in *ZNF*rep1_PE1.fastq.gz
+for i in *rep1_PE1.fastq.gz
 do
     nm=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1.fastq.gz" '{print $1}')
     name=$(echo $nm | awk -F"_rep1" '{print $1}')
@@ -203,6 +203,7 @@ done
 
 # Peak calling
 
+The next step is to use the aligned reads to call peaks. The code below will work if you have 1 replicate or many replicates. You will call peaks with your single replicate. We will combine the replicates and use the same command to get a peak set that uses all the replicates.  
 
 ```{r engine='bash', eval=F, echo=TRUE}
 # this is to activate the macs2 module on the CSHL computers
@@ -210,7 +211,7 @@ conda activate macs2
 # make a directory to store temporary files
 mkdir temp_macs
 # call peaks 
-macs2 callpeak --call-summits -t *_ZNF143_*bam -c *mock*bam -n CTCF_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs
+macs2 callpeak --call-summits -t *_ZNF143_*bam -c *mock*bam -n ZNF143_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs
 ```
 
 ## Removing peaks on contigs and within blacklisted regions
