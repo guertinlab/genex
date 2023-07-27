@@ -239,28 +239,6 @@ do
 done
 ```
 
-## Differential binding and read count in peaks
-
-Recall that this version of `R` on Xanadu has many of our libraries
-preinstalled. 
-
-```{r engine='bash', eval=F, echo=TRUE}
-module load R/4.1.2
-
-R
-```
-
-
-## things to do for the ZNF143
-
-Using the parallel factor ChIP analysis does not work well because
-ZNF143 is ablated on chromatin upon degradation. So size factors
-cannot be accurately estimated between ZNF143 ChIP degron and
-ZNF143/CTCF parallel factor ChIP degron. What is the point of the PF
-then? well, we can see that by our peak calling threshold, that all
-peaks decrease intensity and are likely true positives when we use
-read depth to normalize. 
-
 ## Counting reads in peaks and differential binding 
 
 ```{r, engine='R', eval=F, echo=T}
