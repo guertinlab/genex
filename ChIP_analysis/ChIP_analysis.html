@@ -886,7 +886,7 @@ data is weighted twice as much in the final visualization. We will perform this 
 <pre class="bash"><code>#!/bin/bash
 sizes=~/genex/genomes/hg38.chrom.sizes
 
-for i in *ZNF*rep1_PE1.fastq.gz
+for i in *rep1_PE1.fastq.gz
 do
     nm=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_PE1.fastq.gz&quot; &#39;{print $1}&#39;)
     name=$(echo $nm | awk -F&quot;_rep1&quot; &#39;{print $1}&#39;)
@@ -908,12 +908,13 @@ done</code></pre>
 </div>
 <div id="peak-calling" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Peak calling</h1>
+<p>The next step is to use the aligned reads to call peaks. The code below will work if you have 1 replicate or many replicates. You will call peaks with your single replicate. We will combine the replicates and use the same command to get a peak set that uses all the replicates.</p>
 <pre class="bash"><code># this is to activate the macs2 module on the CSHL computers
 conda activate macs2
 # make a directory to store temporary files
 mkdir temp_macs
 # call peaks 
-macs2 callpeak --call-summits -t *_ZNF143_*bam -c *mock*bam -n CTCF_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs</code></pre>
+macs2 callpeak --call-summits -t *_ZNF143_*bam -c *mock*bam -n ZNF143_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs</code></pre>
 <div id="removing-peaks-on-contigs-and-within-blacklisted-regions" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Removing peaks on contigs and within blacklisted regions</h2>
 <p>You can Google “blacklisted genomic regions” to find a
