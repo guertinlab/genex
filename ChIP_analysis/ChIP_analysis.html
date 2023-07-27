@@ -12,7 +12,7 @@
 <meta name="author" content="Thomas Scott" />
 <meta name="author" content="Michael J. Guertin" />
 
-<meta name="date" content="2023-07-21" />
+<meta name="date" content="2023-07-27" />
 
 <title>ChIP-seq analysis</title>
 
@@ -704,7 +704,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">ChIP-seq analysis</h1>
 <p class="author-name">Thomas Scott and Michael J. Guertin</p>
-<h4 class="date">2023-07-21</h4>
+<h4 class="date">2023-07-27</h4>
 
 </div>
 
@@ -802,28 +802,24 @@ done</code></pre>
 </div>
 <div id="align-to-the-human-genome" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Align to the human genome</h2>
-<p>Now we are aligning to the <code>hg38.fa</code> genome. We first need to “build” a set of index files for the hg38 genome. These files are necessary so the <code>bowtie2</code> software can efficiently search the genome for the input sequences. You can Google and click around the UCSC genome browser website to find genome files, but the code to download from the Terminal (on a Mac) is shown below. We also need a file that has all the information about chromosome sizes later in the vignette, so we will download that as well. Next, we make a <code>genex</code> folder in the home directory and a <code>genomes</code> file in the <code>genex</code> directory, then move these files the files to the <code>genomes</code> folder and navigate to this directory. Finally, we can build the indicies with <code>bowtie2-build</code>. This takes a bit of time and we only need to perform these actions once per genome, so we already did this for you. You will have a chance to build the mitochondrial DNA chromosome alignment indicies later when you analyze ATAC data.</p>
-<pre class="bash"><code># download the genome files
-curl -O https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
+<p>Now we are aligning to the <code>hg38.fa</code> genome. We first need to “build” a set of index files for the hg38 genome. These files are necessary so the <code>bowtie2</code> software can efficiently search the genome for the input sequences. You can Google and click around the UCSC genome browser website to find genome files, but the code to download from the Terminal is shown below. We also need a file that has all the information about chromosome sizes later in the vignette, so we will download that as well. Next, we make a <code>genex</code> folder in the home directory and a <code>genomes</code> file in the <code>genex</code> directory, then move these files the files to the <code>genomes</code> folder and navigate to this directory. Finally, we can build the indicies with <code>bowtie2-build</code>. This takes a bit of time and we only need to perform these actions once per genome, so we already did this for you. You will have a chance to build the mitochondrial DNA chromosome alignment indicies later when you analyze ATAC data.</p>
+<pre class="bash"><code># make a directory for the class
+mkdir ~/genex
+
+# now for the genome files
+mkdir ~/genex/genomes
+
+#navigate to this directory 
+cd ~/genex/genomes
+
+#download the genome file
+wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
 
 #unzip
 gunzip hg38.fa.gz
 
 #download a file that lists the size of chrs
-curl -O https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
-
-# make a directory for the class
-mkdir ~/genex
-
-# now for the genome files
-
-mkdir ~/genex/genomes
-
-mv hg38.fa ~/genex/genomes
-mv hg38.chrom.size ~/genex/genomes
-
-#navigate to this directory 
-cd ~/genex/genomes
+wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
 
 # build indicies
 bowtie2-build hg38.fa hg38_bt2</code></pre>
@@ -850,7 +846,7 @@ genome=~/genex/genomes/hg38.fa
 genome_index=~/genex/genomes/hg38_bt2
 tallymer=~/genex/genomes/hg38.tal_40.gtTxt.gz
 
-ncore=4
+ncore=7
 readLength=40
 
 for i in *_PE1_no_adapt.fastq
@@ -886,12 +882,9 @@ read-depth normalize before we combine the signal from each
 replicate. Otherwise, we would be weighting replicates differently;
 for example, if a library is sequenced to twice the read depth and we
 combine first then read depth normalize, then the more high coverage
-data is weighted twice as much in the final visualization. All the
-relevant track files are here:
-<a href="http://guertinlab.cam.uchc.edu/znf143_hub/">http://guertinlab.cam.uchc.edu/znf143_hub/</a></p>
+data is weighted twice as much in the final visualization. We will perform this step for the class, since you are all operating on your individual replicates independently.</p>
 <pre class="bash"><code>#!/bin/bash
-module load ucsc_genome/2012.05.22
-sizes=/home/FCAM/meds5420/genomes/hg38.chrom.sizes
+sizes=~/genex/genomes/hg38.chrom.sizes
 
 for i in *ZNF*rep1_PE1.fastq.gz
 do
@@ -911,36 +904,16 @@ do
     wigToBigWig ${name}_normalized.bedGraph $sizes ${name}.bigWig
     #awk -v var=&quot;$name&quot; &#39;BEGIN {  print &quot;browser position chr11:5,289,521-5,291,937&quot;; print &quot;track type=bedGraph name=\&quot;&quot; var &quot;\&quot; description=\&quot;&quot; var &quot;_bedGraph\&quot; visibility=full autoScale=on alwaysZero=on color=0,0,0&quot;}  { print $0}&#39; ${name}_normalized.bedGraph &gt; ${name}_header_normalized.bedGraph
     #gzip ${name}_header_normalized.bedGraph
-done
-
-for i in *ZNF*PE1.fastq.gz
-do
-    name=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_PE1.fastq.gz&quot; &#39;{print $1}&#39;)
-    mv ${name}* ./${name}_files
 done</code></pre>
 </div>
 <div id="peak-calling" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Peak calling</h1>
-<pre class="bash"><code>#! /bin/sh
-#SBATCH --job-name=chip_peak_calling.sh     # name for job
-#SBATCH -N 1
-#SBATCH -n 1
-#SBATCH -c 2
-#SBATCH -p general
-#SBATCH --qos=general
-#SBATCH --mem=32G
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=guertin@uchc.edu
-#SBATCH -o chip_peak_calling.sh_%j.out
-#SBATCH -e chip_peak_calling.sh_%j.err
-
-hostname
-
-module load macs3
-
+<pre class="bash"><code># this is to activate the macs2 module on the CSHL computers
+conda activate macs2
+# make a directory to store temporary files
 mkdir temp_macs
-macs3 callpeak --call-summits -t *_CTCF_*bam -c *IgG*bam -n CTCF_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs
-macs3 callpeak --call-summits -t *cont_HA_*bam -c *IgG*bam -n ZNF143_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs</code></pre>
+# call peaks 
+macs2 callpeak --call-summits -t *_ZNF143_*bam -c *mock*bam -n CTCF_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs</code></pre>
 <div id="removing-peaks-on-contigs-and-within-blacklisted-regions" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Removing peaks on contigs and within blacklisted regions</h2>
 <p>You can Google “blacklisted genomic regions” to find a
