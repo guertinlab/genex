@@ -196,11 +196,10 @@ do
     awk -v scaleall="$scaleall" '{OFS="\t";} {print $1, $2, $3, $4*scaleall}' tmp.bg > ${name}_normalized.bedGraph
     rm tmp.bg
     wigToBigWig ${name}_normalized.bedGraph $sizes ${name}.bigWig
-    #awk -v var="$name" 'BEGIN {  print "browser position chr11:5,289,521-5,291,937"; print "track type=bedGraph name=\"" var "\" description=\"" var "_bedGraph\" visibility=full autoScale=on alwaysZero=on color=0,0,0"}  { print $0}' ${name}_normalized.bedGraph > ${name}_header_normalized.bedGraph
-    #gzip ${name}_header_normalized.bedGraph
+    awk -v var="$name" 'BEGIN {  print "browser position chr11:5,289,521-5,291,937"; print "track type=bedGraph name=\"" var "\" description=\"" var "_bedGraph\" visibility=full autoScale=on alwaysZero=on color=0,0,0"}  { print $0}' ${name}_normalized.bedGraph > ${name}_header_normalized.bedGraph
+    gzip ${name}_header_normalized.bedGraph
 done
 ```
-
 # Peak calling
 
 The next step is to use the aligned reads to call peaks. The code below will work if you have 1 replicate or many replicates. You will call peaks with your single replicate. We will combine the replicates and use the same command to get a peak set that uses all the replicates.  
@@ -216,12 +215,11 @@ macs2 callpeak --call-summits -t *_ZNF143_*bam -c *mock*bam -n ZNF143_ChIP -g hs
 
 ## Removing peaks on contigs and within blacklisted regions
 
-
 You can Google "blacklisted genomic regions" to find a
 set of region in the genome in `bed` format that have an over-representation of
 reads regardless of the experiment. Recall this is even more necessary
 because we do not have a control data set. We can also remove peaks on non-canonical chromosomes with
-`grep -v`. 
+`grep -v`. All intervals in the summits file span one base, so we extend this region by a fixed value for each peak using `slopBed`. These larger intervals will be used as input for de novo motif analysis.
 
 ```{r engine='bash', eval=F, echo=TRUE}
 module load deeptools/3.5.0
@@ -229,8 +227,7 @@ module load bedtools
 wget https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz
 gunzip hg38-blacklist.v2.bed.gz
 blacklist=hg38-blacklist.v2.bed
-sizes=/home/FCAM/meds5420/genomes/hg38.chrom.sizes
-
+sizes=~/genex/genomes/hg38.chrom.sizes
 
 for i in *_summits.bed
 do
@@ -238,15 +235,15 @@ do
 	echo $name
 	grep -v "random" ${name}_summits.bed | grep -v "chrUn" | grep -v "chrEBV" | grep -v "chrM" | grep -v "alt" | intersectBed -v -a - -b $blacklist > ${name}_summits_final.bed
 	slopBed -b 70 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n > ${name}_summit_140window.bed
-   	slopBed -b 200 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n > ${name}_summit_400window.bed
+   	#slopBed -b 200 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n > ${name}_summit_400window.bed
 done
-
 ```
 
 # Size factors from library 
 
-```{r engine='bash', eval=F, echo=TRUE}
 
+
+```{r engine='bash', eval=F, echo=TRUE}
 #size factors
 
 module load samtools/1.12
@@ -255,7 +252,7 @@ do
   echo $i
   > ${i}_header.txt
   > ${i}_reads.txt
-  for j in HEK_ZNF-dTAG*_${i}_*.bam
+  for j in *_${i}_*.bam
   do
     echo $j
     name=$(echo $j | awk -F".sorted.bam" '{print $1}')
@@ -269,7 +266,6 @@ do
   mv ${i}_tmp.txt ${i}_reads.txt
   rm ${i}_header.txt
 done 
-
 ```
 
 ## Differential binding and read count in peaks
