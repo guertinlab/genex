@@ -238,6 +238,11 @@ do
    	#slopBed -b 200 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n > ${name}_summit_400window.bed
 done
 ```
+# Fraction of Reads in Peaks
+
+A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let's go in depth about this metric. 
+
+
 
 ## Counting reads in peaks and differential binding 
 
