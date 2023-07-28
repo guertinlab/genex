@@ -186,9 +186,9 @@ do
     name=$(echo $nm | awk -F"_rep1" '{print $1}')
     echo $name
     reps=$(ls ${name}_rep*normalized.bigWig | wc -w | bc)
-	echo $reps
+    echo $reps
     files=$(ls ${name}_rep*normalized.bigWig)
-	echo $files
+    echo $files
     bigWigMerge $files tmp.bg
     scaleall=$(bc <<< "scale=4 ; 1.0 / $reps")
     echo scale:
@@ -219,11 +219,9 @@ You can Google "blacklisted genomic regions" to find a
 set of region in the genome in `bed` format that have an over-representation of
 reads regardless of the experiment. Recall this is even more necessary
 because we do not have a control data set. We can also remove peaks on non-canonical chromosomes with
-`grep -v`. All intervals in the summits file span one base, so we extend this region by a fixed value for each peak using `slopBed`. These larger intervals will be used as input for de novo motif analysis.
+`grep -v`. All intervals in the summits file span one base, so we extend this region by a fixed value for each peak using `slopBed`. These 101 base intervals will be used as input for de novo motif analysis. The 401 base intervals will be used to calculate peak intensity. The rationale for a smaller window for motif analysis is the following: 1) the motif is typically very close to the peak summit, 2) larger window increases the computation time substantially, and 3) the flanking sequence is less enriched for the relevant motifs and de novo motif analysis is less sensitive with higher noise relative to background.
 
 ```{r engine='bash', eval=F, echo=TRUE}
-module load deeptools/3.5.0
-module load bedtools
 wget https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz
 gunzip hg38-blacklist.v2.bed.gz
 blacklist=hg38-blacklist.v2.bed
@@ -234,13 +232,13 @@ do
 	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_summits.bed" '{print $1}')
 	echo $name
 	grep -v "random" ${name}_summits.bed | grep -v "chrUn" | grep -v "chrEBV" | grep -v "chrM" | grep -v "alt" | intersectBed -v -a - -b $blacklist > ${name}_summits_final.bed
-	slopBed -b 70 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n > ${name}_summit_140window.bed
-   	#slopBed -b 200 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n > ${name}_summit_400window.bed
+	slopBed -b 50 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n > ${name}_summit_140window.bed
+   	slopBed -b 200 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n > ${name}_summit_400window.bed
 done
 ```
-# Fraction of Reads in Peaks
+# Fraction of Reads in Peaks (FRiP) 
 
-A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let's go in depth about this metric. 
+A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let's go in depth about this metric. If we reduce the stringency of peak calling, then we have more genomic regions and FRiP increases—so we can have any number of FRiP score for one set of data.  
 
 
 
