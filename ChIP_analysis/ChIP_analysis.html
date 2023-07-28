@@ -906,7 +906,7 @@ done</code></pre>
 </div>
 <div id="peak-calling" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Peak calling</h1>
-<p>The next step is to use the aligned reads to call peaks. The code below will work if you have 1 replicate or many replicates. You will call peaks with your single replicate. We will combine the replicates and use the same command to get a peak set that uses all the replicates.</p>
+<p>The next step is to use the aligned reads to call peaks. The code below will work if you have 1 replicate or many replicates. You will call peaks with your single replicate. We will combine the replicates and use the same command to get a peak set that uses all the replicates. We empirically found that this method typically captures the peaks of interest. If we were to call peaks in each replicate, we could combine peaks in various ways. The lower intensity peaks are the peaks that will change between replicates and these tend to be less important biologically. We believe it is important to have a single peak set per factor and we tend to be permissive with calling peaks and then try to determine which peaks to carry forward. Here we will determine an intensity threshold for peaks by only considering intensity quantiles of peaks that are enriched near genes that are changing expression when ZNF143 is degraded. In the past I have used the presence of a sequence motif or arbitrarily set a threshold for 2 orders of magnitude dynamic range to establish a threshold.</p>
 <pre class="bash"><code># this is to activate the macs2 module on the CSHL computers
 conda activate macs2
 # make a directory to store temporary files
@@ -919,7 +919,7 @@ macs2 callpeak --call-summits -t *_ZNF143_*bam -c *mock*bam -n ZNF143_ChIP -g hs
 set of region in the genome in <code>bed</code> format that have an over-representation of
 reads regardless of the experiment. Recall this is even more necessary
 because we do not have a control data set. We can also remove peaks on non-canonical chromosomes with
-<code>grep -v</code>. All intervals in the summits file span one base, so we extend this region by a fixed value for each peak using <code>slopBed</code>. These 101 base intervals will be used as input for de novo motif analysis. The 401 base intervals will be used to calculate peak intensity. The rationale for a smaller window for motif analysis is the following: 1) the motif is typically very close to the peak summit, 2) larger window increases the computation time substantially, and 3) the flanking sequence is less enriched for the relevant motifs and de novo motif analysis is less sensitive with higher noise relative to background.</p>
+<code>grep -v</code>. All intervals in the summits file span one base, so we extend this region by a fixed value for each peak using <code>slopBed</code>. These 101 base intervals will be used as input for de novo motif analysis. The 401 base intervals will be used to calculate peak intensity. The rationale for a smaller window for motif analysis is the following: 1) the motif is typically very close to the peak summit, 2) larger window increases the computation time substantially, and 3) the flanking sequence is less enriched for the relevant motifs and de novo motif analysis is less sensitive with higher noise relative to background. We use a standard window size to calculate peak intensity, but we use a much wider window because signal 200 bases up or downstream can result from signal. We could increase the window to 600 bases and that would be fine as well. You can vary this window systematically and determine if varying the window affects the relative peak intensity rank. We use the same window size for each peak because otherwise wider windows (note the <code>narrowPeaks</code> file outputs are variable width) would inherently have more reads.</p>
 <pre class="bash"><code>wget https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz
 gunzip hg38-blacklist.v2.bed.gz
 blacklist=hg38-blacklist.v2.bed
@@ -937,7 +937,7 @@ done</code></pre>
 </div>
 <div id="fraction-of-reads-in-peaks-frip" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Fraction of Reads in Peaks (FRiP)</h1>
-<p>A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let’s go in depth about this metric. If we reduce the stringency of peak calling, then we have more genomic regions and FRiP increases—so we can have any number of FRiP score for one set of data.</p>
+<p>A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let’s go in depth about this metric. If we reduce the stringency of peak calling, then we have more genomic regions and FRiP increases—so we can have any number of FRiP score for one set of data. Also peak sets change between datasets. If we call peaks with two different replicates and call peaks in each, then we have two different peaks sets and it is not fair to compare FRiP between them. To avoid this</p>
 <div id="counting-reads-in-peaks-and-differential-binding" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Counting reads in peaks and differential binding</h2>
 <pre class="r"><code>#libraries
