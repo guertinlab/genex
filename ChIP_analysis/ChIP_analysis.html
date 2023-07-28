@@ -12,7 +12,7 @@
 <meta name="author" content="Thomas Scott" />
 <meta name="author" content="Michael J. Guertin" />
 
-<meta name="date" content="2023-07-27" />
+<meta name="date" content="2023-07-28" />
 
 <title>ChIP-seq analysis</title>
 
@@ -704,7 +704,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">ChIP-seq analysis</h1>
 <p class="author-name">Thomas Scott and Michael J. Guertin</p>
-<h4 class="date">2023-07-27</h4>
+<h4 class="date">2023-07-28</h4>
 
 </div>
 
@@ -723,7 +723,7 @@ function toggle_visibility(id1) {
 <ul>
 <li><a href="#removing-peaks-on-contigs-and-within-blacklisted-regions" id="toc-removing-peaks-on-contigs-and-within-blacklisted-regions"><span class="toc-section-number">5.1</span> Removing peaks on contigs and within blacklisted regions</a></li>
 </ul></li>
-<li><a href="#fraction-of-reads-in-peaks" id="toc-fraction-of-reads-in-peaks"><span class="toc-section-number">6</span> Fraction of Reads in Peaks</a>
+<li><a href="#fraction-of-reads-in-peaks-frip" id="toc-fraction-of-reads-in-peaks-frip"><span class="toc-section-number">6</span> Fraction of Reads in Peaks (FRiP)</a>
 <ul>
 <li><a href="#counting-reads-in-peaks-and-differential-binding" id="toc-counting-reads-in-peaks-and-differential-binding"><span class="toc-section-number">6.1</span> Counting reads in peaks and differential binding</a></li>
 </ul></li>
@@ -919,10 +919,8 @@ macs2 callpeak --call-summits -t *_ZNF143_*bam -c *mock*bam -n ZNF143_ChIP -g hs
 set of region in the genome in <code>bed</code> format that have an over-representation of
 reads regardless of the experiment. Recall this is even more necessary
 because we do not have a control data set. We can also remove peaks on non-canonical chromosomes with
-<code>grep -v</code>. All intervals in the summits file span one base, so we extend this region by a fixed value for each peak using <code>slopBed</code>. These larger intervals will be used as input for de novo motif analysis.</p>
-<pre class="bash"><code>module load deeptools/3.5.0
-module load bedtools
-wget https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz
+<code>grep -v</code>. All intervals in the summits file span one base, so we extend this region by a fixed value for each peak using <code>slopBed</code>. These 101 base intervals will be used as input for de novo motif analysis. The 401 base intervals will be used to calculate peak intensity. The rationale for a smaller window for motif analysis is the following: 1) the motif is typically very close to the peak summit, 2) larger window increases the computation time substantially, and 3) the flanking sequence is less enriched for the relevant motifs and de novo motif analysis is less sensitive with higher noise relative to background.</p>
+<pre class="bash"><code>wget https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz
 gunzip hg38-blacklist.v2.bed.gz
 blacklist=hg38-blacklist.v2.bed
 sizes=~/genex/genomes/hg38.chrom.sizes
@@ -932,14 +930,14 @@ do
     name=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_summits.bed&quot; &#39;{print $1}&#39;)
     echo $name
     grep -v &quot;random&quot; ${name}_summits.bed | grep -v &quot;chrUn&quot; | grep -v &quot;chrEBV&quot; | grep -v &quot;chrM&quot; | grep -v &quot;alt&quot; | intersectBed -v -a - -b $blacklist &gt; ${name}_summits_final.bed
-    slopBed -b 70 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n &gt; ${name}_summit_140window.bed
-    #slopBed -b 200 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n &gt; ${name}_summit_400window.bed
+    slopBed -b 50 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n &gt; ${name}_summit_140window.bed
+    slopBed -b 200 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n &gt; ${name}_summit_400window.bed
 done</code></pre>
 </div>
 </div>
-<div id="fraction-of-reads-in-peaks" class="section level1" number="6">
-<h1><span class="header-section-number">6</span> Fraction of Reads in Peaks</h1>
-<p>A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let’s go in depth about this metric.</p>
+<div id="fraction-of-reads-in-peaks-frip" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Fraction of Reads in Peaks (FRiP)</h1>
+<p>A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let’s go in depth about this metric. If we reduce the stringency of peak calling, then we have more genomic regions and FRiP increases—so we can have any number of FRiP score for one set of data.</p>
 <div id="counting-reads-in-peaks-and-differential-binding" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Counting reads in peaks and differential binding</h2>
 <pre class="r"><code>#libraries
