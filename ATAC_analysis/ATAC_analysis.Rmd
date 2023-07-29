@@ -210,14 +210,18 @@ module load genometools/1.5.10
 module load rust/1.64.0
 module load ucsc_genome/2012.05.22
 
+tallymer=~/genex/genomes/hg38.tal_40.gtTxt.gz
+table=~/genex/genomes/hg38_40.4.2.2.tbl
+readLength=40
+
 # mappability tallymer files were pregenerated using this command:
 
-NEED TO DO THIS
+seqOutBias seqtable hg38.fa --read-size=40
 
 # these can only be used for 40 base reads and hg38, but if you 
 
 #Convert BAM to bed for counting (previously created the tallymer with `seqOutBias seqtable`)
-seqOutBias hg38.fa ${name}.hg38.bam --no-scale --custom-shift=4,-4 --read-size=62 2>&1 | tee ${name}_seqOutBias.log
+seqOutBias scale $table ${name}.hg38.bam --tallymer=$tallymer --no-scale --custom-shift=4,-4 --read-size=${readLength} 2>&1 | tee ${name}_seqOutBias.log
 ```
 
 ## Making a scaled `bedGraph` for the browser
