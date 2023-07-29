@@ -224,6 +224,7 @@ gunzip hg38-blacklist.v2.bed.gz
 blacklist=hg38-blacklist.v2.bed
 sizes=~/genex/genomes/hg38.chrom.sizes
 
+# we only have one summits file (we only ChIPed on factor), but I am keeping the "loop" structure so it can be adapted for serial analysis.
 for i in *_summits.bed
 do
 	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_summits.bed" '{print $1}')
@@ -238,6 +239,22 @@ done
 A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let's go in depth about this metric. If we reduce the stringency of peak calling, then we have more genomic regions and FRiP increases—so we can have any number of FRiP score for one set of data. Also peak sets change between datasets. If we call peaks with two different replicates and call peaks in each, then we have two different peaks sets and it is not fair to compare FRiP between them. To avoid this we call a set of universal peaks for a factor; recall that we just use all `bam` files and perform one peak calling step. Next we count reads in this universal peak set for all replicates and we can directly compare FRiP between replicates.    
 
 ## Counting reads in peaks and differential binding 
+
+```{r engine='bash', eval=F, echo=TRUE}
+name=ZNF143_ChIP
+sort -k1,1 -k2,2n ${name}_summit_window.bed > ${name}_summit_window_sorted.bed
+peaks=${name}_summit_window_sorted.bed
+
+for i in *_not_scaled.bed
+do
+	nm=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_not_scaled.bed" '{print $1}')
+	sort -k1,1 -k2,2n $i > ${nm}_sorted.bed
+	mapBed -null '0' -a $peaks -b ${nm}_sorted.bed > ${nm}_peak_counts.txt 
+	sleep 1
+done
+```
+
+
 
 ```{r, engine='R', eval=F, echo=T}
 #libraries
