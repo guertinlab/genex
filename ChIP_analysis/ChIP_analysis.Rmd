@@ -79,7 +79,6 @@ do
     cutadapt -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT -j 8 -m 10 -O 1 -o ${name}_PE1_no_adapt.fastq -p ${name}_PE2_no_adapt.fastq ${name}_PE1.fastq ${name}_PE2.fastq 2>&1 | tee ${name}_cutadapt.log
 done
 ```
-
 ## Align to the human genome
 
 Now we are aligning to the `hg38.fa` genome. We first need to "build" a set of index files for the hg38 genome. These files are necessary so the `bowtie2` software can efficiently search the genome for the input sequences. You can Google and click around the UCSC genome browser website to find genome files, but the code to download from the Terminal is shown below. We also need a file that has all the information about chromosome sizes later in the vignette, so we will download that as well. Next, we make a `genex` folder in the home directory and a `genomes` file in the `genex` directory, then move these files the files to the `genomes` folder and navigate to this directory. Finally, we can build the indicies with `bowtie2-build`. This takes a bit of time and we only need to perform these actions once per genome, so we already did this for you. You will have a chance to build the mitochondrial DNA chromosome alignment indicies later when you analyze ATAC data.
@@ -165,7 +164,6 @@ do
 	wigToBigWig -clip ${name}_normalized.bedGraph $sizes ${name}_normalized.bigWig
 done
 ```
-
 # Combining replicates for the genome browser
 
 Usually we combine replicates into a single track for visualization
@@ -212,7 +210,6 @@ mkdir temp_macs
 # call peaks 
 macs2 callpeak --call-summits -t *_ZNF143_*bam -c *mock*bam -n ZNF143_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs
 ```
-
 ## Removing peaks on contigs and within blacklisted regions
 
 You can Google "blacklisted genomic regions" to find a
@@ -238,9 +235,7 @@ done
 ```
 # Fraction of Reads in Peaks (FRiP) 
 
-A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let's go in depth about this metric. If we reduce the stringency of peak calling, then we have more genomic regions and FRiP increases—so we can have any number of FRiP score for one set of data. Also peak sets change between datasets. If we call peaks with two different replicates and call peaks in each, then we have two different peaks sets and it is not fair to compare FRiP between them. To avoid this    
-
-
+A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let's go in depth about this metric. If we reduce the stringency of peak calling, then we have more genomic regions and FRiP increases—so we can have any number of FRiP score for one set of data. Also peak sets change between datasets. If we call peaks with two different replicates and call peaks in each, then we have two different peaks sets and it is not fair to compare FRiP between them. To avoid this we call a set of universal peaks for a factor; recall that we just use all `bam` files and perform one peak calling step. Next we count reads in this universal peak set for all replicates and we can directly compare FRiP between replicates.    
 
 ## Counting reads in peaks and differential binding 
 
