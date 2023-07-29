@@ -240,6 +240,8 @@ A common metric to assess the quality of ChIP-seq data is fraction of reads in p
 
 ## Counting reads in peaks and differential binding 
 
+NEED TO INCORPORATE A DENOMINATOR HERE FOR THE NUMBER OF READS
+
 ```{r engine='bash', eval=F, echo=TRUE}
 name=ZNF143_ChIP
 sort -k1,1 -k2,2n ${name}_summit_window.bed > ${name}_summit_window_sorted.bed
