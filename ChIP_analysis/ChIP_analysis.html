@@ -843,6 +843,7 @@ seqOutBias seqtable hg38.fa --read-size=40</code></pre>
 genome=~/genex/genomes/hg38.fa
 genome_index=~/genex/genomes/hg38_bt2
 tallymer=~/genex/genomes/hg38.tal_40.gtTxt.gz
+table=~/genex/genomes/hg38_40.4.2.2.tbl
 
 ncore=7
 readLength=40
@@ -858,7 +859,7 @@ do
     gzip ${name}_PE2.fastq
     gzip ${name}_PE1.fastq
     samtools fixmate -m ${name}.bw.bam - | samtools sort -@ $ncore - | samtools markdup -s -r - ${name}.hg38.bam
-    seqOutBias ${genome} ${name}.hg38.bam --shift-counts --no-scale --tallymer=$tallymer --bw=${name}.bigWig --read-size=$readLength 2&gt;&amp;1 | tee ${name}_seqOutBias.log
+    seqOutBias scale $table ${name}.hg38.bam --tallymer=$tallymer --shift-counts --no-scale --tallymer=$tallymer --bw=${name}.bigWig --read-size=40 2&gt;&amp;1 | tee ${name}_seqOutBias.log   
     samtools sort -@ $ncore -n -o ${name}.sorted.bam ${name}.hg38.bam
     bedtools bamtobed -i ${name}.sorted.bam -bedpe &gt; ${name}_bed12.bed
     awk &#39;$1==$4 {print $0}&#39; ${name}_bed12.bed | awk &#39;{OFS=&quot;\t&quot;;} {print $1, $2, $6}&#39; | awk &#39;$1!=&quot;.&quot; &amp;&amp; $3&gt;$2 &amp;&amp; (($3 - $2)&lt;2000) {print $0}&#39; | sort -k1,1 -k2,2n &gt; ${name}_read_span.bed
