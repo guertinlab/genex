@@ -951,7 +951,17 @@ do
     sort -k1,1 -k2,2n $i &gt; ${nm}_sorted.bed
     mapBed -null &#39;0&#39; -a $peaks -b ${nm}_sorted.bed &gt; ${nm}_peak_counts.txt 
     sleep 1
-done</code></pre>
+done
+
+for i in *_peak_counts.txt
+do
+    name=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_peak_counts.txt&quot; &#39;{print $1}&#39;)
+    awk &#39;{print $NF}&#39; ${name}_peak_counts.txt &gt; ${name}_peak_counts_only.txt
+    echo $name | cat - ${name}_peak_counts_only.txt &gt; ${name}_peak_counts.txt
+    rm ${name}_peak_counts_only.txt
+done
+
+echo -e &quot;chr\tstart\tend\tname\tqvalue&quot; | cat - $peaks | paste -d&#39;\t&#39; - *peak_counts.txt &gt; Combined_ZNF143_peak_counts_with_ChIP.txt</code></pre>
 <pre class="r"><code>#libraries
 library(DESeq2)
 library(lattice)
