@@ -252,8 +252,17 @@ do
 	mapBed -null '0' -a $peaks -b ${nm}_sorted.bed > ${nm}_peak_counts.txt 
 	sleep 1
 done
-```
 
+for i in *_peak_counts.txt
+do
+	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_peak_counts.txt" '{print $1}')
+	awk '{print $NF}' ${name}_peak_counts.txt > ${name}_peak_counts_only.txt
+	echo $name | cat - ${name}_peak_counts_only.txt > ${name}_peak_counts.txt
+	rm ${name}_peak_counts_only.txt
+done
+
+echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_counts.txt > Combined_ZNF143_peak_counts_with_ChIP.txt
+```
 
 
 ```{r, engine='R', eval=F, echo=T}
