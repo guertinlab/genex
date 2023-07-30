@@ -291,6 +291,9 @@ meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -sea
 
 # Which ZNF143 peaks functionally regulate transcription?
 
+Navigate to your `/Users/admin/genex` folder and open `R`. We performed PRO-seq after 30 minutes of ZNF143 degradation and identified activated and repressed genes. We also found comparable genes that are unchanged, but matched for the expression levels. We are going to ask "for each of these genes sets, how far away do we have to move from teh transcription start site to fidn the first ZNF143 peaks in each quantile?"
+
+
 ```{r, engine='R', eval=F, echo=T}
 #libraries
 library(DESeq2)
@@ -326,9 +329,17 @@ j = i
 ## Making CDF plots
 
 download the activated, repressed and matched files from `https://github.com/guertinlab/genex/tree/main/ChIP_analysis
-`. 
+`. Concatenate these files into a list of activated and repressed genes that change upon ZNF143 depletion and their matched genes.
+
+```{r engine='bash', eval=F, echo=TRUE}
+cat treated_activated_genes.bed treated_activated_matched_genes.bed treated_repressed_genes.bed treated_repressed_matched_genes.bed > /Users/admin/genex/HEK_ZNF143_gene_annotations.bed
+```
+
+
 ```{r, engine='R', eval=F, echo=T}
 library(latticeExtra)
+source('https://raw.githubusercontent.com/guertinlab/seqOutBias/master/docs/R/seqOutBias_functions.R')
+source('https://raw.githubusercontent.com/mjg54/znf143_pro_seq_analysis/master/docs/ZNF143_functions.R')
 
 cdf.deseq.df <- function(df, genes = gene.file, chip.peaks = chip.peaks) {
   bed.tss.activated = filter.deseq.into.bed(df, genes, cat = "Repressed")
@@ -406,9 +417,57 @@ filter.deseq.into.bed <- function(deseq.df, gene.file, cat = 'R1881 Activated') 
   return(z)
 }
 
+plot_cdf <- function(df.all, tf="quantile", col.lines = c("#ce228e", "grey60", "#2290cf","grey90"), line.type = c(1)) {
+pdf(paste0(tf, "FIG_cdf_compare_Reg_classes.pdf"), width=6.2, height=3.83) 
+    print(ecdfplot(~log(abs(dis), base = 10), groups = status, data = df.all,
+         auto.key = list(lines=TRUE, points=FALSE),
+         col = col.lines,
+         aspect = 1,
+                                        #xlim = c(0, 50000),
+         scales=list(relation="free",alternating=c(1,1,1,1)),
+         ylab = 'Cumulative Distribution Function',
+         xlab = expression('log'[10]~'ZNF143 Distance from TSS'),
+                                        #index.cond = list(c(2,1)),
+         between=list(y=1.0),
+         type = 'a',
+         xlim = c(0,8),
+         lwd=2,
+         lty=line.type,
+         par.settings = list(superpose.line = list(col = col.lines, lwd=3), strip.background=list(col="grey85")),
+         panel = function(...) {
+             panel.abline(v= 200, lty =2)
+             panel.ecdfplot(...)
+         }))
+    dev.off()
+}
 
+gene.file=read.table(file = "/Users/admin/genex/HEK_ZNF143_gene_annotations.bed", sep="\t", header=FALSE)
+
+for (chip.peak in Sys.glob(file.path("/Users/admin/genex/quantile*bed"))) {
+    print(chip.peak)
+    quantile.name = strsplit(strsplit(chip.peak, "/")[[1]][length(strsplit(chip.peak, "/")[[1]])], '.bed')[[1]][1]
+    print(quantile.name)
+    df.all = cdf.deseq.df(df = df.x, genes = gene.file, chip.peaks=read.table(chip.peak, header=FALSE))
+    plot_cdf(df.all, tf = quantile.name)
+    }
+    
+df.cdf = data.frame(matrix(nrow = 0, ncol = 3))     
+colnames(df.cdf) = c("V4", "dis", "status")
+for (chip.peak in Sys.glob(file.path("/Users/admin/genex/quantile*bed"))) {
+    print(chip.peak)
+    quantile.name = strsplit(strsplit(chip.peak, "/")[[1]][length(strsplit(chip.peak, "/")[[1]])], '.bed')[[1]][1]
+    print(quantile.name)
+    df.all = cdf.deseq.df(df = df.x, genes = gene.file,
+    chip.peaks=read.table(chip.peak, header=FALSE))
+    x = paste(as.character(df.all[,3]), quantile.name)
+    df.all[,3] = x
+    df.cdf = rbind(df.cdf, df.all)
+    #plot_cdf(df.all, tf = quantile)
+    }
+
+plot_cdf(df.cdf, tf = "ZNF143", col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(13),colorRampPalette(c("blue", "light blue"))(7)), line.type = c(rep(2, 20), rep(1,20)))
 ```
-# deeptools heatmap of ZNF143 functional and non-functional peaks
+# `deeptools` heatmap of ZNF143 functional and non-functional peaks
 
 ```{r, engine='bash', eval=F, echo=T}
 
