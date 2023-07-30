@@ -12,7 +12,7 @@
 <meta name="author" content="Thomas Scott" />
 <meta name="author" content="Michael J. Guertin" />
 
-<meta name="date" content="2023-07-29" />
+<meta name="date" content="2023-07-30" />
 
 <title>ChIP-seq analysis</title>
 
@@ -704,7 +704,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">ChIP-seq analysis</h1>
 <p class="author-name">Thomas Scott and Michael J. Guertin</p>
-<h4 class="date">2023-07-29</h4>
+<h4 class="date">2023-07-30</h4>
 
 </div>
 
@@ -942,9 +942,10 @@ done</code></pre>
 <p>A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let’s go in depth about this metric. If we reduce the stringency of peak calling, then we have more genomic regions and FRiP increases—so we can have any number of FRiP score for one set of data. Also peak sets change between datasets. If we call peaks with two different replicates and call peaks in each, then we have two different peaks sets and it is not fair to compare FRiP between them. To avoid this we call a set of universal peaks for a factor; recall that we just use all <code>bam</code> files and perform one peak calling step. Next we count reads in this universal peak set for all replicates and we can directly compare FRiP between replicates.</p>
 <div id="counting-reads-in-peaks-and-differential-binding" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Counting reads in peaks and differential binding</h2>
-<p>NEED TO INCORPORATE A DENOMINATOR HERE FOR THE NUMBER OF READS</p>
+<p>The <code>mapBed</code> subcommand from <code>bedtools</code> counts the BED file from the <code>seqOutBias</code> output in the 400 base window peak summits file. The <code>samtools</code> commands counts the number of paired end 1 reads that aligned in a concordant pair (the mate aligned nearby). The final output file contains these two values that we use to calculate FRiP.</p>
+<p>The following</p>
 <pre class="bash"><code>name=ZNF143_ChIP
-sort -k1,1 -k2,2n ${name}_summit_window.bed &gt; ${name}_summit_window_sorted.bed
+sort -k1,1 -k2,2n ${name}_summit_400window.bed &gt; ${name}_summit_window_sorted.bed
 peaks=${name}_summit_window_sorted.bed
 
 for i in *_not_scaled.bed
@@ -960,6 +961,8 @@ do
     name=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_peak_counts.txt&quot; &#39;{print $1}&#39;)
     awk &#39;{print $NF}&#39; ${name}_peak_counts.txt &gt; ${name}_peak_counts_only.txt
     echo $name | cat - ${name}_peak_counts_only.txt &gt; ${name}_peak_counts.txt
+    aligned_reads=$(samtools view -c -f 0x42 ${name}.bam)
+    echo $aligned_reads &gt;&gt; ${name}_peak_counts.txt
     rm ${name}_peak_counts_only.txt
 done
 
