@@ -727,20 +727,19 @@ function toggle_visibility(id1) {
 <ul>
 <li><a href="#counting-reads-in-peaks-and-differential-binding" id="toc-counting-reads-in-peaks-and-differential-binding"><span class="toc-section-number">6.1</span> Counting reads in peaks and differential binding</a></li>
 </ul></li>
-<li><a href="#heatmaps-of-signal-near-peaks" id="toc-heatmaps-of-signal-near-peaks"><span class="toc-section-number">7</span> Heatmaps of signal near peaks</a></li>
-<li><a href="#de-novo-motif-analysis-at-peaks" id="toc-de-novo-motif-analysis-at-peaks"><span class="toc-section-number">8</span> <em>De novo</em> motif analysis at peaks</a></li>
-<li><a href="#which-znf143-peaks-functionally-regulate-transcription" id="toc-which-znf143-peaks-functionally-regulate-transcription"><span class="toc-section-number">9</span> Which ZNF143 peaks functionally regulate transcription?</a></li>
-<li><a href="#deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" id="toc-deeptools-heatmap-of-znf143-functional-and-non-functional-peaks"><span class="toc-section-number">10</span> deeptools heatmap of ZNF143 functional and non-functional peaks</a></li>
-<li><a href="#de-novo-motif-analysis-of-znf143-peaks" id="toc-de-novo-motif-analysis-of-znf143-peaks"><span class="toc-section-number">11</span> De novo motif analysis of ZNF143 peaks</a>
+<li><a href="#de-novo-motif-analysis-at-peaks" id="toc-de-novo-motif-analysis-at-peaks"><span class="toc-section-number">7</span> <em>De novo</em> motif analysis at peaks</a></li>
+<li><a href="#which-znf143-peaks-functionally-regulate-transcription" id="toc-which-znf143-peaks-functionally-regulate-transcription"><span class="toc-section-number">8</span> Which ZNF143 peaks functionally regulate transcription?</a></li>
+<li><a href="#deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" id="toc-deeptools-heatmap-of-znf143-functional-and-non-functional-peaks"><span class="toc-section-number">9</span> deeptools heatmap of ZNF143 functional and non-functional peaks</a></li>
+<li><a href="#de-novo-motif-analysis-of-znf143-peaks" id="toc-de-novo-motif-analysis-of-znf143-peaks"><span class="toc-section-number">10</span> De novo motif analysis of ZNF143 peaks</a>
 <ul>
-<li><a href="#make-a-composite-fimo-motif-signal-at-peak-summits" id="toc-make-a-composite-fimo-motif-signal-at-peak-summits"><span class="toc-section-number">11.1</span> make a composite FIMO motif signal at peak summits</a></li>
-<li><a href="#de-novo-motif-analysis-on-other-non-functional-peaks" id="toc-de-novo-motif-analysis-on-other-non-functional-peaks"><span class="toc-section-number">11.2</span> de novo motif analysis on other (non-functional peaks)</a></li>
-<li><a href="#calculate-the-fraction-of-reads-in-peaks-frip-score-for" id="toc-calculate-the-fraction-of-reads-in-peaks-frip-score-for"><span class="toc-section-number">11.3</span> Calculate the fraction of reads in peaks (FRiP) score for:</a>
+<li><a href="#make-a-composite-fimo-motif-signal-at-peak-summits" id="toc-make-a-composite-fimo-motif-signal-at-peak-summits"><span class="toc-section-number">10.1</span> make a composite FIMO motif signal at peak summits</a></li>
+<li><a href="#de-novo-motif-analysis-on-other-non-functional-peaks" id="toc-de-novo-motif-analysis-on-other-non-functional-peaks"><span class="toc-section-number">10.2</span> de novo motif analysis on other (non-functional peaks)</a></li>
+<li><a href="#calculate-the-fraction-of-reads-in-peaks-frip-score-for" id="toc-calculate-the-fraction-of-reads-in-peaks-frip-score-for"><span class="toc-section-number">10.3</span> Calculate the fraction of reads in peaks (FRiP) score for:</a>
 <ul>
-<li><a href="#the-full-set-of-znf143-narrowpeaks" id="toc-the-full-set-of-znf143-narrowpeaks"><span class="toc-section-number">11.3.1</span> the full set of ZNF143 narrowPeaks</a></li>
+<li><a href="#the-full-set-of-znf143-narrowpeaks" id="toc-the-full-set-of-znf143-narrowpeaks"><span class="toc-section-number">10.3.1</span> the full set of ZNF143 narrowPeaks</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks" id="toc-did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks"><span class="toc-section-number">12</span> DID NOT DO THIS YET De novo motif analysis of differential peaks</a></li>
+<li><a href="#did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks" id="toc-did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks"><span class="toc-section-number">11</span> DID NOT DO THIS YET De novo motif analysis of differential peaks</a></li>
 </ul>
 </div>
 
@@ -969,33 +968,14 @@ done
 echo -e &quot;chr\tstart\tend\tname\tqvalue&quot; | cat - $peaks | paste -d&#39;\t&#39; - *peak_counts.txt &gt; Combined_ZNF143_peak_counts_with_ChIP.txt</code></pre>
 </div>
 </div>
-<div id="heatmaps-of-signal-near-peaks" class="section level1" number="7">
-<h1><span class="header-section-number">7</span> Heatmaps of signal near peaks</h1>
+<div id="de-novo-motif-analysis-at-peaks" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> <em>De novo</em> motif analysis at peaks</h1>
 </div>
-<div id="de-novo-motif-analysis-at-peaks" class="section level1" number="8">
-<h1><span class="header-section-number">8</span> <em>De novo</em> motif analysis at peaks</h1>
+<div id="which-znf143-peaks-functionally-regulate-transcription" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Which ZNF143 peaks functionally regulate transcription?</h1>
 </div>
-<div id="which-znf143-peaks-functionally-regulate-transcription" class="section level1" number="9">
-<h1><span class="header-section-number">9</span> Which ZNF143 peaks functionally regulate transcription?</h1>
-<pre class="r"><code>chr = sapply(strsplit(names(func.znf143.peaks), &quot;:&quot;), &quot;[&quot;, 1)
-rnge = sapply(strsplit(names(func.znf143.peaks), &quot;:&quot;), &quot;[&quot;, 2)
-start = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 1)) + 200
-end = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 2)) - 200
-
-write.table(cbind(chr, start, end), file = &quot;ZNF143_functional_peaks.bed&quot;, quote = FALSE,
-col.names =FALSE, row.names=FALSE, sep = &quot;\t&quot;)
-
-
-chr = sapply(strsplit(names(other.znf143.peaks), &quot;:&quot;), &quot;[&quot;, 1)
-rnge = sapply(strsplit(names(other.znf143.peaks), &quot;:&quot;), &quot;[&quot;, 2)
-start = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 1)) + 200
-end = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 2)) - 200
-
-write.table(cbind(chr, start, end), file = &quot;ZNF143_other_peaks.bed&quot;, quote = FALSE,
-col.names =FALSE, row.names=FALSE, sep = &quot;\t&quot;)</code></pre>
-</div>
-<div id="deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" class="section level1" number="10">
-<h1><span class="header-section-number">10</span> deeptools heatmap of ZNF143 functional and non-functional peaks</h1>
+<div id="deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> deeptools heatmap of ZNF143 functional and non-functional peaks</h1>
 <pre class="bash"><code>
 module load deeptools/3.5.0
 module load bedtools
@@ -1030,8 +1010,8 @@ plotHeatmap -m all_matrix_HA_ChIP_ZNF143_peaks.gz -out other_heatmap_HA_ChIP_ZNF
    --regionsLabel &quot;ZNF143 peaks&quot; --xAxisLabel &quot;Distance from summit&quot; \
    --samplesLabel &quot;DMSO&quot; &quot;dTAG&quot; --colorMap Purples -min 0 -max 13 --whatToShow &quot;heatmap and colorbar&quot; </code></pre>
 </div>
-<div id="de-novo-motif-analysis-of-znf143-peaks" class="section level1" number="11">
-<h1><span class="header-section-number">11</span> De novo motif analysis of ZNF143 peaks</h1>
+<div id="de-novo-motif-analysis-of-znf143-peaks" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> De novo motif analysis of ZNF143 peaks</h1>
 <p>I am brute forcing my way through an iterative and exhaustive motif
 analysis. This should be written into a systematic loop. The reason I
 did not is because I am manualy looking at the top hit to ensure that
@@ -1089,16 +1069,16 @@ wc -l ZNF143_functional_summit_140window.bed
 
 #96% have either motif
 # what comparison comparison set of regions can we use as a control?</code></pre>
-<div id="make-a-composite-fimo-motif-signal-at-peak-summits" class="section level2" number="11.1">
-<h2><span class="header-section-number">11.1</span> make a composite FIMO motif signal at peak summits</h2>
+<div id="make-a-composite-fimo-motif-signal-at-peak-summits" class="section level2" number="10.1">
+<h2><span class="header-section-number">10.1</span> make a composite FIMO motif signal at peak summits</h2>
 </div>
-<div id="de-novo-motif-analysis-on-other-non-functional-peaks" class="section level2" number="11.2">
-<h2><span class="header-section-number">11.2</span> de novo motif analysis on other (non-functional peaks)</h2>
+<div id="de-novo-motif-analysis-on-other-non-functional-peaks" class="section level2" number="10.2">
+<h2><span class="header-section-number">10.2</span> de novo motif analysis on other (non-functional peaks)</h2>
 </div>
-<div id="calculate-the-fraction-of-reads-in-peaks-frip-score-for" class="section level2" number="11.3">
-<h2><span class="header-section-number">11.3</span> Calculate the fraction of reads in peaks (FRiP) score for:</h2>
-<div id="the-full-set-of-znf143-narrowpeaks" class="section level3" number="11.3.1">
-<h3><span class="header-section-number">11.3.1</span> the full set of ZNF143 narrowPeaks</h3>
+<div id="calculate-the-fraction-of-reads-in-peaks-frip-score-for" class="section level2" number="10.3">
+<h2><span class="header-section-number">10.3</span> Calculate the fraction of reads in peaks (FRiP) score for:</h2>
+<div id="the-full-set-of-znf143-narrowpeaks" class="section level3" number="10.3.1">
+<h3><span class="header-section-number">10.3.1</span> the full set of ZNF143 narrowPeaks</h3>
 <pre class="r"><code>plot.barchart &lt;- function(df.barchart, filename = &quot;~/Desktop/barchart.beds.broadPeaks.pdf&quot;) {
   pdf(filename, width=12.83, height=6)
 
@@ -1304,8 +1284,8 @@ genes below 1.6% of the max peak height</p>
 </div>
 </div>
 </div>
-<div id="did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks" class="section level1" number="12">
-<h1><span class="header-section-number">12</span> DID NOT DO THIS YET De novo motif analysis of differential peaks</h1>
+<div id="did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> DID NOT DO THIS YET De novo motif analysis of differential peaks</h1>
 <p>Lastly, we perform <em>de novo</em> motif analysis as we have previously with
 <code>meme</code>. We can also determine the fraction of regions with immediate
 increases in accessibility have the underlying motif. However, this
