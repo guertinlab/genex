@@ -727,19 +727,20 @@ function toggle_visibility(id1) {
 <ul>
 <li><a href="#counting-reads-in-peaks-and-differential-binding" id="toc-counting-reads-in-peaks-and-differential-binding"><span class="toc-section-number">6.1</span> Counting reads in peaks and differential binding</a></li>
 </ul></li>
-<li><a href="#now-switch-over-to-the-pro-seq-vignette-to-determine-the-functional-peaks" id="toc-now-switch-over-to-the-pro-seq-vignette-to-determine-the-functional-peaks"><span class="toc-section-number">7</span> Now switch over to the PRO-seq vignette to determine the functional peaks</a></li>
-<li><a href="#motif-analysis-of-other-and-functional-znf143-peaks" id="toc-motif-analysis-of-other-and-functional-znf143-peaks"><span class="toc-section-number">8</span> motif analysis of other and functional ZNF143 peaks</a></li>
-<li><a href="#deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" id="toc-deeptools-heatmap-of-znf143-functional-and-non-functional-peaks"><span class="toc-section-number">9</span> deeptools heatmap of ZNF143 functional and non-functional peaks</a></li>
-<li><a href="#de-novo-motif-analysis-of-znf143-peaks" id="toc-de-novo-motif-analysis-of-znf143-peaks"><span class="toc-section-number">10</span> De novo motif analysis of ZNF143 peaks</a>
+<li><a href="#heatmaps-of-signal-near-peaks" id="toc-heatmaps-of-signal-near-peaks"><span class="toc-section-number">7</span> Heatmaps of signal near peaks</a></li>
+<li><a href="#de-novo-motif-analysis-at-peaks" id="toc-de-novo-motif-analysis-at-peaks"><span class="toc-section-number">8</span> <em>De novo</em> motif analysis at peaks</a></li>
+<li><a href="#which-znf143-peaks-functionally-regulate-transcription" id="toc-which-znf143-peaks-functionally-regulate-transcription"><span class="toc-section-number">9</span> Which ZNF143 peaks functionally regulate transcription?</a></li>
+<li><a href="#deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" id="toc-deeptools-heatmap-of-znf143-functional-and-non-functional-peaks"><span class="toc-section-number">10</span> deeptools heatmap of ZNF143 functional and non-functional peaks</a></li>
+<li><a href="#de-novo-motif-analysis-of-znf143-peaks" id="toc-de-novo-motif-analysis-of-znf143-peaks"><span class="toc-section-number">11</span> De novo motif analysis of ZNF143 peaks</a>
 <ul>
-<li><a href="#make-a-composite-fimo-motif-signal-at-peak-summits" id="toc-make-a-composite-fimo-motif-signal-at-peak-summits"><span class="toc-section-number">10.1</span> make a composite FIMO motif signal at peak summits</a></li>
-<li><a href="#de-novo-motif-analysis-on-other-non-functional-peaks" id="toc-de-novo-motif-analysis-on-other-non-functional-peaks"><span class="toc-section-number">10.2</span> de novo motif analysis on other (non-functional peaks)</a></li>
-<li><a href="#calculate-the-fraction-of-reads-in-peaks-frip-score-for" id="toc-calculate-the-fraction-of-reads-in-peaks-frip-score-for"><span class="toc-section-number">10.3</span> Calculate the fraction of reads in peaks (FRiP) score for:</a>
+<li><a href="#make-a-composite-fimo-motif-signal-at-peak-summits" id="toc-make-a-composite-fimo-motif-signal-at-peak-summits"><span class="toc-section-number">11.1</span> make a composite FIMO motif signal at peak summits</a></li>
+<li><a href="#de-novo-motif-analysis-on-other-non-functional-peaks" id="toc-de-novo-motif-analysis-on-other-non-functional-peaks"><span class="toc-section-number">11.2</span> de novo motif analysis on other (non-functional peaks)</a></li>
+<li><a href="#calculate-the-fraction-of-reads-in-peaks-frip-score-for" id="toc-calculate-the-fraction-of-reads-in-peaks-frip-score-for"><span class="toc-section-number">11.3</span> Calculate the fraction of reads in peaks (FRiP) score for:</a>
 <ul>
-<li><a href="#the-full-set-of-znf143-narrowpeaks" id="toc-the-full-set-of-znf143-narrowpeaks"><span class="toc-section-number">10.3.1</span> the full set of ZNF143 narrowPeaks</a></li>
+<li><a href="#the-full-set-of-znf143-narrowpeaks" id="toc-the-full-set-of-znf143-narrowpeaks"><span class="toc-section-number">11.3.1</span> the full set of ZNF143 narrowPeaks</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks" id="toc-did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks"><span class="toc-section-number">11</span> DID NOT DO THIS YET De novo motif analysis of differential peaks</a></li>
+<li><a href="#did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks" id="toc-did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks"><span class="toc-section-number">12</span> DID NOT DO THIS YET De novo motif analysis of differential peaks</a></li>
 </ul>
 </div>
 
@@ -943,7 +944,6 @@ done</code></pre>
 <div id="counting-reads-in-peaks-and-differential-binding" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Counting reads in peaks and differential binding</h2>
 <p>The <code>mapBed</code> subcommand from <code>bedtools</code> counts the BED file from the <code>seqOutBias</code> output in the 400 base window peak summits file. The <code>samtools</code> commands counts the number of paired end 1 reads that aligned in a concordant pair (the mate aligned nearby). The final output file contains these two values that we use to calculate FRiP.</p>
-<p>The following</p>
 <pre class="bash"><code>name=ZNF143_ChIP
 sort -k1,1 -k2,2n ${name}_summit_400window.bed &gt; ${name}_summit_window_sorted.bed
 peaks=${name}_summit_window_sorted.bed
@@ -967,237 +967,16 @@ do
 done
 
 echo -e &quot;chr\tstart\tend\tname\tqvalue&quot; | cat - $peaks | paste -d&#39;\t&#39; - *peak_counts.txt &gt; Combined_ZNF143_peak_counts_with_ChIP.txt</code></pre>
-<pre class="r"><code>#libraries
-library(DESeq2)
-library(lattice)
-library(dplyr)
-library(ggplot2)
-library(limma)
-library(bigWig)
-
-#functions on github
-source(&#39;https://raw.githubusercontent.com/mjg54/znf143_pro_seq_analysis/master/docs/ZNF143_functions.R&#39;)
-
-#new functions
-get.counts.interval &lt;- function(df, path.to.bigWig, file.prefix = &#39;H&#39;) {
-    vec.names = c()
-    inten.df=data.frame(matrix(ncol = 0, nrow = nrow(df)))
-    
-    for (mod.bigWig in Sys.glob(file.path(path.to.bigWig, paste(file.prefix, &quot;*.bigWig&quot;, sep =&#39;&#39;)))) {
-        factor.name = strsplit(strsplit(mod.bigWig, &quot;/&quot;)[[1]][length(strsplit(mod.bigWig, &quot;/&quot;)[[1]])], &#39;.bigWig&#39;)[[1]][1]
-        print(factor.name)
-        vec.names = c(vec.names, factor.name)
-        loaded.bw = load.bigWig(mod.bigWig)
-        print(mod.bigWig)
-        mod.inten = bed.region.bpQuery.bigWig(loaded.bw, df, abs.value = TRUE)
-        inten.df = cbind(inten.df, mod.inten)
-    }
-    colnames(inten.df) = vec.names
-    r.names = paste(df[,1], &#39;:&#39;, df[,2], &#39;-&#39;, df[,3], sep=&#39;&#39;)
-    row.names(inten.df) = r.names
-    return(inten.df)
-}
-
-ma.plot.lattice &lt;- function(ma.df, filename = &#39;file.name&#39;, 
-         title.main = &quot;Differential ATAC-seq Accessibility&quot;, ymin = -4,
-         ymax=4,
-         col = c(&quot;grey90&quot;,  &quot;grey60&quot;, &quot;#ce228e&quot; , &quot;#2290cf&quot;))
-  {
-  pdf(paste(&quot;MA_plot_&quot;, filename, &quot;.pdf&quot;, sep=&#39;&#39;), 
-      useDingbats = FALSE, width=3.83, height=3.83);
-  print(xyplot(ma.df$log2FoldChange ~ log(ma.df$baseMean, base=10),
-               groups=ma.df$response,
-               col= col, ylim=c(ymin,ymax),
-                main=title.main, scales=&quot;free&quot;, aspect=1, pch=20, cex=0.5,
-               ylab=expression(&quot;log&quot;[2]~&quot;ChIP-seq change&quot;), 
-               xlab=expression(&quot;log&quot;[10]~&quot;Mean of Normalized Counts&quot;),
-               par.settings=list(par.xlab.text=list(cex=1.1,font=2), 
-                                 par.ylab.text=list(cex=1.1,font=2))));
-  dev.off()
-  }
-
-
-
-
-
-categorize.deseq.df.repressed &lt;- function(df, fdr = 0.1, log2fold = 0.0, treat
-= &#39;Auxin&#39;) {
-
-     df.activated = data.frame(matrix(nrow = 0, ncol = 0))
-     df.repressed = data.frame(matrix(nrow = 0, ncol = 0))
-     df.unchanged = data.frame(matrix(nrow = 0, ncol = 0))
-     df.dregs = data.frame(matrix(nrow = 0, ncol = 0))
-     if (nrow(df[df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &gt; log2fold,]) != 0) {
-        df.activated = df[df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &gt; log2fold,]
-    df.activated$response = paste(treat, &#39;Activated&#39;)
-    }
-
-     if (nrow(df[df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &lt; -log2fold,]) != 0) {
-        df.repressed = df[df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &lt; -log2fold,]
-    df.repressed$response = paste(treat, &#39;Repressed&#39;)
-    }
-    
-    if (nrow(df[df$padj &gt; 0.5 &amp; !is.na(df$padj) &amp; abs(df$log2FoldChange) &lt; 0.25,]) != 0) {
-    df.unchanged = df[df$padj &gt; 0.5 &amp; !is.na(df$padj) &amp; abs(df$log2FoldChange) &lt; 0.25,]
-    df.unchanged$response = paste(treat, &#39;Unchanged&#39;)
-    }
-
-    if (nrow(df[!(df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &gt; log2fold) &amp;
-                  !(df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &lt; -log2fold) &amp;
-                  !(df$padj &gt; 0.5 &amp; !is.na(df$padj) &amp;
-              abs(df$log2FoldChange) &lt; 0.25), ]) != 0) {
-    df.dregs = df[!(df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &gt; log2fold) &amp;
-                  !(df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &lt; -log2fold) &amp;
-                  !(df$padj &gt; 0.5 &amp; !is.na(df$padj) &amp;
-              abs(df$log2FoldChange) &lt; 0.25), ]
-    df.dregs$response = paste(treat, &#39;All Other Genes&#39;)
-    }
-    print(head(df.repressed))
-    print(head(df.activated))
-    print(head(df.dregs))
-    print(head(df.unchanged))
-    df.effects.lattice = df.repressed
-    #rbind(df.activated, 
-    #      df.unchanged, 
-    #      df.repressed, 
-    #      df.dregs)
-    print(head(df.effects.lattice))
-    #df.effects.lattice$response = factor(df.effects.lattice$response)
-    #df.effects.lattice$response = relevel(df.effects.lattice$response, ref = paste(treat, &#39;Unchanged&#39;))
-    #df.effects.lattice$response = relevel(df.effects.lattice$response, ref = paste(treat, &#39;All Other Genes&#39;))
-    return(df.effects.lattice)
-}
-
-
-#things to do:
-# 
-
-
-
-#ZNF143 size factors from read depth
-
-
-x = read.table(&#39;CTCF_ChIP_summit_400window_isolated.bed&#39;, sep = &quot;\t&quot;, header=FALSE)
-y = read.table(&#39;ZNF143_ChIP_summit_400window.bed&#39;, sep = &quot;\t&quot;, header=FALSE)
-
-#normalized signal
-znf.signal.df = get.counts.interval(y, &quot;/Users/guertinlab/Desktop/ZNF143_ChIP/normalized_bigWig&quot;)
-
-#likewise for CTCF
-ctcf.signal.df = get.counts.interval(x, &quot;/Users/guertinlab/Desktop/ZNF143_ChIP/normalized_bigWig&quot;)
-
-
-ctcf.counts.df = get.counts.interval(x, &quot;/Users/guertinlab/Desktop/ZNF143_ChIP&quot;)
-znf143.counts.df = get.counts.interval(y, &quot;/Users/guertinlab/Desktop/ZNF143_ChIP&quot;)
-
-#
-
-HA.SF &lt;- read.table(&quot;HA_reads.txt&quot;, sep = &#39;\t&#39;, header = TRUE)[,-1]
-
-HA.size.factors = estimateSizeFactorsForMatrix(HA.SF)
-
-
-
-#first step is get sizefactors for CTCFHA degron, CTCFHA ctrl, CTCF degron, CTCF ctrl
-#next step is identify ZNF143 peaks distal to any CTCF peak
-#get sizefactors of HA ctrl and HACTCF ctrl for these peaks
-#get sizefactors of HA degron and HACTCF degron for these peaks 
-#use the HACTCF degron and HACTCF ctrl to get normalized size factors between all conditions 
-
-all.regions = rbind(ctcf.counts.df, znf143.counts.df)
-
-#ctcf.all.regions=all.regions[,grepl(&quot;CTCF&quot;,colnames(all.regions))]
-#sample.conditions = factor(sapply(strsplit(colnames(ctcf.all.regions), &#39;_rep&#39;), &#39;[&#39;, 1))
-
-#deseq.counts.table = DESeqDataSetFromMatrix(countData = ctcf.all.regions,
-#                colData = as.data.frame(sample.conditions), 
-#                design = ~ sample.conditions)
-                
-#dds &lt;- estimateSizeFactors(deseq.counts.table , controlGenes=rownames(deseq.counts.table) %in% rownames(ctcf.counts.df))
-#dds &lt;- DESeq(dds)
-#anchor.SF = dds$sizeFactor
-
-
-#
-znf143.analysis.regions=all.regions[,grepl(&quot;_HA_&quot;,colnames(all.regions))]
-
-znf143.analysis.regions = znf143.analysis.regions[rownames(znf143.analysis.regions) %in% rownames(znf143.counts.df),]
-
-
-znf143.analysis.SF = HA.size.factors
-
-sample.conditions = factor(sapply(strsplit(colnames(znf143.analysis.regions), &#39;_rep&#39;), &#39;[&#39;, 1))
-
-deseq.counts.table.4 = DESeqDataSetFromMatrix(countData = znf143.analysis.regions,
-                colData = as.data.frame(sample.conditions),
-                design = ~ sample.conditions)
-        
-        
-#deseq.counts.table.4$colnames
-#HA.sf.final = rep(NA, 6)
-#HA.sf = read.table(i, sep = &#39;\t&#39;, header = FALSE, check.names=FALSE)[,-1]
-#HA.sf=t(HA.sf)
-
-#factors &lt;- read.table(&quot;ATAC_sizeFactor.txt&quot;)
-#HA.sf.final[1:6] = as.numeric(HA.sf[2,1:6])
-#names(HA.sf.final) = HA.sf[1,]
-#sizeFactors(deseq.df) &lt;- size_factors
-
-
-#sizeFactors(deseq.counts.table.4) &lt;- HA.sf.final/mean(HA.sf.final)
-
-sizeFactors(deseq.counts.table.4) &lt;- znf143.analysis.SF
-
-dds.4 &lt;- DESeq(deseq.counts.table.4)
-
-
-
-DE.results = results(dds.4)
-#DE.results.lattice = 
-#    categorize.deseq.df.repressed(DE.results, 
-#                        fdr = 0.1, log2fold = 0.0, treat =
-#                       &#39;ZNF143_degron_30min&#39;)
-                        
-#DE.results.lattice = 
-#    categorize.deseq.df(DE.results, 
-#                        fdr = 0.1, log2fold = 0.0, treat =
-#                       &#39;ZNF143_degron_30min&#39;)
-                        
-                        
-normalized.counts.znf143 = counts(dds.4, normalized=TRUE)
-peak.intensities = rowMeans(normalized.counts.znf143[,1:3])
-
-names(peak.intensities) = rownames(normalized.counts.znf143)
-chr = sapply(strsplit(names(peak.intensities), &quot;:&quot;), &quot;[&quot;, 1)
-rnge = sapply(strsplit(names(peak.intensities), &quot;:&quot;), &quot;[&quot;, 2)
-start = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 1)) + 100
-end = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 2)) - 100
-
-quantile(peak.intensities, probs = seq(.05, 1.00, by = .05))
-
-j =0 
-q=seq(.05, 1.00, by = .05)
-count=0
-for (i in quantile(peak.intensities, probs = seq(.05, 1.00, by =
-.05)))
-{
-count = count +1
-
-write.table(file = paste0(&#39;quantile&#39;, as.character(q[count]), &#39;.bed&#39;), data.frame(chr[peak.intensities &gt; j &amp; peak.intensities &lt;= i], start[peak.intensities &gt; j &amp; peak.intensities &lt;= i], end[peak.intensities &gt; j &amp; peak.intensities &lt;= i], peak.intensities[peak.intensities &gt; j &amp; peak.intensities &lt;= i]), sep = &#39;\t&#39;, quote=FALSE, col.names=FALSE, row.names=FALSE )
-j = i
-}</code></pre>
 </div>
 </div>
-<div id="now-switch-over-to-the-pro-seq-vignette-to-determine-the-functional-peaks" class="section level1" number="7">
-<h1><span class="header-section-number">7</span> Now switch over to the PRO-seq vignette to determine the functional peaks</h1>
-<pre class="r"><code>length(peak.intensities[peak.intensities &gt;= quantile(peak.intensities, probs = seq(.05, 1.00, by = .05))[13]])
-
-func.znf143.peaks = peak.intensities[peak.intensities &gt;= quantile(peak.intensities, probs = seq(.05, 1.00, by = .05))[13]]
-
-other.znf143.peaks = peak.intensities[peak.intensities &lt; quantile(peak.intensities, probs = seq(.05, 1.00, by = .05))[13]]</code></pre>
+<div id="heatmaps-of-signal-near-peaks" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Heatmaps of signal near peaks</h1>
 </div>
-<div id="motif-analysis-of-other-and-functional-znf143-peaks" class="section level1" number="8">
-<h1><span class="header-section-number">8</span> motif analysis of other and functional ZNF143 peaks</h1>
+<div id="de-novo-motif-analysis-at-peaks" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> <em>De novo</em> motif analysis at peaks</h1>
+</div>
+<div id="which-znf143-peaks-functionally-regulate-transcription" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> Which ZNF143 peaks functionally regulate transcription?</h1>
 <pre class="r"><code>chr = sapply(strsplit(names(func.znf143.peaks), &quot;:&quot;), &quot;[&quot;, 1)
 rnge = sapply(strsplit(names(func.znf143.peaks), &quot;:&quot;), &quot;[&quot;, 2)
 start = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 1)) + 200
@@ -1215,8 +994,8 @@ end = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 2)) - 200
 write.table(cbind(chr, start, end), file = &quot;ZNF143_other_peaks.bed&quot;, quote = FALSE,
 col.names =FALSE, row.names=FALSE, sep = &quot;\t&quot;)</code></pre>
 </div>
-<div id="deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" class="section level1" number="9">
-<h1><span class="header-section-number">9</span> deeptools heatmap of ZNF143 functional and non-functional peaks</h1>
+<div id="deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> deeptools heatmap of ZNF143 functional and non-functional peaks</h1>
 <pre class="bash"><code>
 module load deeptools/3.5.0
 module load bedtools
@@ -1251,8 +1030,8 @@ plotHeatmap -m all_matrix_HA_ChIP_ZNF143_peaks.gz -out other_heatmap_HA_ChIP_ZNF
    --regionsLabel &quot;ZNF143 peaks&quot; --xAxisLabel &quot;Distance from summit&quot; \
    --samplesLabel &quot;DMSO&quot; &quot;dTAG&quot; --colorMap Purples -min 0 -max 13 --whatToShow &quot;heatmap and colorbar&quot; </code></pre>
 </div>
-<div id="de-novo-motif-analysis-of-znf143-peaks" class="section level1" number="10">
-<h1><span class="header-section-number">10</span> De novo motif analysis of ZNF143 peaks</h1>
+<div id="de-novo-motif-analysis-of-znf143-peaks" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> De novo motif analysis of ZNF143 peaks</h1>
 <p>I am brute forcing my way through an iterative and exhaustive motif
 analysis. This should be written into a systematic loop. The reason I
 did not is because I am manualy looking at the top hit to ensure that
@@ -1310,16 +1089,16 @@ wc -l ZNF143_functional_summit_140window.bed
 
 #96% have either motif
 # what comparison comparison set of regions can we use as a control?</code></pre>
-<div id="make-a-composite-fimo-motif-signal-at-peak-summits" class="section level2" number="10.1">
-<h2><span class="header-section-number">10.1</span> make a composite FIMO motif signal at peak summits</h2>
+<div id="make-a-composite-fimo-motif-signal-at-peak-summits" class="section level2" number="11.1">
+<h2><span class="header-section-number">11.1</span> make a composite FIMO motif signal at peak summits</h2>
 </div>
-<div id="de-novo-motif-analysis-on-other-non-functional-peaks" class="section level2" number="10.2">
-<h2><span class="header-section-number">10.2</span> de novo motif analysis on other (non-functional peaks)</h2>
+<div id="de-novo-motif-analysis-on-other-non-functional-peaks" class="section level2" number="11.2">
+<h2><span class="header-section-number">11.2</span> de novo motif analysis on other (non-functional peaks)</h2>
 </div>
-<div id="calculate-the-fraction-of-reads-in-peaks-frip-score-for" class="section level2" number="10.3">
-<h2><span class="header-section-number">10.3</span> Calculate the fraction of reads in peaks (FRiP) score for:</h2>
-<div id="the-full-set-of-znf143-narrowpeaks" class="section level3" number="10.3.1">
-<h3><span class="header-section-number">10.3.1</span> the full set of ZNF143 narrowPeaks</h3>
+<div id="calculate-the-fraction-of-reads-in-peaks-frip-score-for" class="section level2" number="11.3">
+<h2><span class="header-section-number">11.3</span> Calculate the fraction of reads in peaks (FRiP) score for:</h2>
+<div id="the-full-set-of-znf143-narrowpeaks" class="section level3" number="11.3.1">
+<h3><span class="header-section-number">11.3.1</span> the full set of ZNF143 narrowPeaks</h3>
 <pre class="r"><code>plot.barchart &lt;- function(df.barchart, filename = &quot;~/Desktop/barchart.beds.broadPeaks.pdf&quot;) {
   pdf(filename, width=12.83, height=6)
 
@@ -1525,8 +1304,8 @@ genes below 1.6% of the max peak height</p>
 </div>
 </div>
 </div>
-<div id="did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks" class="section level1" number="11">
-<h1><span class="header-section-number">11</span> DID NOT DO THIS YET De novo motif analysis of differential peaks</h1>
+<div id="did-not-do-this-yet-de-novo-motif-analysis-of-differential-peaks" class="section level1" number="12">
+<h1><span class="header-section-number">12</span> DID NOT DO THIS YET De novo motif analysis of differential peaks</h1>
 <p>Lastly, we perform <em>de novo</em> motif analysis as we have previously with
 <code>meme</code>. We can also determine the fraction of regions with immediate
 increases in accessibility have the underlying motif. However, this
