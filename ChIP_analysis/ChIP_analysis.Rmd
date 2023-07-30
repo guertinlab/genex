@@ -291,7 +291,123 @@ meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -sea
 
 # Which ZNF143 peaks functionally regulate transcription?
 
+```{r, engine='R', eval=F, echo=T}
+#libraries
+library(DESeq2)
+library(lattice)
+library(dplyr)
+library(ggplot2)
+library(limma)
+library(bigWig)
 
+peak.intensities = read.table('PEAKS_file_from_FRiP.bed', header =FALSE)
+
+#NEEDS EDITS
+names(peak.intensities) = rownames(normalized.counts.znf143)
+chr = sapply(strsplit(names(peak.intensities), ":"), "[", 1)
+rnge = sapply(strsplit(names(peak.intensities), ":"), "[", 2)
+start =	as.numeric(sapply(strsplit(rnge, "-"), "[", 1)) + 100
+end = as.numeric(sapply(strsplit(rnge, "-"), "[", 2)) - 100
+
+quantile(peak.intensities, probs = seq(.05, 1.00, by = .05))
+
+j =0 
+q=seq(.05, 1.00, by = .05)
+count=0
+for (i in quantile(peak.intensities, probs = seq(.05, 1.00, by =
+.05)))
+{
+count = count +1
+
+write.table(file = paste0('quantile', as.character(q[count]), '.bed'), data.frame(chr[peak.intensities > j & peak.intensities <= i], start[peak.intensities > j & peak.intensities <= i], end[peak.intensities > j & peak.intensities <= i], peak.intensities[peak.intensities > j & peak.intensities <= i]), sep = '\t', quote=FALSE, col.names=FALSE, row.names=FALSE )
+j = i
+}
+```
+## Making CDF plots
+
+download the activated, repressed and matched files from `https://github.com/guertinlab/genex/tree/main/ChIP_analysis
+`. 
+```{r, engine='R', eval=F, echo=T}
+library(latticeExtra)
+
+cdf.deseq.df <- function(df, genes = gene.file, chip.peaks = chip.peaks) {
+  bed.tss.activated = filter.deseq.into.bed(df, genes, cat = "Repressed")
+  bed.tss.unchanged = filter.deseq.into.bed(df, genes, cat = "Matched to Repressed")
+  act.distance = bedTools.closest(bed1 = bed.tss.activated, bed2 = chip.peaks[,c(1:3)], opt.string = '-D a')
+  unreg.distance = bedTools.closest(bed1 = bed.tss.unchanged, bed2 = chip.peaks[,c(1:3)], opt.string = '-D a')
+
+  df.up.can = cbind(act.distance[,c(4, 10)], "Repressed")
+  df.un.can = cbind(unreg.distance[,c(4, 10)], "Matched to Repressed")
+
+  colnames(df.up.can) = c(colnames(df.up.can)[1:2], 'status')
+  colnames(df.un.can) = c(colnames(df.up.can)[1:2], 'status')
+
+  df.all = rbind(df.up.can, df.un.can)
+  df.all$status = factor(df.all$status, levels = c("Repressed", "Matched to Repressed"))
+  return(df.all)
+}
+
+filter.deseq.into.bed <- function(deseq.df, gene.file, cat = 'R1881 Activated') {
+  deseq.df = deseq.df[deseq.df$treatment == cat,]
+  #print(dim(deseq.df))
+  #scientific notation was messing this up occasionally
+  x = gene.file$V4
+  #print(length(x))
+  y = gene.file[x %in% rownames(deseq.df),]
+  #print(dim(y))
+  z = get.tss(y)
+  #print(dim(z))
+  return(z)
+}
+
+col.lines = c("#FF0000", "grey60")
+
+bedTools.closest <- function(functionstring="/usr/local/bin/closestBed",bed1,bed2,opt.string="") {
+  options(scipen =99) # not to use scientific notation when writing out
+  
+  #write bed formatted dataframes to tempfile
+  write.table(bed1,file= 'a.file.bed', quote=F,sep="\t",col.names=F,row.names=F)
+  write.table(bed2,file= 'b.file.bed', quote=F,sep="\t",col.names=F,row.names=F)
+  
+  # create the command string and call the command using system()
+  command1=paste('sort -k1,1 -k2,2n', 'a.file.bed', '> a.file.sorted.bed')
+  cat(command1,"\n")
+  try(system(command1))
+  command2=paste('sort -k1,1 -k2,2n', 'b.file.bed', '> b.file.sorted.bed')
+  cat(command2,"\n")
+  try(system(command2))
+  
+  command=paste(functionstring, opt.string,"-a",'a.file.sorted.bed',"-b",'b.file.sorted.bed',">",'out.file.bed',sep=" ")
+  cat(command,"\n")
+  try(system(command))
+  
+  res=read.table('out.file.bed',header=F, comment.char='')
+  
+  command3=paste('rm', 'a.file.bed', 'b.file.bed', 'a.file.sorted.bed', 'b.file.sorted.bed', 'out.file.bed')
+  cat(command3,"\n")
+  try(system(command3))
+  
+  colnames(res) = c(colnames(bed1), colnames(bed2), 'dis' )
+  return(res)
+}
+
+filter.deseq.into.bed <- function(deseq.df, gene.file, cat = 'R1881 Activated') {
+  deseq.df = deseq.df[deseq.df$treatment == cat,]
+  print(dim(deseq.df))
+  #scientific notation was messing this up occasionally
+  x = gene.file$V4
+  print(length(x))
+  xy=sapply(strsplit(sapply(strsplit(rownames(deseq.df), ':'), '[', 2), "-"), "[", 2)
+  gene = sapply(strsplit(xy, "_"), "[", 2)
+  y = gene.file[x %in% gene,]
+  #print(dim(y))
+  z = get.tss(y)
+  #print(dim(z))
+  return(z)
+}
+
+
+```
 # deeptools heatmap of ZNF143 functional and non-functional peaks
 
 ```{r, engine='bash', eval=F, echo=T}
