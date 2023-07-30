@@ -241,11 +241,13 @@ A common metric to assess the quality of ChIP-seq data is fraction of reads in p
 
 ## Counting reads in peaks and differential binding 
 
-NEED TO INCORPORATE A DENOMINATOR HERE FOR THE NUMBER OF READS
+The `mapBed` subcommand from `bedtools` counts the BED file from the `seqOutBias` output in the 400 base window peak summits file. The `samtools` commands counts the number of paired end 1 reads that aligned in a concordant pair (the mate aligned nearby). The final output file contains these two values that we use to calculate FRiP.
 
+
+The following
 ```{r engine='bash', eval=F, echo=TRUE}
 name=ZNF143_ChIP
-sort -k1,1 -k2,2n ${name}_summit_window.bed > ${name}_summit_window_sorted.bed
+sort -k1,1 -k2,2n ${name}_summit_400window.bed > ${name}_summit_window_sorted.bed
 peaks=${name}_summit_window_sorted.bed
 
 for i in *_not_scaled.bed
@@ -261,6 +263,8 @@ do
 	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_peak_counts.txt" '{print $1}')
 	awk '{print $NF}' ${name}_peak_counts.txt > ${name}_peak_counts_only.txt
 	echo $name | cat - ${name}_peak_counts_only.txt > ${name}_peak_counts.txt
+	aligned_reads=$(samtools view -c -f 0x42 ${name}.bam)
+	echo $aligned_reads >> ${name}_peak_counts.txt
 	rm ${name}_peak_counts_only.txt
 done
 
