@@ -268,35 +268,11 @@ done
 
 echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_counts.txt > Combined_ZNF143_peak_counts_with_ChIP.txt
 ```
-# Heatmaps of signal near peaks
-
 
 # *De novo* motif analysis at peaks
 
 
 # Which ZNF143 peaks functionally regulate transcription?
-
-
-```{r, engine='R', eval=F, echo=T}
-
-chr = sapply(strsplit(names(func.znf143.peaks), ":"), "[", 1)
-rnge = sapply(strsplit(names(func.znf143.peaks), ":"), "[", 2)
-start =	as.numeric(sapply(strsplit(rnge, "-"), "[", 1)) + 200
-end = as.numeric(sapply(strsplit(rnge, "-"), "[", 2)) - 200
-
-write.table(cbind(chr, start, end), file = "ZNF143_functional_peaks.bed", quote = FALSE,
-col.names =FALSE, row.names=FALSE, sep = "\t")
-
-
-chr = sapply(strsplit(names(other.znf143.peaks), ":"), "[", 1)
-rnge = sapply(strsplit(names(other.znf143.peaks), ":"), "[", 2)
-start =	as.numeric(sapply(strsplit(rnge, "-"), "[", 1)) + 200
-end = as.numeric(sapply(strsplit(rnge, "-"), "[", 2)) - 200
-
-write.table(cbind(chr, start, end), file = "ZNF143_other_peaks.bed", quote = FALSE,
-col.names =FALSE, row.names=FALSE, sep = "\t")
-
-```
 
 
 # deeptools heatmap of ZNF143 functional and non-functional peaks
