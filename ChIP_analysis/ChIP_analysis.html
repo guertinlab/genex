@@ -734,6 +734,7 @@ function toggle_visibility(id1) {
 <li><a href="#ranking-and-quantile-parsing-of-chip-peaks" id="toc-ranking-and-quantile-parsing-of-chip-peaks"><span class="toc-section-number">9.1</span> Ranking and quantile parsing of ChIP peaks</a></li>
 <li><a href="#integration-with-pro-seq-data" id="toc-integration-with-pro-seq-data"><span class="toc-section-number">9.2</span> Integration with PRO-seq data</a></li>
 <li><a href="#making-cdf-plots" id="toc-making-cdf-plots"><span class="toc-section-number">9.3</span> Making CDF plots</a></li>
+<li><a href="#look-at-the-plots-and-decide-a-peak-threshold" id="toc-look-at-the-plots-and-decide-a-peak-threshold"><span class="toc-section-number">9.4</span> Look at the plots and decide a peak threshold</a></li>
 </ul></li>
 <li><a href="#deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" id="toc-deeptools-heatmap-of-znf143-functional-and-non-functional-peaks"><span class="toc-section-number">10</span> <code>deeptools</code> heatmap of ZNF143 functional and non-functional peaks</a></li>
 </ul>
@@ -1049,109 +1050,19 @@ j = i
 </div>
 <div id="making-cdf-plots" class="section level2" number="9.3">
 <h2><span class="header-section-number">9.3</span> Making CDF plots</h2>
+<p>There are many methods to generate and visualize CDF plots and we have developed many functions in <code>R</code> that perform these tasks. The first ten lines import common libraries that are preinstalled on CSHL computers and the last three of the preamble lines import some functions that we use routinely in the lab.</p>
 <pre class="r"><code>library(latticeExtra)
+library(DESeq2)
+library(lattice)
+library(dplyr)
+library(ggplot2)
+library(limma)
+library(bigWig)
 source(&#39;https://raw.githubusercontent.com/guertinlab/seqOutBias/master/docs/R/seqOutBias_functions.R&#39;)
 source(&#39;https://raw.githubusercontent.com/mjg54/znf143_pro_seq_analysis/master/docs/ZNF143_functions.R&#39;)
-
-cdf.deseq.df &lt;- function(df, genes = gene.file, chip.peaks = chip.peaks) {
-  bed.tss.activated = filter.deseq.into.bed(df, genes, cat = &quot;Repressed&quot;)
-  bed.tss.unchanged = filter.deseq.into.bed(df, genes, cat = &quot;Matched to Repressed&quot;)
-  act.distance = bedTools.closest(bed1 = bed.tss.activated, bed2 = chip.peaks[,c(1:3)], opt.string = &#39;-D a&#39;)
-  unreg.distance = bedTools.closest(bed1 = bed.tss.unchanged, bed2 = chip.peaks[,c(1:3)], opt.string = &#39;-D a&#39;)
-
-  df.up.can = cbind(act.distance[,c(4, 10)], &quot;Repressed&quot;)
-  df.un.can = cbind(unreg.distance[,c(4, 10)], &quot;Matched to Repressed&quot;)
-
-  colnames(df.up.can) = c(colnames(df.up.can)[1:2], &#39;status&#39;)
-  colnames(df.un.can) = c(colnames(df.up.can)[1:2], &#39;status&#39;)
-
-  df.all = rbind(df.up.can, df.un.can)
-  df.all$status = factor(df.all$status, levels = c(&quot;Repressed&quot;, &quot;Matched to Repressed&quot;))
-  return(df.all)
-}
-
-filter.deseq.into.bed &lt;- function(deseq.df, gene.file, cat = &#39;R1881 Activated&#39;) {
-  deseq.df = deseq.df[deseq.df$treatment == cat,]
-  #print(dim(deseq.df))
-  #scientific notation was messing this up occasionally
-  x = gene.file$V4
-  #print(length(x))
-  y = gene.file[x %in% rownames(deseq.df),]
-  #print(dim(y))
-  z = get.tss(y)
-  #print(dim(z))
-  return(z)
-}
+source(&#39;https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/cdf_functions.R&#39;)
 
 col.lines = c(&quot;#FF0000&quot;, &quot;grey60&quot;)
-
-bedTools.closest &lt;- function(functionstring=&quot;/usr/local/bin/closestBed&quot;,bed1,bed2,opt.string=&quot;&quot;) {
-  options(scipen =99) # not to use scientific notation when writing out
-  
-  #write bed formatted dataframes to tempfile
-  write.table(bed1,file= &#39;a.file.bed&#39;, quote=F,sep=&quot;\t&quot;,col.names=F,row.names=F)
-  write.table(bed2,file= &#39;b.file.bed&#39;, quote=F,sep=&quot;\t&quot;,col.names=F,row.names=F)
-  
-  # create the command string and call the command using system()
-  command1=paste(&#39;sort -k1,1 -k2,2n&#39;, &#39;a.file.bed&#39;, &#39;&gt; a.file.sorted.bed&#39;)
-  cat(command1,&quot;\n&quot;)
-  try(system(command1))
-  command2=paste(&#39;sort -k1,1 -k2,2n&#39;, &#39;b.file.bed&#39;, &#39;&gt; b.file.sorted.bed&#39;)
-  cat(command2,&quot;\n&quot;)
-  try(system(command2))
-  
-  command=paste(functionstring, opt.string,&quot;-a&quot;,&#39;a.file.sorted.bed&#39;,&quot;-b&quot;,&#39;b.file.sorted.bed&#39;,&quot;&gt;&quot;,&#39;out.file.bed&#39;,sep=&quot; &quot;)
-  cat(command,&quot;\n&quot;)
-  try(system(command))
-  
-  res=read.table(&#39;out.file.bed&#39;,header=F, comment.char=&#39;&#39;)
-  
-  command3=paste(&#39;rm&#39;, &#39;a.file.bed&#39;, &#39;b.file.bed&#39;, &#39;a.file.sorted.bed&#39;, &#39;b.file.sorted.bed&#39;, &#39;out.file.bed&#39;)
-  cat(command3,&quot;\n&quot;)
-  try(system(command3))
-  
-  colnames(res) = c(colnames(bed1), colnames(bed2), &#39;dis&#39; )
-  return(res)
-}
-
-filter.deseq.into.bed &lt;- function(deseq.df, gene.file, cat = &#39;R1881 Activated&#39;) {
-  deseq.df = deseq.df[deseq.df$treatment == cat,]
-  print(dim(deseq.df))
-  #scientific notation was messing this up occasionally
-  x = gene.file$V4
-  print(length(x))
-  xy=sapply(strsplit(sapply(strsplit(rownames(deseq.df), &#39;:&#39;), &#39;[&#39;, 2), &quot;-&quot;), &quot;[&quot;, 2)
-  gene = sapply(strsplit(xy, &quot;_&quot;), &quot;[&quot;, 2)
-  y = gene.file[x %in% gene,]
-  #print(dim(y))
-  z = get.tss(y)
-  #print(dim(z))
-  return(z)
-}
-
-plot_cdf &lt;- function(df.all, tf=&quot;quantile&quot;, col.lines = c(&quot;#ce228e&quot;, &quot;grey60&quot;, &quot;#2290cf&quot;,&quot;grey90&quot;), line.type = c(1)) {
-pdf(paste0(tf, &quot;FIG_cdf_compare_Reg_classes.pdf&quot;), width=6.2, height=3.83) 
-    print(ecdfplot(~log(abs(dis), base = 10), groups = status, data = df.all,
-         auto.key = list(lines=TRUE, points=FALSE),
-         col = col.lines,
-         aspect = 1,
-                                        #xlim = c(0, 50000),
-         scales=list(relation=&quot;free&quot;,alternating=c(1,1,1,1)),
-         ylab = &#39;Cumulative Distribution Function&#39;,
-         xlab = expression(&#39;log&#39;[10]~&#39;ZNF143 Distance from TSS&#39;),
-                                        #index.cond = list(c(2,1)),
-         between=list(y=1.0),
-         type = &#39;a&#39;,
-         xlim = c(0,8),
-         lwd=2,
-         lty=line.type,
-         par.settings = list(superpose.line = list(col = col.lines, lwd=3), strip.background=list(col=&quot;grey85&quot;)),
-         panel = function(...) {
-             panel.abline(v= 200, lty =2)
-             panel.ecdfplot(...)
-         }))
-    dev.off()
-}
 
 gene.file=read.table(file = &quot;/Users/admin/genex/HEK_ZNF143_gene_annotations.bed&quot;, sep=&quot;\t&quot;, header=FALSE)
 
@@ -1178,6 +1089,10 @@ for (chip.peak in Sys.glob(file.path(&quot;/Users/admin/genex/quantile*bed&quot;
     }
 
 plot_cdf(df.cdf, tf = &quot;ZNF143&quot;, col.lines = c(rep(&quot;grey60&quot;,20),colorRampPalette(c(&quot;red&quot;,&quot;pink&quot;))(13),colorRampPalette(c(&quot;blue&quot;, &quot;light blue&quot;))(7)), line.type = c(rep(2, 20), rep(1,20)))</code></pre>
+</div>
+<div id="look-at-the-plots-and-decide-a-peak-threshold" class="section level2" number="9.4">
+<h2><span class="header-section-number">9.4</span> Look at the plots and decide a peak threshold</h2>
+<p>You can employ a Kolmogorov–Smirnov, which is an overused statistical test that will provide a test statistic p-value for pairwise comparison of CDF curves. However, in this course we will just decide on a threshold by looking at the plots one by one.</p>
 </div>
 </div>
 <div id="deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" class="section level1" number="10">
