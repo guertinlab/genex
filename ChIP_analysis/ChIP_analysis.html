@@ -832,20 +832,7 @@ wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
 
 # build indicies
 bowtie2-build hg38.fa hg38_bt2</code></pre>
-<p>Note that the libraries are paired end. The <code>-1</code> and
-<code>-2</code> options are for the respective paired-end <code>fastq</code> files. There is no
-need to save the output <code>sam</code> file, so the output is piped to
-<code>samtools</code> to convert to <code>bam</code>, then sorted by name (<code>-n</code>) so paired
-end reads are adjacent in the file, then piped to <code>samtools fixmate</code>
-which adds information about the fragment length by comparing the PE1
-and PE2 coordinates. Then the files are sorted by coordinate and
-piped to <code>samtools markdup</code> to remove duplicate reads. Duplicate reads
-have the same PE1 and PE2 ends. This is very unlikely to happen by
-chance unless you sequence to very high read depth, so these reads are
-considered PCR amplicon duplicates. The <code>fixmate</code> step is necessary to
-pipe to <code>markdup</code>. We use the entire DNA fragment for making the
-browser tracks, which is accomplished by converted the paired-end
-<code>bam</code> file to a <code>bed12</code> and taking out discordant reads. We are defining discordant as the two ends of the DNA fragments being greater that 2kb away from one another. This is unlikely given the size of or sonicated DNA and the Illumina sequencing platform. Then we normalize to read depth, add a trackline so we can upload into the UCSC genome browser, and make a <code>bigWig</code> file, which is very similar to a <code>bedGraph</code>, but it binary and not human-readable.</p>
+<p>Note that the libraries are paired end. The <code>-1</code> and <code>-2</code> options are for the respective paired-end <code>fastq</code> files. There is no need to save the output <code>sam</code> file, so the output is piped to <code>samtools</code> to convert to <code>bam</code>, then sorted by name (<code>-n</code>) so paired end reads are adjacent in the file, then piped to <code>samtools fixmate</code> which adds information about the fragment length by comparing the PE1 and PE2 coordinates. Then the files are sorted by coordinate and piped to <code>samtools markdup</code> to remove duplicate reads. Duplicate reads have the same PE1 and PE2 ends. This is very unlikely to happen by chance unless you sequence to very high read depth, so these reads are considered PCR amplicon duplicates. The <code>fixmate</code> step is necessary to pipe to <code>markdup</code>. We use the entire DNA fragment for making the browser tracks, which is accomplished by converted the paired-end <code>bam</code> file to a <code>bed12</code> and taking out discordant reads. We are defining discordant as the two ends of the DNA fragments being greater that 2kb away from one another. This is unlikely given the size of or sonicated DNA and the Illumina sequencing platform. Then we normalize to read depth, add a trackline so we can upload into the UCSC genome browser, and make a <code>bigWig</code> file, which is very similar to a <code>bedGraph</code>, but it binary and not human-readable.</p>
 <p>The software <code>seqOutBias</code> software incorporates whether a read is uniquely mappable when converting a <code>bam</code> file to a <code>bed</code> and <code>bigWig</code>. This requires a compute-intensive task of looking at all k-mers (sequencing read length, here it is 40 bases) in the genome and determining if they are unique. Since this takes a bit of time, we performed this task for you and the resultant files are within the <code>~/genex/genomes/</code> directory.</p>
 <pre class="bash bg-danger"><code># generate mappability file
 seqOutBias seqtable hg38.fa --read-size=40</code></pre>
@@ -863,9 +850,8 @@ for i in *_PE1_no_adapt.fastq
 do
     name=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_PE1&quot; &#39;{print $1}&#39;)
         echo $name  
-    bowtie2 -p $ncore --maxins 800 -x $genome_index -1 ${name}_PE1_no_adapt.fastq -2 ${name}_PE2_no_adapt.fastq | samtools sort -@ $ncore -n -o ${name}.bw.bam
-#compress the files
-        gzip ${name}_PE1_no_adapt.fastq
+    bowtie2 -p $ncore --maxins 800 -x $genome_index -1 ${name}_PE1_no_adapt.fastq -2 ${name}_PE2_no_adapt.fastq | samtools sort -@ $ncore -n -o ${name}.bw.bam      #compress the files
+    gzip ${name}_PE1_no_adapt.fastq
     gzip ${name}_PE2_no_adapt.fastq
     gzip ${name}_PE2.fastq
     gzip ${name}_PE1.fastq
