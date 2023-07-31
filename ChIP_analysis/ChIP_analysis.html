@@ -1093,6 +1093,9 @@ plot_cdf(df.cdf, tf = &quot;ZNF143&quot;, col.lines = c(rep(&quot;grey60&quot;,2
 <div id="look-at-the-plots-and-decide-a-peak-threshold" class="section level2" number="9.4">
 <h2><span class="header-section-number">9.4</span> Look at the plots and decide a peak threshold</h2>
 <p>You can employ a Kolmogorov–Smirnov, which is an overused statistical test that will provide a test statistic p-value for pairwise comparison of CDF curves. However, in this course we will just decide on a threshold by looking at the plots one by one.</p>
+<p>We can use <code>awk</code> to parse the peak file to only include peaks with intensities above are threshold.</p>
+<p>NEED TO EDIT THIS.</p>
+<pre class="bash"><code>awk PEAKS_file_from_FRiP.bed </code></pre>
 </div>
 </div>
 <div id="deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" class="section level1" number="10">
