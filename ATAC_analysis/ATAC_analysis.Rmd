@@ -126,7 +126,7 @@ areguments are the input `fastq` files. We save the output
 to a log file.
 
 
-```{r engine='bash', eval=F, echo=TRUE}
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 
 #newer versions don't seem to work
 module load cutadapt
@@ -142,15 +142,14 @@ to save time, then we sort the file, and use `samtools` and the `-f`
 option with the flag `0x4` to output the reads that do NOT align to
 the mitochondrial genome.
 
-```{r engine='bash', eval=F, echo=TRUE}
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 module load bowtie2
 module load samtools
 
 #Align to chrM first and remove aligned reads
 #if you need to build it:
 
-#wget https://hgdownload.cse.ucsc.edu/goldenpath/hg38/chromosomes/chrM.fa.gz
-curl -O https://hgdownload.cse.ucsc.edu/goldenpath/hg38/chromosomes/chrM.fa.gz
+wget https://hgdownload.cse.ucsc.edu/goldenpath/hg38/chromosomes/chrM.fa.gz
 gunzip chrM.fa.gz
 bowtie2-build chrM.fa chrM
 
@@ -174,7 +173,7 @@ recomend running `ls` before and after a process to determine which
 new files are generated. Also, don't forget to `head`, `tail`, and `wc
 -l` any output files to make sure everything makes sense. 
 
-```{r engine='bash', eval=F, echo=TRUE}
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 module load fastq-pair/1.0
 
 fastq_pair -t 1000000 ${name}_PE1.chrM.fastq ${name}_PE2_no_adapt.fastq 2>&1 | tee ${name}_fastq_pair.log
@@ -197,10 +196,10 @@ considered PCR amplicon duplicates. The `fixmate` step is necessary to
 pipe to `markdup`. 
 
 
-```{r engine='bash', eval=F, echo=TRUE}
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 #Align to the hg38 genome and remove duplicates
 
-genome_index=/path/to/indiceis/hg38_bt2
+genome_index=~/genex/genomes/hg38_bt2
 bowtie2 -p 8 --maxins 800 -x $genome_index -1 ${name}_PE1.chrM.fastq.paired.fq -2 ${name}_PE2_no_adapt.fastq.paired.fq | samtools view -bS - | samtools sort -n - | samtools fixmate -m - - | samtools sort - | samtools markdup -s -r - ${name}.hg38.bam 2>&1 | tee ${name}_bowtie2_hg38.log
 
 ```
@@ -225,7 +224,7 @@ determined. The last line removes chromosomes that are incomplete
 contigs and the Epstein-Barr Virus genome. 
 
 
-```{r engine='bash', eval=F, echo=TRUE}
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 module load genometools/1.5.10
 module load rust/1.64.0
 module load ucsc_genome/2012.05.22
@@ -244,83 +243,6 @@ seqOutBias seqtable hg38.fa --read-size=40
 seqOutBias scale $table ${name}.hg38.bam --tallymer=$tallymer --no-scale --custom-shift=4,-4 --read-size=${readLength} 2>&1 | tee ${name}_seqOutBias.log
 ```
 
-## Making a scaled `bedGraph` for the browser
-
-Now we are read depth normalizing each replicate and making a 201 base
-window centered on the transposase insertion site to smooth the data
-for visualization. The data is first smoothed with
-`slopBed`. Then we combine
-overlapping interval signal with `genomeCoverageBed`. We calculate the read depth by summing up
-the 5th column of the original `bed` file . Then we divide this number by 10 million because the
-normalized values will be 1 for a single read if there are 10 million
-reads in a library. Usually libraries have between 10 and 100 million
-aligned reads, so with this normalization the y-axis does not span extreme values. We round
-this to three places after the decimal.  Then we convert to a `bigWig` (essentially a binary
-`bedGraph` file) in case we want to make a track hub down the
-line. The `bedGraph` files are often too large to upload directly to
-UCSC. It is easier to merge `bigWig` files and sum the intensities for
-each genomic region as well.
-
-```{r engine='bash', eval=F, echo=TRUE}
-#Convert BAM to BED
-sizes=/home/FCAM/meds5420/genomes/hg38.chrom.sizes
-
-slopBed -i ${name}.hg38_not_scaled.bed -g ${sizes} -l 100 -r 100 | sort -k1,1 -k2,2n > ${name}_window.bed
-genomeCoverageBed -bg -i ${name}_window.bed -g $sizes > ${name}.bedGraph
-
-depth=`awk -F'\t' '{sum+=$5;}END{print sum;}' ${name}.hg38_not_scaled.bed`
-scaled=$(bc <<< "scale=3 ; 10000000 / $depth")
-echo $scaled
-
-awk -v scaled="$scaled" '{OFS="\t";} {print $1, $2, $3, $4*scaled}' ${name}.bedGraph > ${name}_normalized.bedGraph
-
-awk -v var="$name" 'BEGIN {  print "browser position chr11:5,289,521-5,291,937"; print "track type=bedGraph name=\"" var "\" description=\"" var "_bedGraph\" visibility=full autoScale=on alwaysZero=on color=0,125,0 windowingFunction=maximum"}  { print $0}' ${name}_normalized.bedGraph > ${name}_ucsc.bedGraph
-
-gzip ${name}_ucsc.bedGraph
-
-wigToBigWig -clip ${name}_normalized.bedGraph $sizes ${name}.bigWig
-```
-
-# Combining replicates for the genome browser
-
-Usually we combine replicates into a single track for visualization
-and we compare the tracks between conditions. It is important that we
-read-depth normalize before we combine the signal from each
-replicate. Otherwise, we would be weighting replicates differently;
-for example, if a library is sequenced to twice the read depth and we
-combine first then read depth normalize, then the more high coverage
-data is weighted twice as much in the final visualization. These `bedGraph` files are probably too big to upload to UCSC, but you can upload portions of the file or convert to `bigWig` files and generate a track hub. The final loop cleans up the directory by putting all the individual replicate files within their respective folders.
-
-
-```{r engine='bash', eval=F, echo=TRUE}
-#!/bin/bash
-
-for i in *rep1*PE1.fastq.gz
-do
-    nm=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1.fastq.gz" '{print $1}')
-    name=$(echo $nm | awk -F"rep1" '{print $1}')
-    echo $name
-    reps=$(ls ${name}rep*bigWig | grep -v hg38 | wc -w | bc)
-    files=$(ls ${name}rep*bigWig | grep -v hg38)
-    bigWigMerge $files tmp.bg
-    scaleall=$(bc <<< "scale=4 ; 1.0 / $reps")
-    echo scale:
-    echo $scaleall
-    awk -v scaleall="$scaleall" '{OFS="\t";} {print $1, $2, $3, $4*scaleall}' tmp.bg > ${name}_normalized.bedGraph
-    rm tmp.bg
-    awk -v var="$name" 'BEGIN {  print "browser position chr11:5,289,521-5,291,937"; print "track type=bedGraph name=\"" var "\" description=\"" var "_bedGraph\" visibility=full autoScale=on alwaysZero=on color=0,0,0"}  { print $0}' ${name}_normalized.bedGraph > ${name}_header_normalized.bedGraph
-    gzip ${name}_header_normalized.bedGraph
-done
-
-
-for i in *PE1.fastq.gz
-do
-    name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1.fastq.gz" '{print $1}')
-	mv ${name}* ./${name}_files
-done
-
-
-```
 
 # Call peaks with `macs3`
 
@@ -334,7 +256,7 @@ am content with just a single peak calling using all the data. We
 should find the important peaks where we have the power to detect changes in
 accessibility. 
 
-```{r engine='bash', eval=F, echo=TRUE}
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 module load macs3
 
 cp */*.hg38.bam ./
@@ -342,8 +264,6 @@ mkdir temp_macs
 macs3 callpeak --call-summits -t *.hg38.bam -n ZNF143_degron_ATAC -g hs -q 0.01 --keep-dup all -f BAM --nomodel --shift -100 --extsize 200 --tempdir temp_macs
 rm *.hg38.bam
 ```
-
-
 ## Removing peaks on contigs and within blacklisted regions
 
 You can Google "blacklisted genomic regions" or the alike to find a
@@ -352,7 +272,7 @@ reads regardless of the experiment. Recall this is even more necessary
 because we do not have a control data set. We can also remove peaks on non-canonical chromosomes with
 `grep -v`. 
 
-```{r engine='bash', eval=F, echo=TRUE}
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 module load bedtools
 wget https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz
 gunzip hg38-blacklist.v2.bed.gz
@@ -375,8 +295,7 @@ two `bed` file inputs. We will counts reads in the 400 base window
 summit file and merge these into a file with experiment name columns
 and genomic interval named rows.
 
-
-```{r engine='bash', eval=F, echo=TRUE}
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 module load bedtools
 name=ZNF143_degron_ATAC
 
@@ -414,19 +333,13 @@ R
 
 # Differential accessibility 
 
-
 ```{r engine='bash', eval=F, echo=TRUE}
 R
 ```
 
 ## Running `DESeq2` with ATAC data
 
-The workflow is identical to what we did with RNA-seq. We excluded the
-shrinkage step because we are not ranking genomic intervals by fold
-change. Recall this was necessary for downstream gene set enrichment
-analysis, which doesn't make sense for ATAC-seq regions. Refer to
-Lecture 24 for the details of `DESeq2` analysis.
-
+The workflow is identical to RNA-seq. If we have counts for genomic regions, then you can use `DESeq2` to find differential binding, expression, or accessibility.
 
 ```{r class.source="bg-info", engine='R', eval=F, echo=T}
 # libraries
@@ -439,7 +352,7 @@ library(limma)
 # functions on github
 source('https://raw.githubusercontent.com/mjg54/znf143_pro_seq_analysis/master/docs/ZNF143_functions.R')
 
-# new functions
+# new functions, we can load them individually as opposed to sourcing them (we sourced in ChIP-seq)
 
 ma.plot.lattice <- function(ma.df, filename = 'file.name', 
          title.main = "Differential ATAC-seq Accessibility",
@@ -569,8 +482,6 @@ dim(repressed.all)
 ma.plot.lattice(DE.results.lattice, filename = '30min_ZNF143_degradation', 
         title.main = "Differential Accessibility")		
 		
-#we are not ranking by fold change, so no need for shrinkage
-
 #lets export a smaller genomic interval for each region for subsequent motif analysis
 
 chr = sapply(strsplit(rownames(repressed.all), ":"), "[", 1)
@@ -578,23 +489,21 @@ rnge = sapply(strsplit(rownames(repressed.all), ":"), "[", 2)
 start =	as.numeric(sapply(strsplit(rnge, "-"), "[", 1)) + 100
 end = as.numeric(sapply(strsplit(rnge, "-"), "[", 2)) - 100
 
-write.table(cbind(chr, start, end), file = "ATAC_decrease_ZNF143_degron.bed", quote = FALSE,
+write.table(cbind(chr, start, end), file = "ATAC_decreased_ZNF143_degron.bed", quote = FALSE,
 col.names =FALSE, row.names=FALSE, sep = "\t")
-
 
 unchanged.all = DE.results.lattice[DE.results.lattice$response == 
                                              'ZNF143_degron_30min Unchanged',]
 											 
 chr.un = sapply(strsplit(rownames(unchanged.all), ":"), "[", 1)
 rnge.un = sapply(strsplit(rownames(unchanged.all), ":"), "[", 2)
-start.un =	as.numeric(sapply(strsplit(rnge.un, "-"), "[", 1)) + 100
+start.un = as.numeric(sapply(strsplit(rnge.un, "-"), "[", 1)) + 100
 end.un = as.numeric(sapply(strsplit(rnge.un, "-"), "[", 2)) - 100
 
 write.table(cbind(chr.un, start.un, end.un), file = "ATAC_unchanged_ZNF143_degron.bed", quote = FALSE,
 col.names =FALSE, row.names=FALSE, sep = "\t")
 
 ```
-
 
 ```{r  out.width = "100%", echo=F, fig.align = "center", fig.cap="PCA Analysis"}
 library(knitr)
@@ -619,19 +528,19 @@ value is meaningless without a comparison. We could compare to
 ```{r engine='bash', eval=F, echo=TRUE}
 module load bedtools
 module load meme/5.4.1
-genome=/home/FCAM/meds5420/genomes/hg38.fa
+genome=~/genex/genomes/hg38.fa
 
-fastaFromBed -fi $genome -bed ATAC_increase_ZNF143_degron.bed -fo ATAC_increase_ZNF143_degron.fasta
+fastaFromBed -fi $genome -bed ATAC_decreased_ZNF143_degron.bed -fo ATAC_decreased_ZNF143_degron.fasta
 fastaFromBed -fi $genome -bed ATAC_unchanged_ZNF143_degron.bed -fo ATAC_unchanged_ZNF143_degron.fasta
 
-meme -oc ZNF143.meme_output -objfun classic -evt 0.01 -searchsize 0 -minw 5 -maxw 10 -revcomp -dna -markov_order 2 -maxsize 100000000 ATAC_increase_ZNF143_degron.fasta
+meme -oc ZNF143.meme_output -objfun classic -evt 0.01 -searchsize 0 -minw 5 -maxw 10 -revcomp -dna -markov_order 2 -maxsize 100000000 ATAC_decrease_ZNF143_degron.fasta
 
-mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ATAC_increase_ZNF143_degron.fasta > mast_hits_increase.txt
+mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ATAC_decreased_ZNF143_degron.fasta > mast_hits_decreased.txt
 mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ATAC_unchanged_ZNF143_degron.fasta > mast_hits_unchanged.txt
 
-cut -f 1 -d " " mast_hits_increase.txt | sort | uniq | grep -v "#" > unique_mast_hits_increase.txt 
-wc -l unique_mast_hits_increase.txt
-wc -l ATAC_increase_ZNF143_degron.bed
+cut -f 1 -d " " mast_hits_decreased.txt | sort | uniq | grep -v "#" > unique_mast_hits_decreased.txt 
+wc -l unique_mast_hits_decreased.txt
+wc -l ATAC_decreased_ZNF143_degron.bed
 
 cut -f 1 -d " " mast_hits_unchanged.txt | sort | uniq | grep -v "#" | wc -l
 wc -l  ATAC_unchanged_ZNF143_degron.bed
