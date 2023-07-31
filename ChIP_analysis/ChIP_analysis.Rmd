@@ -294,11 +294,25 @@ meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -sea
 Navigate to your `/Users/admin/genex` folder and open `R`. We performed PRO-seq after 30 minutes of ZNF143 degradation and identified activated and repressed genes. We also found comparable genes that are unchanged, but matched for the expression levels. We are going to ask "for each of these genes sets, how far away do we have to move from the transcription start site to find the first ZNF143 peaks in each quantile?"
 
 
-```{r echo=F, fig.align = "center", fig.cap="QC flow chart"}
+```{r echo=F, fig.align = "center", fig.cap="TFs tend to act near their gene targets"}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX.png") 
 ```
 
+```{r echo=F, fig.align = "center", fig.cap="The CDF metric quantifies how far away we need to go from the class of genes to find the first TF binding site and plots the cumulative distribution."}
+#library(knitr)
+knitr::include_graphics("230731_CSHL_GeneX_2.png") 
+```
+
+```{r echo=F, fig.align = "center", fig.cap="QC flow chart"}
+#library(knitr)
+knitr::include_graphics("230731_CSHL_GeneX_3.png") 
+```
+
+```{r echo=F, fig.align = "center", fig.cap="QC flow chart"}
+#library(knitr)
+knitr::include_graphics("230731_CSHL_GeneX_4.png") 
+```
 ```{r, engine='R', eval=F, echo=T}
 #libraries
 library(DESeq2)
