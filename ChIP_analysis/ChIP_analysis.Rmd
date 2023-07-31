@@ -406,6 +406,14 @@ plot_cdf(df.cdf, tf = "ZNF143", col.lines = c(rep("grey60",20),colorRampPalette(
 
 You can employ a Kolmogorov–Smirnov, which is an overused statistical test that will provide a test statistic p-value for pairwise comparison of CDF curves. However, in this course we will just decide on a threshold by looking at the plots one by one. 
 
+We can use `awk` to parse the peak file to only include peaks with intensities above are threshold.
+
+NEED TO EDIT THIS.
+
+```{r, engine='bash', eval=F, echo=T}
+awk PEAKS_file_from_FRiP.bed 
+```
+
 # `deeptools` heatmap of ZNF143 functional and non-functional peaks
 
 ```{r, engine='bash', eval=F, echo=T}
