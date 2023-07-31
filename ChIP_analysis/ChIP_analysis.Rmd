@@ -328,8 +328,8 @@ j = i
 ```
 ## Making CDF plots
 
-download the activated, repressed and matched files from `https://github.com/guertinlab/genex/tree/main/ChIP_analysis
-`. Concatenate these files into a list of activated and repressed genes that change upon ZNF143 depletion and their matched genes.
+
+Download the activated, repressed, and matched files from `https://github.com/guertinlab/genex/tree/main/ChIP_analysis`. Concatenate these files into a list of activated and repressed genes that change upon ZNF143 depletion and their matched genes.
 
 ```{r engine='bash', eval=F, echo=TRUE}
 cat treated_activated_genes.bed treated_activated_matched_genes.bed treated_repressed_genes.bed treated_repressed_matched_genes.bed > /Users/admin/genex/HEK_ZNF143_gene_annotations.bed
