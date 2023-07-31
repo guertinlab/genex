@@ -36,15 +36,15 @@ pre[class] {
 
 # ChIP-seq experiments
 
-ChIP-seq measures protein abundance on DNA and one can quantify
-protein modifications if an antibody to the modification is
-available. 
+ChIP-seq measures protein abundance on DNA and one can quantify protein modifications if an antibody to the modification is available. 
 
 # ChIP-seq experimental design
 
 We performed ChIP-seq of HA-tagged ZNF143 in HEK-293T cells with mock IP (no antibody) as a control. 
 
 # ChIP-seq analysis
+
+In this vignette, grey code chunks are performed in bash, blue code chunks are performed in R, and red code chunks are not to be run by you (either we already ran them or will run them using all samples).
 
 First, we name the experiments with the trailing name being `PE1` or `PE2` for paired end data. 
 
@@ -100,8 +100,7 @@ done
 
 Now we are aligning to the `hg38.fa` genome. We first need to "build" a set of index files for the hg38 genome. These files are necessary so the `bowtie2` software can efficiently search the genome for the input sequences. You can Google and click around the UCSC genome browser website to find genome files, but the code to download from the Terminal is shown below. We also need a file that has all the information about chromosome sizes later in the vignette, so we will download that as well. Next, we make a `genex` folder in the home directory and a `genomes` file in the `genex` directory, then move these files the files to the `genomes` folder and navigate to this directory. Finally, we can build the indicies with `bowtie2-build`. This takes a bit of time and we only need to perform these actions once per genome, so we already did this for you. You will have a chance to build the mitochondrial DNA chromosome alignment indicies later when you analyze ATAC data.
 
-
-```{r engine='bash', eval=F, echo=TRUE}
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 # make a directory for the class
 mkdir ~/genex
 
@@ -142,7 +141,7 @@ browser tracks, which is accomplished by converted the paired-end
 
 The software `seqOutBias` software incorporates whether a read is uniquely mappable when converting a `bam` file to a `bed` and `bigWig`. This requires a compute-intensive task of looking at all k-mers (sequencing read length, here it is 40 bases) in the genome and determining if they are unique. Since this takes a bit of time, we performed this task for you and the resultant files are within the `~/genex/genomes/` directory.  
 
-```{r engine='bash', eval=F, echo=TRUE}
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 # generate mappability file
 seqOutBias seqtable hg38.fa --read-size=40
 ```
@@ -192,7 +191,7 @@ for example, if a library is sequenced to twice the read depth and we
 combine first then read depth normalize, then the more high coverage
 data is weighted twice as much in the final visualization. We will perform this step for the class, since you are all operating on your individual replicates independently.
 
-```{r engine='bash', eval=F, echo=TRUE}
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 #!/bin/bash
 sizes=~/genex/genomes/hg38.chrom.sizes
 
@@ -334,7 +333,7 @@ knitr::include_graphics("230731_CSHL_GeneX_4.png")
 ## Ranking and quantile parsing of ChIP peaks
 
 The first step is to generate BED files that are ranked by their intensity, parsed into separate files, and named according to their quantile.
-```{r, engine='R', eval=F, echo=T}
+```{r class.source="bg-info", engine='R', eval=F, echo=T}
 #libraries
 library(DESeq2)
 library(lattice)
@@ -379,7 +378,7 @@ cat treated_activated_genes.bed treated_activated_matched_genes.bed treated_repr
 
 There are many methods to generate and visualize CDF plots and we have developed many functions in `R` that perform these tasks. The first ten lines import common libraries that are preinstalled on CSHL computers and the last three of the preamble lines import some functions that we use routinely in the lab.
 
-```{r, engine='R', eval=F, echo=T}
+```{r class.source="bg-info", engine='R', eval=F, echo=T}
 library(latticeExtra)
 library(DESeq2)
 library(lattice)
@@ -434,9 +433,6 @@ awk PEAKS_file_from_FRiP.bed
 # `deeptools` heatmap of ZNF143 functional and non-functional peaks
 
 ```{r, engine='bash', eval=F, echo=T}
-
-module load deeptools/3.5.0
-module load bedtools
 
 #Make the matrix (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
