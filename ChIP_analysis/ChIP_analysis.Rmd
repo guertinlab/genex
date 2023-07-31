@@ -49,6 +49,7 @@ In this vignette, grey code chunks are performed in bash, blue code chunks are p
 First, we name the experiments with the trailing name being `PE1` or `PE2` for paired end data. 
 
 ```{r engine='bash', eval=F, echo=TRUE}
+cd ~/genex/
 for i in *_S*R1_001.fastq.gz
 do
 	nm=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_S" '{print $1}')
@@ -116,9 +117,6 @@ wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
 #unzip
 gunzip hg38.fa.gz
 
-#download a file that lists the size of chrs
-wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
-
 # build indicies
 bowtie2-build hg38.fa hg38_bt2
 ```
@@ -133,7 +131,8 @@ The software `seqOutBias` software incorporates whether a read is uniquely mappa
 seqOutBias seqtable hg38.fa --read-size=40
 ```
 
-The following is the alignment and processing code that you will execute:
+The following is the alignment and processing code that you will execute. One of the commands will produce a lot of warnings (one for each 
+
 ```{r engine='bash', eval=F, echo=TRUE}
 sizes=~/genex/genomes/hg38.chrom.sizes
 genome=~/genex/genomes/hg38.fa
@@ -144,19 +143,20 @@ table=~/genex/genomes/hg38_40.4.2.2.tbl
 ncore=7
 readLength=40
 
+#download a file that lists the size of chromosomes
+wget -P ~/genex/genomes/ https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
+
 for i in *_PE1_no_adapt.fastq
 do
 	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1" '{print $1}')
     	echo $name	
-	bowtie2 -p $ncore --maxins 800 -x $genome_index -1 ${name}_PE1_no_adapt.fastq -2 ${name}_PE2_no_adapt.fastq | samtools sort -@ $ncore -n -o ${name}.bw.bam 		#compress the files
+	bowtie2 -p $ncore --maxins 800 -x $genome_index -1 ${name}_PE1_no_adapt.fastq -2 ${name}_PE2_no_adapt.fastq | samtools view -bS -f 0x2 - | samtools sort -@ $ncore -n | samtools fixmate -m - - | samtools sort - | samtools markdup -s -r - ${name}.hg38.bam
 	gzip ${name}_PE1_no_adapt.fastq
 	gzip ${name}_PE2_no_adapt.fastq
 	gzip ${name}_PE2.fastq
 	gzip ${name}_PE1.fastq
-	samtools fixmate -m ${name}.bw.bam - | samtools sort -@ $ncore - | samtools markdup -s -r - ${name}.hg38.bam
 	seqOutBias scale $table ${name}.hg38.bam --tallymer=$tallymer --shift-counts --no-scale --bw=${name}.bigWig --read-size=${readLength} 2>&1 | tee ${name}_seqOutBias.log	
-	samtools sort -@ $ncore -n -o ${name}.sorted.bam ${name}.hg38.bam
-	bedtools bamtobed -i ${name}.sorted.bam -bedpe > ${name}_bed12.bed
+	bedtools bamtobed -i ${name}.hg38.bam -bedpe > ${name}_bed12.bed
 	awk '$1==$4 {print $0}' ${name}_bed12.bed | awk '{OFS="\t";} {print $1, $2, $6}' | awk '$1!="." && $3>$2 && (($3 - $2)<2000) {print $0}' | sort -k1,1 -k2,2n > ${name}_read_span.bed
 	genomeCoverageBed -bg -i ${name}_read_span.bed -g $sizes > ${name}.bedGraph
 	depth=`awk -F'\t' '{sum+=$5;}END{print sum;}' ${name}.hg38_not_scaled.bed`
