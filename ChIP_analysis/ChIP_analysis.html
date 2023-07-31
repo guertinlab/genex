@@ -927,7 +927,7 @@ gunzip hg38-blacklist.v2.bed.gz
 blacklist=hg38-blacklist.v2.bed
 sizes=~/genex/genomes/hg38.chrom.sizes
 
-# we only have one summits file (we only ChIPed on factor), but I am keeping the &quot;loop&quot; structure so it can be adapted for serial analysis.
+# we only have one summits file (we only ChIPed one factor), but I am keeping the &quot;loop&quot; structure so it can be adapted for serial analysis.
 for i in *_summits.bed
 do
     name=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_summits.bed&quot; &#39;{print $1}&#39;)
@@ -971,7 +971,7 @@ echo -e &quot;chr\tstart\tend\tname\tqvalue&quot; | cat - $peaks | paste -d&#39;
 </div>
 <div id="using-the-ucsc-genome-browser" class="section level1" number="7">
 <h1><span class="header-section-number">7</span> Using the UCSC genome browser</h1>
-<p>We will take the file <code>_header_normalized.bedGraph</code>, zip it and upload to UCSC.</p>
+<p>We will take the file <code>${name}_header_normalized.bedGraph</code>, zip it and upload to UCSC.</p>
 </div>
 <div id="de-novo-motif-analysis-at-peaks" class="section level1" number="8">
 <h1><span class="header-section-number">8</span> <em>De novo</em> motif analysis at peaks</h1>
@@ -1116,9 +1116,8 @@ computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missi
 plotHeatmap -m matrix_HA_ChIP_ZNF143_peaks.gz -out heatmap_HA_ChIP_ZNF143_peaks.pdf --heatmapHeight 7 \
    --regionsLabel &quot;ZNF143 peaks&quot; --xAxisLabel &quot;Distance from summit&quot; \
    --samplesLabel &quot;DMSO&quot; &quot;dTAG&quot; --colorMap Purples -min 0 -max 300 --whatToShow &quot;heatmap and colorbar&quot; 
-   
-   
-   #Make the matrix (this can be used for a composite profile as well)
+      
+#Make the matrix (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_other_peaks.bed \
   -S HEK_ZNF-dTAG_cont_HA.bigWig \
