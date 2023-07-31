@@ -768,7 +768,10 @@ max-height: 600px;
 <h1><span class="header-section-number">3</span> ChIP-seq analysis</h1>
 <p>In this vignette, grey code chunks are performed in bash, blue code chunks are performed in R, and red code chunks are not to be run by you (either we already ran them or will run them using all samples).</p>
 <p>First, we name the experiments with the trailing name being <code>PE1</code> or <code>PE2</code> for paired end data.</p>
-<pre class="bash"><code>cd ~/genex/
+<pre class="bash"><code># make a directory for the class
+mkdir ~/genex
+
+cd ~/genex/
 for i in *_S*R1_001.fastq.gz
 do
     nm=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_S&quot; &#39;{print $1}&#39;)
@@ -813,10 +816,7 @@ done</code></pre>
 <div id="align-to-the-human-genome" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Align to the human genome</h2>
 <p>Now we are aligning to the <code>hg38.fa</code> genome. We first need to “build” a set of index files for the hg38 genome. These files are necessary so the <code>bowtie2</code> software can efficiently search the genome for the input sequences. You can Google and click around the UCSC genome browser website to find genome files, but the code to download from the Terminal is shown below. We also need a file that has all the information about chromosome sizes later in the vignette, so we will download that as well. Next, we make a <code>genex</code> folder in the home directory and a <code>genomes</code> file in the <code>genex</code> directory, then move these files the files to the <code>genomes</code> folder and navigate to this directory. Finally, we can build the indicies with <code>bowtie2-build</code>. This takes a bit of time and we only need to perform these actions once per genome, so we already did this for you. You will have a chance to build the mitochondrial DNA chromosome alignment indicies later when you analyze ATAC data.</p>
-<pre class="bash bg-danger"><code># make a directory for the class
-mkdir ~/genex
-
-# now for the genome files
+<pre class="bash bg-danger"><code># Make a directory for the genome files
 mkdir ~/genex/genomes
 
 #navigate to this directory 
@@ -829,11 +829,15 @@ wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
 gunzip hg38.fa.gz
 
 # build indicies
-bowtie2-build hg38.fa hg38_bt2</code></pre>
+bowtie2-build hg38.fa hg38_bt2
+</code></pre>
 <p>Note that the libraries are paired end. The <code>-1</code> and <code>-2</code> options are for the respective paired-end <code>fastq</code> files. There is no need to save the output <code>sam</code> file, so the output is piped to <code>samtools</code> to convert to <code>bam</code>, then sorted by name (<code>-n</code>) so paired end reads are adjacent in the file, then piped to <code>samtools fixmate</code> which adds information about the fragment length by comparing the PE1 and PE2 coordinates. Then the files are sorted by coordinate and piped to <code>samtools markdup</code> to remove duplicate reads. Duplicate reads have the same PE1 and PE2 ends. This is very unlikely to happen by chance unless you sequence to very high read depth, so these reads are considered PCR amplicon duplicates. The <code>fixmate</code> step is necessary to pipe to <code>markdup</code>. We use the entire DNA fragment for making the browser tracks, which is accomplished by converted the paired-end <code>bam</code> file to a <code>bed12</code> and taking out discordant reads. We are defining discordant as the two ends of the DNA fragments being greater that 2kb away from one another. This is unlikely given the size of or sonicated DNA and the Illumina sequencing platform. Then we normalize to read depth, add a trackline so we can upload into the UCSC genome browser, and make a <code>bigWig</code> file, which is very similar to a <code>bedGraph</code>, but it binary and not human-readable.</p>
 <p>The software <code>seqOutBias</code> software incorporates whether a read is uniquely mappable when converting a <code>bam</code> file to a <code>bed</code> and <code>bigWig</code>. This requires a compute-intensive task of looking at all k-mers (sequencing read length, here it is 40 bases) in the genome and determining if they are unique. Since this takes a bit of time, we performed this task for you and the resultant files are within the <code>~/genex/genomes/</code> directory.</p>
 <pre class="bash bg-danger"><code># generate mappability file
-seqOutBias seqtable hg38.fa --read-size=40</code></pre>
+seqOutBias seqtable hg38.fa --read-size=40
+
+#Go back to the above directory
+cd ..</code></pre>
 <p>The following is the alignment and processing code that you will execute.</p>
 <pre class="bash"><code>sizes=~/genex/genomes/hg38.chrom.sizes
 genome=~/genex/genomes/hg38.fa
@@ -847,6 +851,7 @@ readLength=40
 #download a file that lists the size of chromosomes
 wget -P ~/genex/genomes/ https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
 
+cd ~/genex/
 for i in *_PE1_no_adapt.fastq
 do
     name=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_PE1&quot; &#39;{print $1}&#39;)
