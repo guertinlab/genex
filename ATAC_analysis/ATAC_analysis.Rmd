@@ -428,7 +428,7 @@ analysis, which doesn't make sense for ATAC-seq regions. Refer to
 Lecture 24 for the details of `DESeq2` analysis.
 
 
-```{r, engine='R', eval=F, echo=T}
+```{r class.source="bg-info", engine='R', eval=F, echo=T}
 # libraries
 library(DESeq2)
 library(lattice)
