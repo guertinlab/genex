@@ -49,6 +49,9 @@ In this vignette, grey code chunks are performed in bash, blue code chunks are p
 First, we name the experiments with the trailing name being `PE1` or `PE2` for paired end data. 
 
 ```{r engine='bash', eval=F, echo=TRUE}
+# make a directory for the class
+mkdir ~/genex
+
 cd ~/genex/
 for i in *_S*R1_001.fastq.gz
 do
@@ -102,10 +105,7 @@ done
 Now we are aligning to the `hg38.fa` genome. We first need to "build" a set of index files for the hg38 genome. These files are necessary so the `bowtie2` software can efficiently search the genome for the input sequences. You can Google and click around the UCSC genome browser website to find genome files, but the code to download from the Terminal is shown below. We also need a file that has all the information about chromosome sizes later in the vignette, so we will download that as well. Next, we make a `genex` folder in the home directory and a `genomes` file in the `genex` directory, then move these files the files to the `genomes` folder and navigate to this directory. Finally, we can build the indicies with `bowtie2-build`. This takes a bit of time and we only need to perform these actions once per genome, so we already did this for you. You will have a chance to build the mitochondrial DNA chromosome alignment indicies later when you analyze ATAC data.
 
 ```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
-# make a directory for the class
-mkdir ~/genex
-
-# now for the genome files
+# Make a directory for the genome files
 mkdir ~/genex/genomes
 
 #navigate to this directory 
@@ -119,6 +119,7 @@ gunzip hg38.fa.gz
 
 # build indicies
 bowtie2-build hg38.fa hg38_bt2
+
 ```
 
 Note that the libraries are paired end. The `-1` and `-2` options are for the respective paired-end `fastq` files. There is no need to save the output `sam` file, so the output is piped to `samtools` to convert to `bam`, then sorted by name (`-n`) so paired end reads are adjacent in the file, then piped to `samtools fixmate` which adds information about the fragment length by comparing the PE1 and PE2 coordinates. Then the files are sorted by coordinate and piped to `samtools markdup` to remove duplicate reads. Duplicate reads have the same PE1 and PE2 ends. This is very unlikely to happen by chance unless you sequence to very high read depth, so these reads are considered PCR amplicon duplicates. The `fixmate` step is necessary to pipe to `markdup`. We use the entire DNA fragment for making the browser tracks, which is accomplished by converted the paired-end `bam` file to a `bed12` and taking out discordant reads. We are defining discordant as the two ends of the DNA fragments being greater that 2kb away from one another. This is unlikely given the size of or sonicated DNA and the Illumina sequencing platform. Then we normalize to read depth, add a trackline so we can upload into the UCSC genome browser, and make a `bigWig` file, which is very similar to a `bedGraph`, but it binary and not human-readable. 
@@ -129,6 +130,9 @@ The software `seqOutBias` software incorporates whether a read is uniquely mappa
 ```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 # generate mappability file
 seqOutBias seqtable hg38.fa --read-size=40
+
+#Go back to the above directory
+cd ..
 ```
 
 The following is the alignment and processing code that you will execute. 
@@ -146,6 +150,7 @@ readLength=40
 #download a file that lists the size of chromosomes
 wget -P ~/genex/genomes/ https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
 
+cd ~/genex/
 for i in *_PE1_no_adapt.fastq
 do
 	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1" '{print $1}')
