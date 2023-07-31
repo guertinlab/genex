@@ -313,6 +313,10 @@ knitr::include_graphics("230731_CSHL_GeneX_3.png")
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX_4.png") 
 ```
+
+## Ranking and quantile parsing of ChIP peaks
+
+The first step is to generate BED files that are ranked by their intensity, parsed into separate files, and named according to their quantile.
 ```{r, engine='R', eval=F, echo=T}
 #libraries
 library(DESeq2)
@@ -345,14 +349,17 @@ write.table(file = paste0('quantile', as.character(q[count]), '.bed'), data.fram
 j = i
 }
 ```
-## Making CDF plots
+## Integration with PRO-seq data
 
+We degraded ZNF143 for 30 minutes and performed PRO-seq. We can use these data to determine if ZNF143 is activating genes and estimate the dynamic range of peak intensities that are detectably regulating gene expression (so-called functional peaks).
 
 Download the activated, repressed, and matched files from `https://github.com/guertinlab/genex/tree/main/ChIP_analysis`. Concatenate these files into a list of activated and repressed genes that change upon ZNF143 depletion and their matched genes.
 
 ```{r engine='bash', eval=F, echo=TRUE}
 cat treated_activated_genes.bed treated_activated_matched_genes.bed treated_repressed_genes.bed treated_repressed_matched_genes.bed > /Users/admin/genex/HEK_ZNF143_gene_annotations.bed
 ```
+## Making CDF plots
+
 
 
 ```{r, engine='R', eval=F, echo=T}
