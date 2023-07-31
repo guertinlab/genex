@@ -758,9 +758,7 @@ max-height: 600px;
 </style>
 <div id="chip-seq-experiments" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> ChIP-seq experiments</h1>
-<p>ChIP-seq measures protein abundance on DNA and one can quantify
-protein modifications if an antibody to the modification is
-available.</p>
+<p>ChIP-seq measures protein abundance on DNA and one can quantify protein modifications if an antibody to the modification is available.</p>
 </div>
 <div id="chip-seq-experimental-design" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> ChIP-seq experimental design</h1>
@@ -768,6 +766,7 @@ available.</p>
 </div>
 <div id="chip-seq-analysis" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> ChIP-seq analysis</h1>
+<p>In this vignette, grey code chunks are performed in bash, blue code chunks are performed in R, and red code chunks are not to be run by you (either we already ran them or will run them using all samples).</p>
 <p>First, we name the experiments with the trailing name being <code>PE1</code> or <code>PE2</code> for paired end data.</p>
 <pre class="bash"><code>for i in *_S*R1_001.fastq.gz
 do
@@ -813,7 +812,7 @@ done</code></pre>
 <div id="align-to-the-human-genome" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Align to the human genome</h2>
 <p>Now we are aligning to the <code>hg38.fa</code> genome. We first need to “build” a set of index files for the hg38 genome. These files are necessary so the <code>bowtie2</code> software can efficiently search the genome for the input sequences. You can Google and click around the UCSC genome browser website to find genome files, but the code to download from the Terminal is shown below. We also need a file that has all the information about chromosome sizes later in the vignette, so we will download that as well. Next, we make a <code>genex</code> folder in the home directory and a <code>genomes</code> file in the <code>genex</code> directory, then move these files the files to the <code>genomes</code> folder and navigate to this directory. Finally, we can build the indicies with <code>bowtie2-build</code>. This takes a bit of time and we only need to perform these actions once per genome, so we already did this for you. You will have a chance to build the mitochondrial DNA chromosome alignment indicies later when you analyze ATAC data.</p>
-<pre class="bash"><code># make a directory for the class
+<pre class="bash bg-danger"><code># make a directory for the class
 mkdir ~/genex
 
 # now for the genome files
@@ -848,7 +847,7 @@ pipe to <code>markdup</code>. We use the entire DNA fragment for making the
 browser tracks, which is accomplished by converted the paired-end
 <code>bam</code> file to a <code>bed12</code> and taking out discordant reads. We are defining discordant as the two ends of the DNA fragments being greater that 2kb away from one another. This is unlikely given the size of or sonicated DNA and the Illumina sequencing platform. Then we normalize to read depth, add a trackline so we can upload into the UCSC genome browser, and make a <code>bigWig</code> file, which is very similar to a <code>bedGraph</code>, but it binary and not human-readable.</p>
 <p>The software <code>seqOutBias</code> software incorporates whether a read is uniquely mappable when converting a <code>bam</code> file to a <code>bed</code> and <code>bigWig</code>. This requires a compute-intensive task of looking at all k-mers (sequencing read length, here it is 40 bases) in the genome and determining if they are unique. Since this takes a bit of time, we performed this task for you and the resultant files are within the <code>~/genex/genomes/</code> directory.</p>
-<pre class="bash"><code># generate mappability file
+<pre class="bash bg-danger"><code># generate mappability file
 seqOutBias seqtable hg38.fa --read-size=40</code></pre>
 <p>The following is the alignment and processing code that you will execute:</p>
 <pre class="bash"><code>sizes=~/genex/genomes/hg38.chrom.sizes
@@ -894,7 +893,7 @@ replicate. Otherwise, we would be weighting replicates differently;
 for example, if a library is sequenced to twice the read depth and we
 combine first then read depth normalize, then the more high coverage
 data is weighted twice as much in the final visualization. We will perform this step for the class, since you are all operating on your individual replicates independently.</p>
-<pre class="bash"><code>#!/bin/bash
+<pre class="bash bg-danger"><code>#!/bin/bash
 sizes=~/genex/genomes/hg38.chrom.sizes
 
 for i in *rep1_PE1.fastq.gz
@@ -1026,7 +1025,7 @@ Figure 4: <span class="caption-title">A classic example is the Estrogen receptor
 <div id="ranking-and-quantile-parsing-of-chip-peaks" class="section level2" number="9.1">
 <h2><span class="header-section-number">9.1</span> Ranking and quantile parsing of ChIP peaks</h2>
 <p>The first step is to generate BED files that are ranked by their intensity, parsed into separate files, and named according to their quantile.</p>
-<pre class="r"><code>#libraries
+<pre class="r bg-info"><code>#libraries
 library(DESeq2)
 library(lattice)
 library(dplyr)
@@ -1066,7 +1065,7 @@ j = i
 <div id="making-cdf-plots" class="section level2" number="9.3">
 <h2><span class="header-section-number">9.3</span> Making CDF plots</h2>
 <p>There are many methods to generate and visualize CDF plots and we have developed many functions in <code>R</code> that perform these tasks. The first ten lines import common libraries that are preinstalled on CSHL computers and the last three of the preamble lines import some functions that we use routinely in the lab.</p>
-<pre class="r"><code>library(latticeExtra)
+<pre class="r bg-info"><code>library(latticeExtra)
 library(DESeq2)
 library(lattice)
 library(dplyr)
@@ -1116,9 +1115,6 @@ plot_cdf(df.cdf, tf = &quot;ZNF143&quot;, col.lines = c(rep(&quot;grey60&quot;,2
 <div id="deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" class="section level1" number="10">
 <h1><span class="header-section-number">10</span> <code>deeptools</code> heatmap of ZNF143 functional and non-functional peaks</h1>
 <pre class="bash"><code>
-module load deeptools/3.5.0
-module load bedtools
-
 #Make the matrix (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_functional_peaks.bed \
