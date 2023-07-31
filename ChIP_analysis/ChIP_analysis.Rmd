@@ -15,6 +15,24 @@ fontsize: 14pt
 geometry: margin=1in
 ---
 
+```{css, echo=FALSE}
+body .main-container {
+  max-width: 1600px !important;
+  width: 1600px !important;
+}
+body {
+  max-width: 1600px !important;
+}
+
+pre {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+pre[class] {
+  max-height: 600px;
+}
+```
 
 # ChIP-seq experiments
 
@@ -67,7 +85,6 @@ removed first, then 18-mer matches removed, etc. Each group has two sets of file
 
 
 ```{r engine='bash', eval=F, echo=TRUE}
-module load cutadapt
 for i in *PE1.fastq.gz
 do
     name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1" '{print $1}')
