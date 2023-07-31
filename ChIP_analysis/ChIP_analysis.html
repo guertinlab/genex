@@ -731,7 +731,9 @@ function toggle_visibility(id1) {
 <li><a href="#de-novo-motif-analysis-at-peaks" id="toc-de-novo-motif-analysis-at-peaks"><span class="toc-section-number">8</span> <em>De novo</em> motif analysis at peaks</a></li>
 <li><a href="#which-znf143-peaks-functionally-regulate-transcription" id="toc-which-znf143-peaks-functionally-regulate-transcription"><span class="toc-section-number">9</span> Which ZNF143 peaks functionally regulate transcription?</a>
 <ul>
-<li><a href="#making-cdf-plots" id="toc-making-cdf-plots"><span class="toc-section-number">9.1</span> Making CDF plots</a></li>
+<li><a href="#ranking-and-quantile-parsing-of-chip-peaks" id="toc-ranking-and-quantile-parsing-of-chip-peaks"><span class="toc-section-number">9.1</span> Ranking and quantile parsing of ChIP peaks</a></li>
+<li><a href="#integration-with-pro-seq-data" id="toc-integration-with-pro-seq-data"><span class="toc-section-number">9.2</span> Integration with PRO-seq data</a></li>
+<li><a href="#making-cdf-plots" id="toc-making-cdf-plots"><span class="toc-section-number">9.3</span> Making CDF plots</a></li>
 </ul></li>
 <li><a href="#deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" id="toc-deeptools-heatmap-of-znf143-functional-and-non-functional-peaks"><span class="toc-section-number">10</span> <code>deeptools</code> heatmap of ZNF143 functional and non-functional peaks</a></li>
 </ul>
@@ -1005,6 +1007,9 @@ Figure 3: <span class="caption-title">TF binding sites are closer to their direc
 Figure 4: <span class="caption-title">A classic example is the Estrogen receptor, which is an activator that is stimulated by the addition of estrogen</span><br>
 </p>
 </div>
+<div id="ranking-and-quantile-parsing-of-chip-peaks" class="section level2" number="9.1">
+<h2><span class="header-section-number">9.1</span> Ranking and quantile parsing of ChIP peaks</h2>
+<p>The first step is to generate BED files that are ranked by their intensity, parsed into separate files, and named according to their quantile.</p>
 <pre class="r"><code>#libraries
 library(DESeq2)
 library(lattice)
@@ -1035,10 +1040,15 @@ count = count +1
 write.table(file = paste0(&#39;quantile&#39;, as.character(q[count]), &#39;.bed&#39;), data.frame(chr[peak.intensities &gt; j &amp; peak.intensities &lt;= i], start[peak.intensities &gt; j &amp; peak.intensities &lt;= i], end[peak.intensities &gt; j &amp; peak.intensities &lt;= i], peak.intensities[peak.intensities &gt; j &amp; peak.intensities &lt;= i]), sep = &#39;\t&#39;, quote=FALSE, col.names=FALSE, row.names=FALSE )
 j = i
 }</code></pre>
-<div id="making-cdf-plots" class="section level2" number="9.1">
-<h2><span class="header-section-number">9.1</span> Making CDF plots</h2>
+</div>
+<div id="integration-with-pro-seq-data" class="section level2" number="9.2">
+<h2><span class="header-section-number">9.2</span> Integration with PRO-seq data</h2>
+<p>We degraded ZNF143 for 30 minutes and performed PRO-seq. We can use these data to determine if ZNF143 is activating genes and estimate the dynamic range of peak intensities that are detectably regulating gene expression (so-called functional peaks).</p>
 <p>Download the activated, repressed, and matched files from <code>https://github.com/guertinlab/genex/tree/main/ChIP_analysis</code>. Concatenate these files into a list of activated and repressed genes that change upon ZNF143 depletion and their matched genes.</p>
 <pre class="bash"><code>cat treated_activated_genes.bed treated_activated_matched_genes.bed treated_repressed_genes.bed treated_repressed_matched_genes.bed &gt; /Users/admin/genex/HEK_ZNF143_gene_annotations.bed</code></pre>
+</div>
+<div id="making-cdf-plots" class="section level2" number="9.3">
+<h2><span class="header-section-number">9.3</span> Making CDF plots</h2>
 <pre class="r"><code>library(latticeExtra)
 source(&#39;https://raw.githubusercontent.com/guertinlab/seqOutBias/master/docs/R/seqOutBias_functions.R&#39;)
 source(&#39;https://raw.githubusercontent.com/mjg54/znf143_pro_seq_analysis/master/docs/ZNF143_functions.R&#39;)
