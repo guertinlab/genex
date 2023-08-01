@@ -291,7 +291,6 @@ The coordinate `bed` file is converted to a sequence `fasta` file, then we perfo
 name=ZNF143_ChIP
 genome=~/genex/genomes/hg38.fa
 sizes=~/genex/genomes/hg38.chrom.sizes
-${name}_summit_100window.bed
 
 fastaFromBed -fi $genome -bed ${name}_summit_100window.bed -fo ${name}_summit_100window.fasta
 
