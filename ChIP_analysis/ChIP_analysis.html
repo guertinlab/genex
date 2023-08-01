@@ -962,14 +962,22 @@ done
 for i in *_peak_counts.txt
 do
     name=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_peak_counts.txt&quot; &#39;{print $1}&#39;)
+    echo $name &gt; ${name}_FRiP.txt
     awk &#39;{print $NF}&#39; ${name}_peak_counts.txt &gt; ${name}_peak_counts_only.txt
+    RiP=$(awk &#39;{sum+=$1;} END{print sum;}&#39; ${name}_peak_counts_only.txt)
     echo $name | cat - ${name}_peak_counts_only.txt &gt; ${name}_peak_counts.txt
     aligned_reads=$(samtools view -c -f 0x42 ${name}.bam)
-    echo $aligned_reads &gt;&gt; ${name}_peak_counts.txt
+    FRiP=$(echo &quot;scale=2 ; $RiP / $aligned_reads&quot; | bc)
+    echo $FRiP &gt;&gt; ${name}_FRiP.txt
     rm ${name}_peak_counts_only.txt
 done
 
-echo -e &quot;chr\tstart\tend\tname\tqvalue&quot; | cat - $peaks | paste -d&#39;\t&#39; - *peak_counts.txt &gt; Combined_ZNF143_peak_counts_with_ChIP.txt</code></pre>
+echo -e &quot;chr\tstart\tend\tname\tqvalue&quot; | cat - $peaks | paste -d&#39;\t&#39; - *peak_counts.txt &gt; Combined_ZNF143_peak_counts.txt
+echo -e &quot;Name&quot; &gt; rowname.txt
+echo -e &quot;FrIP&quot; &gt;&gt; rowname.txt
+paste -d&#39;\t&#39; rowname.txt *.hg38_FRiP.txt &gt; Combined_ZNF143_FRiP.txt
+rm rowname.txt
+</code></pre>
 </div>
 </div>
 <div id="using-the-ucsc-genome-browser" class="section level1" number="7">
