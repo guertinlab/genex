@@ -269,14 +269,22 @@ done
 for i in *_peak_counts.txt
 do
 	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_peak_counts.txt" '{print $1}')
+	echo $name > ${name}_FRiP.txt
 	awk '{print $NF}' ${name}_peak_counts.txt > ${name}_peak_counts_only.txt
+	RiP=$(awk '{sum+=$1;} END{print sum;}' ${name}_peak_counts_only.txt)
 	echo $name | cat - ${name}_peak_counts_only.txt > ${name}_peak_counts.txt
 	aligned_reads=$(samtools view -c -f 0x42 ${name}.bam)
-	echo $aligned_reads >> ${name}_peak_counts.txt
+	FRiP=$(echo "scale=2 ; $RiP / $aligned_reads" | bc)
+	echo $FRiP >> ${name}_FRiP.txt
 	rm ${name}_peak_counts_only.txt
 done
 
-echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_counts.txt > Combined_ZNF143_peak_counts_with_ChIP.txt
+echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_counts.txt > Combined_ZNF143_peak_counts.txt
+echo -e "Name" > rowname.txt
+echo -e "FrIP" >> rowname.txt
+paste -d'\t' rowname.txt *.hg38_FRiP.txt > Combined_ZNF143_FRiP.txt
+rm rowname.txt
+
 ```
 # Using the UCSC genome browser
 
