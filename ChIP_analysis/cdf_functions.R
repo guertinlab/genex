@@ -45,8 +45,8 @@ bedTools.closest <- function(functionstring="/usr/local/bin/closestBed",bed1,bed
   return(res)
 }
 
-plot_cdf <- function(df.all, tf="quantile", col.lines = c("#ce228e", "grey60", "#2290cf","grey90"), line.type = c(1)) {
-pdf(paste0(tf, "FIG_cdf_compare_Reg_classes.pdf"), width=6.2, height=3.83) 
+plot_cdf <- function(df.all, tf="quantile", cat = "Repressed", col.lines = c("#ce228e", "grey60", "#2290cf","grey90"), line.type = c(1)) {
+pdf(paste0(tf, "_FIG_cdf_compare_Reg_classes_", cat, ".pdf"), width=6.2, height=3.83) 
     print(ecdfplot(~log(abs(dis), base = 10), groups = status, data = df.all,
          auto.key = list(lines=TRUE, points=FALSE),
          col = col.lines,
