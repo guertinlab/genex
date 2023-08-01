@@ -771,7 +771,7 @@ max-height: 600px;
 <pre class="bash"><code># navigate to the class directory
 cd ~/genex/
 wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_repXX_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_repXX_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_repXX_PE2.fastq.gz
 wget http://guertinlab.cam.uchc.edu/HEK293T_ZNF143_repXX_PE1.fastq.gz
 wget http://guertinlab.cam.uchc.edu/HEK293T_ZNF143_repXX_PE2.fastq.gz</code></pre>
 <div id="cut-off-the-adapter-with-cutadapt" class="section level2" number="3.1">
@@ -862,10 +862,10 @@ do
     awk -v scaled=&quot;$scaled&quot; &#39;{OFS=&quot;\t&quot;;} {print $1, $2, $3, $4*scaled}&#39; ${name}.bedGraph &gt; ${name}_normalized.bedGraph
     awk -v var=&quot;$name&quot; &#39;BEGIN {  print &quot;browser position chr11:5,289,521-5,291,937&quot;; print &quot;track type=bedGraph name=\&quot;&quot; var &quot;\&quot; description=\&quot;&quot; var &quot;_bedGraph\&quot; visibility=full autoScale=on alwaysZero=on color=0,125,0 windowingFunction=maximum&quot;}  { print $0}&#39; ${name}_normalized.bedGraph &gt; ${name}_ucsc.bedGraph
     wigToBigWig -clip ${name}_normalized.bedGraph $sizes ${name}_normalized.bigWig
-    #gzip ${name}_PE1_no_adapt.fastq
-    #gzip ${name}_PE2_no_adapt.fastq
-    #gzip ${name}_PE2.fastq
-    #gzip ${name}_PE1.fastq
+    gzip ${name}_PE1_no_adapt.fastq
+    gzip ${name}_PE2_no_adapt.fastq
+    gzip ${name}_PE2.fastq
+    gzip ${name}_PE1.fastq
 done</code></pre>
 </div>
 </div>
