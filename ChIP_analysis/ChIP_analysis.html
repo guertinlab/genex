@@ -1125,6 +1125,9 @@ for (chip.peak in Sys.glob(file.path(&quot;/Users/admin/genex/quantile*bed&quot;
     #plot_cdf(df.all, tf = quantile)
     }
 
+levels = levels(factor(df.cdf$status))
+levels = c(levels[grepl(&quot;Matched&quot;, levels)], levels[!grepl(&quot;Matched&quot;, levels)])
+df.cdf$status = factor(df.cdf$status, levels = levels)
 plot_cdf(df.cdf, tf = &quot;ZNF143&quot;, cat = cat, col.lines = c(rep(&quot;grey60&quot;,20),colorRampPalette(c(&quot;red&quot;,&quot;pink&quot;))(13),colorRampPalette(c(&quot;blue&quot;, &quot;light blue&quot;))(7)), line.type = c(rep(2, 20), rep(1,20)))</code></pre>
 </div>
 <div id="look-at-the-plots-and-decide-a-peak-threshold" class="section level2" number="9.4">
