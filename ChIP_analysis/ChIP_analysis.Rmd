@@ -327,6 +327,8 @@ knitr::include_graphics("230731_CSHL_GeneX_4.png")
 
 The first step is to generate BED files that are ranked by their intensity, parsed into separate files, and named according to their quantile.
 ```{r class.source="bg-info", engine='R', eval=F, echo=T}
+setwd("~/genex/")
+
 #libraries
 library(DESeq2)
 library(lattice)
@@ -335,26 +337,24 @@ library(ggplot2)
 library(limma)
 library(bigWig)
 
-peak.intensities = read.table('PEAKS_file_from_FRiP.bed', header =FALSE)
+peak.intensities = read.table('ZNF143_ChIP_summits_final.bed', header =FALSE)
 
 #NEEDS EDITS
-names(peak.intensities) = rownames(normalized.counts.znf143)
-chr = sapply(strsplit(names(peak.intensities), ":"), "[", 1)
-rnge = sapply(strsplit(names(peak.intensities), ":"), "[", 2)
-start =	as.numeric(sapply(strsplit(rnge, "-"), "[", 1)) + 100
-end = as.numeric(sapply(strsplit(rnge, "-"), "[", 2)) - 100
+chr = peak.intensities$V1
+start =	peak.intensities$V2
+end = peak.intensities$V3
 
-quantile(peak.intensities, probs = seq(.05, 1.00, by = .05))
+quantile(peak.intensities$V5, probs = seq(.05, 1.00, by = .05))
 
 j =0 
 q=seq(.05, 1.00, by = .05)
 count=0
-for (i in quantile(peak.intensities, probs = seq(.05, 1.00, by =
+for (i in quantile(peak.intensities$V5, probs = seq(.05, 1.00, by =
 .05)))
 {
 count = count +1
 
-write.table(file = paste0('quantile', as.character(q[count]), '.bed'), data.frame(chr[peak.intensities > j & peak.intensities <= i], start[peak.intensities > j & peak.intensities <= i], end[peak.intensities > j & peak.intensities <= i], peak.intensities[peak.intensities > j & peak.intensities <= i]), sep = '\t', quote=FALSE, col.names=FALSE, row.names=FALSE )
+write.table(file = paste0('quantile', as.character(q[count]), '.bed'), peak.intensities[peak.intensities$V5 > j & peak.intensities$V5 <= i,], sep = '\t', quote=FALSE, col.names=FALSE, row.names=FALSE )
 j = i
 }
 ```
