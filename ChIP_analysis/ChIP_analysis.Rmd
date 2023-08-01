@@ -161,12 +161,13 @@ do
 	awk -v scaled="$scaled" '{OFS="\t";} {print $1, $2, $3, $4*scaled}' ${name}.bedGraph > ${name}_normalized.bedGraph
 	awk -v var="$name" 'BEGIN {  print "browser position chr11:5,289,521-5,291,937"; print "track type=bedGraph name=\"" var "\" description=\"" var "_bedGraph\" visibility=full autoScale=on alwaysZero=on color=0,125,0 windowingFunction=maximum"}  { print $0}' ${name}_normalized.bedGraph > ${name}_ucsc.bedGraph
 	wigToBigWig -clip ${name}_normalized.bedGraph $sizes ${name}_normalized.bigWig
-	#gzip ${name}_PE1_no_adapt.fastq
-	#gzip ${name}_PE2_no_adapt.fastq
-	#gzip ${name}_PE2.fastq
-	#gzip ${name}_PE1.fastq
+	gzip ${name}_PE1_no_adapt.fastq
+	gzip ${name}_PE2_no_adapt.fastq
+	gzip ${name}_PE2.fastq
+	gzip ${name}_PE1.fastq
 done
 ```
+
 # Combining replicates for the genome browser
 
 Usually we combine replicates into a single track for visualization
