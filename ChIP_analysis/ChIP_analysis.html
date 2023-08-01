@@ -1064,6 +1064,7 @@ library(dplyr)
 library(ggplot2)
 library(limma)
 library(bigWig)
+install.packages(&quot;gplots&quot;)
 source(&#39;https://raw.githubusercontent.com/guertinlab/seqOutBias/master/docs/R/seqOutBias_functions.R&#39;)
 source(&#39;https://raw.githubusercontent.com/mjg54/znf143_pro_seq_analysis/master/docs/ZNF143_functions.R&#39;)
 source(&#39;https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/cdf_functions.R&#39;)
@@ -1071,13 +1072,14 @@ source(&#39;https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysi
 col.lines = c(&quot;#FF0000&quot;, &quot;grey60&quot;)
 
 gene.file=read.table(file = &quot;/Users/admin/genex/HEK_ZNF143_gene_annotations.bed&quot;, sep=&quot;\t&quot;, header=FALSE)
+cat = &quot;Repressed&quot;
 
 for (chip.peak in Sys.glob(file.path(&quot;/Users/admin/genex/quantile*bed&quot;))) {
     print(chip.peak)
     quantile.name = strsplit(strsplit(chip.peak, &quot;/&quot;)[[1]][length(strsplit(chip.peak, &quot;/&quot;)[[1]])], &#39;.bed&#39;)[[1]][1]
     print(quantile.name)
-    df.all = cdf.deseq.df(df = df.x, genes = gene.file, chip.peaks=read.table(chip.peak, header=FALSE))
-    plot_cdf(df.all, tf = quantile.name)
+    df.all = cdf.deseq.df(genes = gene.file, chip.peaks=read.table(chip.peak, header=FALSE), cat = cat)
+    plot_cdf(df.all, tf = quantile.name, cat = cat)
     }
     
 df.cdf = data.frame(matrix(nrow = 0, ncol = 3))     
@@ -1086,15 +1088,44 @@ for (chip.peak in Sys.glob(file.path(&quot;/Users/admin/genex/quantile*bed&quot;
     print(chip.peak)
     quantile.name = strsplit(strsplit(chip.peak, &quot;/&quot;)[[1]][length(strsplit(chip.peak, &quot;/&quot;)[[1]])], &#39;.bed&#39;)[[1]][1]
     print(quantile.name)
-    df.all = cdf.deseq.df(df = df.x, genes = gene.file,
-    chip.peaks=read.table(chip.peak, header=FALSE))
+    df.all = cdf.deseq.df(genes = gene.file,
+        chip.peaks=read.table(chip.peak, header=FALSE),
+    cat = cat)
     x = paste(as.character(df.all[,3]), quantile.name)
     df.all[,3] = x
     df.cdf = rbind(df.cdf, df.all)
     #plot_cdf(df.all, tf = quantile)
     }
 
-plot_cdf(df.cdf, tf = &quot;ZNF143&quot;, col.lines = c(rep(&quot;grey60&quot;,20),colorRampPalette(c(&quot;red&quot;,&quot;pink&quot;))(13),colorRampPalette(c(&quot;blue&quot;, &quot;light blue&quot;))(7)), line.type = c(rep(2, 20), rep(1,20)))</code></pre>
+plot_cdf(df.cdf, tf = &quot;ZNF143&quot;, cat = cat, col.lines = c(rep(&quot;grey60&quot;,20),colorRampPalette(c(&quot;red&quot;,&quot;pink&quot;))(13),colorRampPalette(c(&quot;blue&quot;, &quot;light blue&quot;))(7)), line.type = c(rep(2, 20), rep(1,20)))
+
+#Activated genes
+cat = &quot;Activated&quot;
+
+for (chip.peak in Sys.glob(file.path(&quot;/Users/admin/genex/quantile*bed&quot;))) {
+    print(chip.peak)
+    quantile.name = strsplit(strsplit(chip.peak, &quot;/&quot;)[[1]][length(strsplit(chip.peak, &quot;/&quot;)[[1]])], &#39;.bed&#39;)[[1]][1]
+    print(quantile.name)
+    df.all = cdf.deseq.df(genes = gene.file, chip.peaks=read.table(chip.peak, header=FALSE), cat = cat)
+    plot_cdf(df.all, tf = quantile.name, cat = cat)
+    }
+    
+df.cdf = data.frame(matrix(nrow = 0, ncol = 3))     
+colnames(df.cdf) = c(&quot;V4&quot;, &quot;dis&quot;, &quot;status&quot;)
+for (chip.peak in Sys.glob(file.path(&quot;/Users/admin/genex/quantile*bed&quot;))) {
+    print(chip.peak)
+    quantile.name = strsplit(strsplit(chip.peak, &quot;/&quot;)[[1]][length(strsplit(chip.peak, &quot;/&quot;)[[1]])], &#39;.bed&#39;)[[1]][1]
+    print(quantile.name)
+    df.all = cdf.deseq.df(genes = gene.file,
+        chip.peaks=read.table(chip.peak, header=FALSE),
+    cat = cat)
+    x = paste(as.character(df.all[,3]), quantile.name)
+    df.all[,3] = x
+    df.cdf = rbind(df.cdf, df.all)
+    #plot_cdf(df.all, tf = quantile)
+    }
+
+plot_cdf(df.cdf, tf = &quot;ZNF143&quot;, cat = cat, col.lines = c(rep(&quot;grey60&quot;,20),colorRampPalette(c(&quot;red&quot;,&quot;pink&quot;))(13),colorRampPalette(c(&quot;blue&quot;, &quot;light blue&quot;))(7)), line.type = c(rep(2, 20), rep(1,20)))</code></pre>
 </div>
 <div id="look-at-the-plots-and-decide-a-peak-threshold" class="section level2" number="9.4">
 <h2><span class="header-section-number">9.4</span> Look at the plots and decide a peak threshold</h2>
