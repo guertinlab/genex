@@ -136,12 +136,12 @@ option with the flag `0x4` to output the reads that do NOT align to
 the mitochondrial genome.
 
 ```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
-#Align to chrM first and remove aligned reads
-#if you need to build it:
+#If you need to build the mitochondrial genome
 wget https://hgdownload.cse.ucsc.edu/goldenpath/hg38/chromosomes/chrM.fa.gz
 gunzip chrM.fa.gz
 bowtie2-build chrM.fa chrM
 
+#Align to chrM first and remove aligned reads
 bowtie2 -p 8 -x chrM -U ${name}_PE1_no_adapt.fastq | samtools sort -n - | samtools fastq -f 0x4 - > ${name}_PE1.chrM.fastq 2>&1 | tee ${name}_chrM_alignment.log
 ```
 
@@ -185,7 +185,6 @@ pipe to `markdup`.
 
 ```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 #Align to the hg38 genome and remove duplicates
-
 genome_index=~/genex/genomes/hg38_bt2
 bowtie2 -p 8 --maxins 800 -x $genome_index -1 ${name}_PE1.chrM.fastq.paired.fq -2 ${name}_PE2_no_adapt.fastq.paired.fq | samtools view -bS - | samtools sort -n - | samtools fixmate -m - - | samtools sort - | samtools markdup -s -r - ${name}.hg38.bam 2>&1 | tee ${name}_bowtie2_hg38.log
 
@@ -224,9 +223,9 @@ seqOutBias seqtable hg38.fa --read-size=40
 seqOutBias scale $table ${name}.hg38.bam --tallymer=$tallymer --no-scale --custom-shift=4,-4 --read-size=${readLength} 2>&1 | tee ${name}_seqOutBias.log
 ```
 
-# Call peaks with `macs3`
+# Call peaks with `macs2`
 
-We next call peaks with `macs3` using all the `*.hg38.bam` files. We
+We next call peaks with `macs2` using all the `*.hg38.bam` files. We
 already removed replicate duplicates, so any true duplicates arose
 independently. We could call peaks in individual replicates and take
 the union or intersect or there are many other ways to call
