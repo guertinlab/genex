@@ -391,7 +391,7 @@ for (chip.peak in Sys.glob(file.path("/Users/admin/genex/quantile*bed"))) {
     print(chip.peak)
     quantile.name = strsplit(strsplit(chip.peak, "/")[[1]][length(strsplit(chip.peak, "/")[[1]])], '.bed')[[1]][1]
     print(quantile.name)
-    df.all = cdf.deseq.df(df = df.x, genes = gene.file, chip.peaks=read.table(chip.peak, header=FALSE))
+    df.all = cdf.deseq.df(genes = gene.file, chip.peaks=read.table(chip.peak, header=FALSE), cat = "Repressed")
     plot_cdf(df.all, tf = quantile.name)
     }
     
@@ -401,15 +401,16 @@ for (chip.peak in Sys.glob(file.path("/Users/admin/genex/quantile*bed"))) {
     print(chip.peak)
     quantile.name = strsplit(strsplit(chip.peak, "/")[[1]][length(strsplit(chip.peak, "/")[[1]])], '.bed')[[1]][1]
     print(quantile.name)
-    df.all = cdf.deseq.df(df = df.x, genes = gene.file,
-    chip.peaks=read.table(chip.peak, header=FALSE))
+    df.all = cdf.deseq.df(genes = gene.file,
+    	chip.peaks=read.table(chip.peak, header=FALSE),
+	cat = "Repressed")
     x = paste(as.character(df.all[,3]), quantile.name)
     df.all[,3] = x
     df.cdf = rbind(df.cdf, df.all)
     #plot_cdf(df.all, tf = quantile)
     }
 
-plot_cdf(df.cdf, tf = "ZNF143", col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(13),colorRampPalette(c("blue", "light blue"))(7)), line.type = c(rep(2, 20), rep(1,20)))
+plot_cdf(df.cdf, tf = "ZNF143", cat = "Repressed", col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(13),colorRampPalette(c("blue", "light blue"))(7)), line.type = c(rep(2, 20), rep(1,20)))
 ```
 ## Look at the plots and decide a peak threshold
 
