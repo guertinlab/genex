@@ -1037,7 +1037,6 @@ library(bigWig)
 
 peak.intensities = read.table(&#39;ZNF143_ChIP_summits_final.bed&#39;, header =FALSE)
 
-#NEEDS EDITS
 chr = peak.intensities$V1
 start = peak.intensities$V2
 end = peak.intensities$V3
@@ -1107,6 +1106,10 @@ for (chip.peak in Sys.glob(file.path(&quot;/Users/admin/genex/quantile*bed&quot;
 
 plot_cdf(df.cdf, tf = &quot;ZNF143&quot;, cat = cat, col.lines = c(rep(&quot;grey60&quot;,20),colorRampPalette(c(&quot;red&quot;,&quot;pink&quot;))(13),colorRampPalette(c(&quot;blue&quot;, &quot;light blue&quot;))(7)), line.type = c(rep(2, 20), rep(1,20)))
 
+#Let&#39;s choose a cutoff of 0.7
+quantiles = quantile(peak.intensities$V5, probs = seq(.05, 1.00, by = .05))
+write.table(quantiles[13][[1]], file = &quot;cutoff.txt&quot;, col.names = F, row.names = F, quote = F)
+
 #Activated genes
 cat = &quot;Activated&quot;
 
@@ -1142,8 +1145,9 @@ plot_cdf(df.cdf, tf = &quot;ZNF143&quot;, cat = cat, col.lines = c(rep(&quot;gre
 <h2><span class="header-section-number">9.4</span> Look at the plots and decide a peak threshold</h2>
 <p>You can employ a Kolmogorov–Smirnov, which is an overused statistical test that will provide a test statistic p-value for pairwise comparison of CDF curves. However, in this course we will just decide on a threshold by looking at the plots one by one.</p>
 <p>We can use <code>awk</code> to parse the peak file to only include peaks with intensities above are threshold.</p>
-<p>NEED TO EDIT THIS.</p>
-<pre class="bash"><code>awk PEAKS_file_from_FRiP.bed </code></pre>
+<pre class="bash"><code>cutoff=$(cat cutoff.txt)
+awk -v cutoff=$cutoff -F&quot;\t&quot; &#39;$5&gt;cutoff&#39; ZNF143_ChIP_summits_final.bed &gt; ZNF143_functional_peaks.bed
+awk -v cutoff=$cutoff -F&quot;\t&quot; &#39;$5&lt;=cutoff&#39; ZNF143_ChIP_summits_final.bed &gt; ZNF143_other_peaks.bed</code></pre>
 </div>
 </div>
 <div id="deeptools-heatmap-of-znf143-functional-and-non-functional-peaks" class="section level1" number="10">
@@ -1152,31 +1156,31 @@ plot_cdf(df.cdf, tf = &quot;ZNF143&quot;, cat = cat, col.lines = c(rep(&quot;gre
 #Make the matrix (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_functional_peaks.bed \
-  -S HEK_ZNF-dTAG_cont_HA.bigWig \
-  HEK_ZNF-dTAG_dTAGV_HA.bigWig \
+  -S HEK293T_ZNF143.bigWig \
+  HEK293T_Mock.bigWig \
   -o matrix_HA_ChIP_ZNF143_peaks.gz --outFileSortedRegions ZNF143_peaks_sorted_for_heatmap.bed
   
 #Make the heatmap
 plotHeatmap -m matrix_HA_ChIP_ZNF143_peaks.gz -out heatmap_HA_ChIP_ZNF143_peaks.pdf --heatmapHeight 7 \
    --regionsLabel &quot;ZNF143 peaks&quot; --xAxisLabel &quot;Distance from summit&quot; \
-   --samplesLabel &quot;DMSO&quot; &quot;dTAG&quot; --colorMap Purples -min 0 -max 300 --whatToShow &quot;heatmap and colorbar&quot; 
+   --samplesLabel &quot;ChIP&quot; &quot;Mock&quot; --colorMap Purples -min 0 -max 300 --whatToShow &quot;heatmap and colorbar&quot; 
       
 #Make the matrix (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_other_peaks.bed \
-  -S HEK_ZNF-dTAG_cont_HA.bigWig \
-  HEK_ZNF-dTAG_dTAGV_HA.bigWig \
+  -S HEK293T_ZNF143.bigWig \
+  HEK293T_Mock.bigWig \
   -o all_matrix_HA_ChIP_ZNF143_peaks.gz --outFileSortedRegions other_ZNF143_peaks_sorted_for_heatmap.bed
   
 #Make the heatmap
 plotHeatmap -m all_matrix_HA_ChIP_ZNF143_peaks.gz -out other_heatmap_HA_ChIP_ZNF143_peaks.pdf --heatmapHeight 7 \
    --regionsLabel &quot;ZNF143 peaks&quot; --xAxisLabel &quot;Distance from summit&quot; \
-   --samplesLabel &quot;DMSO&quot; &quot;dTAG&quot; --colorMap Purples -min 0 -max 300 --whatToShow &quot;heatmap and colorbar&quot; 
+   --samplesLabel &quot;ChIP&quot; &quot;Mock&quot; --colorMap Purples -min 0 -max 300 --whatToShow &quot;heatmap and colorbar&quot; 
 
 #so we can see peaks
 plotHeatmap -m all_matrix_HA_ChIP_ZNF143_peaks.gz -out other_heatmap_HA_ChIP_ZNF143_peaks_scaled.pdf --heatmapHeight 7 \
    --regionsLabel &quot;ZNF143 peaks&quot; --xAxisLabel &quot;Distance from summit&quot; \
-   --samplesLabel &quot;DMSO&quot; &quot;dTAG&quot; --colorMap Purples -min 0 -max 13 --whatToShow &quot;heatmap and colorbar&quot; </code></pre>
+   --samplesLabel &quot;ChIP&quot; &quot;Mock&quot; --colorMap Purples -min 0 -max 13 --whatToShow &quot;heatmap and colorbar&quot; </code></pre>
 </div>
 
 
