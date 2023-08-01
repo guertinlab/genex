@@ -1017,7 +1017,9 @@ Figure 4: <span class="caption-title">A classic example is the Estrogen receptor
 <div id="ranking-and-quantile-parsing-of-chip-peaks" class="section level2" number="9.1">
 <h2><span class="header-section-number">9.1</span> Ranking and quantile parsing of ChIP peaks</h2>
 <p>The first step is to generate BED files that are ranked by their intensity, parsed into separate files, and named according to their quantile.</p>
-<pre class="r bg-info"><code>#libraries
+<pre class="r bg-info"><code>setwd(&quot;~/genex/&quot;)
+
+#libraries
 library(DESeq2)
 library(lattice)
 library(dplyr)
@@ -1025,26 +1027,24 @@ library(ggplot2)
 library(limma)
 library(bigWig)
 
-peak.intensities = read.table(&#39;PEAKS_file_from_FRiP.bed&#39;, header =FALSE)
+peak.intensities = read.table(&#39;ZNF143_ChIP_summits_final.bed&#39;, header =FALSE)
 
 #NEEDS EDITS
-names(peak.intensities) = rownames(normalized.counts.znf143)
-chr = sapply(strsplit(names(peak.intensities), &quot;:&quot;), &quot;[&quot;, 1)
-rnge = sapply(strsplit(names(peak.intensities), &quot;:&quot;), &quot;[&quot;, 2)
-start = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 1)) + 100
-end = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 2)) - 100
+chr = peak.intensities$V1
+start = peak.intensities$V2
+end = peak.intensities$V3
 
-quantile(peak.intensities, probs = seq(.05, 1.00, by = .05))
+quantile(peak.intensities$V5, probs = seq(.05, 1.00, by = .05))
 
 j =0 
 q=seq(.05, 1.00, by = .05)
 count=0
-for (i in quantile(peak.intensities, probs = seq(.05, 1.00, by =
+for (i in quantile(peak.intensities$V5, probs = seq(.05, 1.00, by =
 .05)))
 {
 count = count +1
 
-write.table(file = paste0(&#39;quantile&#39;, as.character(q[count]), &#39;.bed&#39;), data.frame(chr[peak.intensities &gt; j &amp; peak.intensities &lt;= i], start[peak.intensities &gt; j &amp; peak.intensities &lt;= i], end[peak.intensities &gt; j &amp; peak.intensities &lt;= i], peak.intensities[peak.intensities &gt; j &amp; peak.intensities &lt;= i]), sep = &#39;\t&#39;, quote=FALSE, col.names=FALSE, row.names=FALSE )
+write.table(file = paste0(&#39;quantile&#39;, as.character(q[count]), &#39;.bed&#39;), peak.intensities[peak.intensities$V5 &gt; j &amp; peak.intensities$V5 &lt;= i,], sep = &#39;\t&#39;, quote=FALSE, col.names=FALSE, row.names=FALSE )
 j = i
 }</code></pre>
 </div>
