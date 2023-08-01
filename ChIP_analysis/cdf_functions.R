@@ -35,7 +35,7 @@ bedTools.closest <- function(functionstring="/usr/local/bin/closestBed",bed1,bed
   cat(command,"\n")
   try(system(command))
   
-  res=read.table('out.file.bed',header=F, comment.char='')
+  res=read.table('out.file.bed',header=F, sep="\t", comment.char='')
   
   command3=paste('rm', 'a.file.bed', 'b.file.bed', 'a.file.sorted.bed', 'b.file.sorted.bed', 'out.file.bed')
   cat(command3,"\n")
