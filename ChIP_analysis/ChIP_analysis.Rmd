@@ -217,7 +217,9 @@ conda activate macs2
 # make a directory to store temporary files
 mkdir temp_macs
 # call peaks 
-macs2 callpeak --call-summits -t *_ZNF143_*bam -c *mock*bam -n ZNF143_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs
+macs2 callpeak --call-summits -t *_ZNF143_*bam -c *_Mock_*bam -n ZNF143_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs
+# deactivate the module
+conda deactivate
 ```
 ## Removing peaks on contigs and within blacklisted regions
 
