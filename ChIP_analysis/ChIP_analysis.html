@@ -767,19 +767,13 @@ max-height: 600px;
 <div id="chip-seq-analysis" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> ChIP-seq analysis</h1>
 <p>In this vignette, grey code chunks are performed in bash, blue code chunks are performed in R, and red code chunks are not to be run by you (either we already ran them or will run them using all samples).</p>
-<p>First, we name the experiments with the trailing name being <code>PE1</code> or <code>PE2</code> for paired end data.</p>
-<pre class="bash"><code># make a directory for the class
-mkdir ~/genex
-
+<p>We already named the experiments with the trailing name being <code>PE1</code> or <code>PE2</code> for paired end data. You can retrieve the files by substituting you group number (1-8) for <code>XX</code> in the code below.</p>
+<pre class="bash"><code># navigate to the class directory
 cd ~/genex/
-for i in *_S*R1_001.fastq.gz
-do
-    nm=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_S&quot; &#39;{print $1}&#39;)
-        echo $nm
-    two=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;R1_001.fastq.gz&quot; &#39;{print $1}&#39;)
-    mv $i ${nm}_PE1.fastq.gz
-    mv ${two}R2_001.fastq.gz ${nm}_PE2.fastq.gz
-done</code></pre>
+wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_repXX_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_repXX_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_ZNF143_repXX_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_ZNF143_repXX_PE2.fastq.gz</code></pre>
 <div id="cut-off-the-adapter-with-cutadapt" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Cut off the adapter with <code>cutadapt</code></h2>
 <p>In our daily workflow in the lab we use
