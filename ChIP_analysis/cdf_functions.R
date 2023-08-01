@@ -1,7 +1,7 @@
 
 cdf.deseq.df <- function(genes = gene.file, chip.peaks = chip.peaks) {
-  bed.tss.activated = get.tss(genes[genes$treatment == "Repressed",]
-  bed.tss.unchanged = get.tss(genes[genes$treatment == "Matched to Repressed",]
+  bed.tss.activated = get.tss(genes[genes$treatment == "Repressed",])
+  bed.tss.unchanged = get.tss(genes[genes$treatment == "Matched to Repressed",])
   act.distance = bedTools.closest(bed1 = bed.tss.activated, bed2 = chip.peaks[,c(1:3)], opt.string = '-D a')
   unreg.distance = bedTools.closest(bed1 = bed.tss.unchanged, bed2 = chip.peaks[,c(1:3)], opt.string = '-D a')
 
