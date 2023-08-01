@@ -419,7 +419,7 @@ for (chip.peak in Sys.glob(file.path("/Users/admin/genex/quantile*bed"))) {
     #plot_cdf(df.all, tf = quantile)
     }
 
-plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(13),colorRampPalette(c("blue", "light blue"))(7)), line.type = c(rep(2, 20), rep(1,20)))
+plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(13),colorRampPalette(c("blue", "light blue"))(7)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
 
 #Let's choose a cutoff of 0.7
 quantiles = quantile(peak.intensities$V5, probs = seq(.05, 1.00, by = .05))
