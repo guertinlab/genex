@@ -1,7 +1,7 @@
 
-cdf.deseq.df <- function(df, genes = gene.file, chip.peaks = chip.peaks) {
-  bed.tss.activated = filter.deseq.into.bed(df, genes, cat = "Repressed")
-  bed.tss.unchanged = filter.deseq.into.bed(df, genes, cat = "Matched to Repressed")
+cdf.deseq.df <- function(genes = gene.file, chip.peaks = chip.peaks) {
+  bed.tss.activated = get.tss(genes[genes$treatment == "Repressed",]
+  bed.tss.unchanged = get.tss(genes[genes$treatment == "Matched to Repressed",]
   act.distance = bedTools.closest(bed1 = bed.tss.activated, bed2 = chip.peaks[,c(1:3)], opt.string = '-D a')
   unreg.distance = bedTools.closest(bed1 = bed.tss.unchanged, bed2 = chip.peaks[,c(1:3)], opt.string = '-D a')
 
@@ -14,19 +14,6 @@ cdf.deseq.df <- function(df, genes = gene.file, chip.peaks = chip.peaks) {
   df.all = rbind(df.up.can, df.un.can)
   df.all$status = factor(df.all$status, levels = c("Repressed", "Matched to Repressed"))
   return(df.all)
-}
-
-filter.deseq.into.bed <- function(deseq.df, gene.file, cat = 'R1881 Activated') {
-  deseq.df = deseq.df[deseq.df$treatment == cat,]
-  #print(dim(deseq.df))
-  #scientific notation was messing this up occasionally
-  x = gene.file$V4
-  #print(length(x))
-  y = gene.file[x %in% rownames(deseq.df),]
-  #print(dim(y))
-  z = get.tss(y)
-  #print(dim(z))
-  return(z)
 }
 
 bedTools.closest <- function(functionstring="/usr/local/bin/closestBed",bed1,bed2,opt.string="") {
@@ -56,21 +43,6 @@ bedTools.closest <- function(functionstring="/usr/local/bin/closestBed",bed1,bed
   
   colnames(res) = c(colnames(bed1), colnames(bed2), 'dis' )
   return(res)
-}
-
-filter.deseq.into.bed <- function(deseq.df, gene.file, cat = 'R1881 Activated') {
-  deseq.df = deseq.df[deseq.df$treatment == cat,]
-  print(dim(deseq.df))
-  #scientific notation was messing this up occasionally
-  x = gene.file$V4
-  print(length(x))
-  xy=sapply(strsplit(sapply(strsplit(rownames(deseq.df), ':'), '[', 2), "-"), "[", 2)
-  gene = sapply(strsplit(xy, "_"), "[", 2)
-  y = gene.file[x %in% gene,]
-  #print(dim(y))
-  z = get.tss(y)
-  #print(dim(z))
-  return(z)
 }
 
 plot_cdf <- function(df.all, tf="quantile", col.lines = c("#ce228e", "grey60", "#2290cf","grey90"), line.type = c(1)) {
