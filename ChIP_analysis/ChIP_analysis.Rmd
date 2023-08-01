@@ -52,7 +52,7 @@ We already named the experiments with the trailing name being `PE1` or `PE2` for
 # navigate to the class directory
 cd ~/genex/
 wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_repXX_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_repXX_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_repXX_PE2.fastq.gz
 wget http://guertinlab.cam.uchc.edu/HEK293T_ZNF143_repXX_PE1.fastq.gz
 wget http://guertinlab.cam.uchc.edu/HEK293T_ZNF143_repXX_PE2.fastq.gz
 ```
