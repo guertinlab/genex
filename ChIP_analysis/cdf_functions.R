@@ -1,18 +1,18 @@
 
-cdf.deseq.df <- function(genes = gene.file, chip.peaks = chip.peaks) {
-  bed.tss.activated = get.tss(genes[genes$V5 == "Repressed",])
-  bed.tss.unchanged = get.tss(genes[genes$V5 == "Matched to Repressed",])
+cdf.deseq.df <- function(genes = gene.file, chip.peaks = chip.peaks, cat = "Repressed") {
+  bed.tss.activated = get.tss(genes[genes$V5 == cat,])
+  bed.tss.unchanged = get.tss(genes[genes$V5 == paste0("Matched to ", cat),])
   act.distance = bedTools.closest(bed1 = bed.tss.activated, bed2 = chip.peaks[,c(1:3)], opt.string = '-D a')
   unreg.distance = bedTools.closest(bed1 = bed.tss.unchanged, bed2 = chip.peaks[,c(1:3)], opt.string = '-D a')
 
-  df.up.can = cbind(act.distance[,c(4, 10)], "Repressed")
-  df.un.can = cbind(unreg.distance[,c(4, 10)], "Matched to Repressed")
+  df.up.can = cbind(act.distance[,c(4, 10)], cat)
+  df.un.can = cbind(unreg.distance[,c(4, 10)], paste0("Matched to ", cat))
 
   colnames(df.up.can) = c(colnames(df.up.can)[1:2], 'status')
   colnames(df.un.can) = c(colnames(df.up.can)[1:2], 'status')
 
   df.all = rbind(df.up.can, df.un.can)
-  df.all$status = factor(df.all$status, levels = c("Repressed", "Matched to Repressed"))
+  df.all$status = factor(df.all$status, levels = c(cat, paste0("Matched to ", cat)"))
   return(df.all)
 }
 
