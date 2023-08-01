@@ -12,7 +12,7 @@ cdf.deseq.df <- function(genes = gene.file, chip.peaks = chip.peaks, cat = "Repr
   colnames(df.un.can) = c(colnames(df.up.can)[1:2], 'status')
 
   df.all = rbind(df.up.can, df.un.can)
-  df.all$status = factor(df.all$status, levels = c(cat, paste0("Matched to ", cat)"))
+  df.all$status = factor(df.all$status, levels = c(cat, paste0("Matched to ", cat)))
   return(df.all)
 }
 
