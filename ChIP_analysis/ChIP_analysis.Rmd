@@ -317,6 +317,7 @@ knitr::include_graphics("THAP11_TOMTOM.png")
 ```{r echo=F, fig.align = "center", out.height="600px", fig.cap="Second de novo identified motif matched to the ZNF143 motif with TOMTOM"}
 #library(knitr)
 knitr::include_graphics("ZNF143_TOMTOM.png") 
+```
 
 # Which ZNF143 peaks functionally regulate transcription?
 
@@ -385,6 +386,7 @@ Download the activated, repressed, and matched files from `https://github.com/gu
 ```{r engine='bash', eval=F, echo=TRUE}
 cat treated_activated_genes.bed treated_activated_matched_genes.bed treated_repressed_genes.bed treated_repressed_matched_genes.bed > /Users/admin/genex/HEK_ZNF143_gene_annotations.bed
 ```
+
 ## Making CDF plots
 
 There are many methods to generate and visualize CDF plots and we have developed many functions in `R` that perform these tasks. The first ten lines import common libraries that are preinstalled on CSHL computers and the last three of the preamble lines import some functions that we use routinely in the lab.
