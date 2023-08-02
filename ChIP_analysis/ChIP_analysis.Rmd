@@ -13,6 +13,7 @@ output:
     toc: true
 fontsize: 14pt
 geometry: margin=1in
+fig_height: 4
 ---
 
 ```{css, echo=FALSE}
