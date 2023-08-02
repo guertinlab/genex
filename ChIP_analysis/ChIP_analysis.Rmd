@@ -309,36 +309,56 @@ meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -sea
 
 When we did this with the top 2000 most significant peaks using all replicates, we found 2 motifs, both of which match with the ZNF143 motif:
 
-```{r echo=F, fig.align = "center", out.height="600px", fig.cap="First de novo identified motif matched to the THAP11 motif with TOMTOM"}
+```{css, echo=FALSE}
+body .main-container {
+  max-width: 600px !important;
+  width: 600px !important;
+}
+body {
+  max-width: 600px !important;
+}
+```
+
+```{r echo=F, fig.align = "center", fig.cap="First de novo identified motif matched to the THAP11 motif with TOMTOM"}
 #library(knitr)
 knitr::include_graphics("THAP11_TOMTOM.png") 
 ```
 
-```{r echo=F, fig.align = "center", out.height="600px", fig.cap="Second de novo identified motif matched to the ZNF143 motif with TOMTOM"}
+```{r echo=F, fig.align = "center", fig.cap="Second de novo identified motif matched to the ZNF143 motif with TOMTOM"}
 #library(knitr)
 knitr::include_graphics("ZNF143_TOMTOM.png") 
+```
+
+```{css, echo=FALSE}
+body .main-container {
+  max-width: 1600px !important;
+  width: 1600px !important;
+}
+body {
+  max-width: 1600px !important;
+}
 ```
 
 # Which ZNF143 peaks functionally regulate transcription?
 
 Navigate to your `/Users/admin/genex` folder and open `R`. We performed PRO-seq after 30 minutes of ZNF143 degradation and identified activated and repressed genes. We also found comparable genes that are unchanged, but matched for the expression levels. We are going to ask "for each of these genes sets, how far away do we have to move from the transcription start site to find the first ZNF143 peaks in each quantile?"
 
-```{r echo=F, fig.align = "center", out.height="600px", fig.cap="TFs tend to act near their gene targets"}
+```{r echo=F, fig.align = "center", fig.cap="TFs tend to act near their gene targets"}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX.png") 
 ```
 
-```{r echo=F, fig.align = "center", out.height="600px", fig.cap="The CDF metric quantifies how far away we need to go from the class of genes to find the first TF binding site and plots the cumulative distribution."}
+```{r echo=F, fig.align = "center", fig.cap="The CDF metric quantifies how far away we need to go from the class of genes to find the first TF binding site and plots the cumulative distribution."}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX_2.png") 
 ```
 
-```{r echo=F, fig.align = "center", out.height="600px", fig.cap="TF binding sites are closer to their direct gene targets."}
+```{r echo=F, fig.align = "center", fig.cap="TF binding sites are closer to their direct gene targets."}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX_3.png") 
 ```
 
-```{r echo=F, fig.align = "center", out.height="600px", fig.width = 5, fig.cap="A classic example is the Estrogen receptor, which is an activator that is stimulated by the addition of estrogen. "}
+```{r echo=F, fig.align = "center", fig.width = 5, fig.cap="A classic example is the Estrogen receptor, which is an activator that is stimulated by the addition of estrogen. "}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX_4.png") 
 ```
@@ -471,7 +491,7 @@ df.cdf$status = factor(df.cdf$status, levels = levels)
 plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(20)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
 ```
 
-```{r echo=F, fig.align = "center", out.height="600px", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
+```{r echo=F, fig.align = "center", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
 #library(knitr)
 knitr::include_graphics("ZNF143_FIG_cdf_compare_Reg_classes_Repressed1024_1.png") 
 ```
@@ -521,12 +541,12 @@ plotHeatmap -m all_matrix_HA_ChIP_ZNF143_peaks.gz -out other_heatmap_HA_ChIP_ZNF
    --samplesLabel "ChIP" "Mock" --colorMap viridis -min 0 -max 14 --whatToShow "heatmap and colorbar" 
 ```
 
-```{r echo=F, fig.align = "center", out.height="600px", fig.cap="Functional ZNF143 ChIP peaks"}
+```{r echo=F, fig.align = "center", fig.cap="Functional ZNF143 ChIP peaks"}
 #library(knitr)
 knitr::include_graphics("heatmap_HA_ChIP_ZNF143_peaks1024_1.png") 
 ```
 
-```{r echo=F, fig.align = "center", out.height="600px", fig.cap="Non-functional ZNF143 ChIP peaks (note the color range)"}
+```{r echo=F, fig.align = "center", fig.cap="Non-functional ZNF143 ChIP peaks (note the color range)"}
 #library(knitr)
 knitr::include_graphics("other_heatmap_HA_ChIP_ZNF143_peaks_scaled1024_1.png")
 ```
