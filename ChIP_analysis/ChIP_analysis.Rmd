@@ -13,7 +13,6 @@ output:
     toc: true
 fontsize: 14pt
 geometry: margin=1in
-fig_height: 4
 ---
 
 ```{css, echo=FALSE}
@@ -288,7 +287,6 @@ rm rowname.txt
 
 We will take the file `${name}_header_normalized.bedGraph`, zip it and upload to UCSC.
 
-
 # *De novo* motif analysis at peaks
 
 The coordinate `bed` file is converted to a sequence `fasta` file, then we perform *de novo* motif analysis with `meme`. The lab performs motif analysis frequently, so we have many options invoked when we call `meme` below. You can always use `meme -h` to determine the function of each option/parameter.
@@ -303,7 +301,6 @@ fastaFromBed -fi $genome -bed ${name}_summit_100window.bed -fo ${name}_summit_10
 meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -searchsize 0 -minw 10 -maxw 15 -revcomp -dna -markov_order 3 -maxsize 100000000 ${name}_summit_100window.fasta
 ```
 
-
 # Which ZNF143 peaks functionally regulate transcription?
 
 Navigate to your `/Users/admin/genex` folder and open `R`. We performed PRO-seq after 30 minutes of ZNF143 degradation and identified activated and repressed genes. We also found comparable genes that are unchanged, but matched for the expression levels. We are going to ask "for each of these genes sets, how far away do we have to move from the transcription start site to find the first ZNF143 peaks in each quantile?"
@@ -311,6 +308,7 @@ Navigate to your `/Users/admin/genex` folder and open `R`. We performed PRO-seq 
 
 ```{r echo=F, fig.align = "center", fig.cap="TFs tend to act near their gene targets"}
 #library(knitr)
+knitr::opts_chunk$set(fig.height=4) 
 knitr::include_graphics("230731_CSHL_GeneX.png") 
 ```
 
