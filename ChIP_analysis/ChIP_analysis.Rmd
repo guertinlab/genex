@@ -323,7 +323,7 @@ knitr::include_graphics("230731_CSHL_GeneX_2.png")
 knitr::include_graphics("230731_CSHL_GeneX_3.png") 
 ```
 
-```{r echo=F, fig.align = "center", fig.width=2, fig.cap="A classic example is the Estrogen receptor, which is an activator that is stimulated by the addition of estrogen. "}
+```{r echo=F, fig.align = "center", fig.cap="A classic example is the Estrogen receptor, which is an activator that is stimulated by the addition of estrogen. "}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX_4.png") 
 ```
