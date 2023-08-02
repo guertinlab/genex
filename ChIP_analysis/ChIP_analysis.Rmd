@@ -471,7 +471,7 @@ df.cdf$status = factor(df.cdf$status, levels = levels)
 plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(20)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
 ```
 
-```{r echo=F, fig.align = "center", out.width="50%", out.height="50%", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
+```{r echo=F, fig.align = "center", out.width="100%", out.height="100%", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
 #library(knitr)
 knitr::include_graphics("ZNF143_FIG_cdf_compare_Reg_classes_Repressed1024_1.png") 
 ```
