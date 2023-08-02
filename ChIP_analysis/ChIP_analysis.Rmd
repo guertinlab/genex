@@ -182,6 +182,8 @@ data is weighted twice as much in the final visualization. We will perform this 
 #!/bin/bash
 sizes=~/genex/genomes/hg38.chrom.sizes
 
+#conda install -c bioconda ucsc-bigwigmerge
+
 for i in *rep1_PE1.fastq.gz
 do
     nm=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1.fastq.gz" '{print $1}')
@@ -191,7 +193,7 @@ do
     echo $reps
     files=$(ls ${name}_rep*normalized.bigWig)
     echo $files
-    bigWigMerge $files tmp.bg
+    bigWigMerge ${name}_rep*normalized.bigWig tmp.bg
     scaleall=$(bc <<< "scale=4 ; 1.0 / $reps")
     echo scale:
     echo $scaleall
