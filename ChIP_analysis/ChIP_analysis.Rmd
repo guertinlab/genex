@@ -299,14 +299,19 @@ sizes=~/genex/genomes/hg38.chrom.sizes
 fastaFromBed -fi $genome -bed ${name}_summit_100window.bed -fo ${name}_summit_100window.fasta
 
 meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -searchsize 0 -minw 10 -maxw 15 -revcomp -dna -markov_order 3 -maxsize 100000000 ${name}_summit_100window.fasta
+
+#Just did the top 2000 peaks to make it faster
+sort -nrk5,5 ${name}_summit_100window.bed | head -n 2000 > ${name}_top2000_summit_100window.bed
+name=${name}_top2000
+fastaFromBed -fi $genome -bed ${name}_summit_100window.bed -fo ${name}_summit_100window.fasta
+meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -searchsize 0 -minw 10 -maxw 15 -revcomp -dna -markov_order 3 -maxsize 100000000 ${name}_summit_100window.fasta
 ```
 
 # Which ZNF143 peaks functionally regulate transcription?
 
 Navigate to your `/Users/admin/genex` folder and open `R`. We performed PRO-seq after 30 minutes of ZNF143 degradation and identified activated and repressed genes. We also found comparable genes that are unchanged, but matched for the expression levels. We are going to ask "for each of these genes sets, how far away do we have to move from the transcription start site to find the first ZNF143 peaks in each quantile?"
 
-
-```{r echo=F, out.height="600px", fig.align = "center", fig.cap="TFs tend to act near their gene targets"}
+```{r echo=F, fig.align = "center", fig.cap="TFs tend to act near their gene targets"}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX.png") 
 ```
@@ -321,7 +326,7 @@ knitr::include_graphics("230731_CSHL_GeneX_2.png")
 knitr::include_graphics("230731_CSHL_GeneX_3.png") 
 ```
 
-```{r echo=F, out.width="50%", fig.align = "center", fig.cap="A classic example is the Estrogen receptor, which is an activator that is stimulated by the addition of estrogen. "}
+```{r echo=F, fig.align = "center", fig.width = 5, fig.cap="A classic example is the Estrogen receptor, which is an activator that is stimulated by the addition of estrogen. "}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX_4.png") 
 ```
@@ -414,11 +419,12 @@ for (chip.peak in Sys.glob(file.path("/Users/admin/genex/quantile*bed"))) {
     #plot_cdf(df.all, tf = quantile)
     }
 
-plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(13),colorRampPalette(c("blue", "light blue"))(7)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
+plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(16),colorRampPalette(c("blue", "light blue"))(4)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
+#plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(20)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
 
-#Let's choose a cutoff of 0.7
+#Let's choose a cutoff of 0.85
 quantiles = quantile(peak.intensities$V5, probs = seq(.05, 1.00, by = .05))
-write.table(quantiles[13][[1]], file = "cutoff.txt", col.names = F, row.names = F, quote = F)
+write.table(quantiles[16][[1]], file = "cutoff.txt", col.names = F, row.names = F, quote = F)
 
 #Activated genes
 cat = "Activated"
@@ -449,7 +455,7 @@ for (chip.peak in Sys.glob(file.path("/Users/admin/genex/quantile*bed"))) {
 levels = levels(factor(df.cdf$status))
 levels = c(levels[grepl("Matched", levels)], levels[!grepl("Matched", levels)])
 df.cdf$status = factor(df.cdf$status, levels = levels)
-plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(13),colorRampPalette(c("blue", "light blue"))(7)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
+plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(20)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
 ```
 ## Look at the plots and decide a peak threshold
 
@@ -466,7 +472,6 @@ awk -v cutoff=$cutoff -F"\t" '$5<=cutoff' ZNF143_ChIP_summits_final.bed > ZNF143
 # `deeptools` heatmap of ZNF143 functional and non-functional peaks
 
 ```{r, engine='bash', eval=F, echo=T}
-
 #Make the matrix (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_functional_peaks.bed \
@@ -477,7 +482,7 @@ computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missi
 #Make the heatmap
 plotHeatmap -m matrix_HA_ChIP_ZNF143_peaks.gz -out heatmap_HA_ChIP_ZNF143_peaks.pdf --heatmapHeight 7 \
    --regionsLabel "ZNF143 peaks" --xAxisLabel "Distance from summit" \
-   --samplesLabel "ChIP" "Mock" --colorMap Purples -min 0 -max 300 --whatToShow "heatmap and colorbar" 
+   --samplesLabel "ChIP" "Mock" --colorMap viridis -min 0 -max 700 --whatToShow "heatmap and colorbar" 
       
 #Make the matrix (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
@@ -489,10 +494,10 @@ computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missi
 #Make the heatmap
 plotHeatmap -m all_matrix_HA_ChIP_ZNF143_peaks.gz -out other_heatmap_HA_ChIP_ZNF143_peaks.pdf --heatmapHeight 7 \
    --regionsLabel "ZNF143 peaks" --xAxisLabel "Distance from summit" \
-   --samplesLabel "ChIP" "Mock" --colorMap Purples -min 0 -max 300 --whatToShow "heatmap and colorbar" 
+   --samplesLabel "ChIP" "Mock" --colorMap viridis -min 0 -max 700 --whatToShow "heatmap and colorbar" 
 
 #so we can see peaks
 plotHeatmap -m all_matrix_HA_ChIP_ZNF143_peaks.gz -out other_heatmap_HA_ChIP_ZNF143_peaks_scaled.pdf --heatmapHeight 7 \
    --regionsLabel "ZNF143 peaks" --xAxisLabel "Distance from summit" \
-   --samplesLabel "ChIP" "Mock" --colorMap Purples -min 0 -max 13 --whatToShow "heatmap and colorbar" 
+   --samplesLabel "ChIP" "Mock" --colorMap viridis -min 0 -max 14 --whatToShow "heatmap and colorbar" 
 ```
