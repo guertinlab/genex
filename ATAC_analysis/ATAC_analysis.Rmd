@@ -319,7 +319,7 @@ two `bed` file inputs. We will counts reads in the 400 base window
 summit file and merge these into a file with experiment name columns
 and genomic interval named rows.
 
-```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
+```{r engine='bash', eval=F, echo=TRUE}
 name=ZNF143_degron_ATAC
 
 cp */*_not_scaled.bed ./
@@ -343,7 +343,7 @@ do
   rm ${name}_peak_counts_only.txt
 done
 
-echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_counts.txt > Combined_ATAC_peak_counts_with_ChIP.txt
+echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_counts.txt > Combined_ATAC_peak_counts.txt
 
 #rm *_not_scaled.bed
 ```
@@ -433,7 +433,7 @@ plotPCAlattice <- function(df, file = 'PCA_lattice.pdf') {
 
 # data processing and plotting
 
-x = read.table('Combined_ATAC_peak_counts_with_ChIP.txt', sep = "\t", check.names=FALSE, header=TRUE)
+x = read.table('Combined_ATAC_peak_counts.txt', sep = "\t", check.names=FALSE, header=TRUE)
 rownames(x) = paste0(x[,1], ":", x[,2], "-", x[,3])
 peak_name = x[,4]
 peak_qvalue = x[,5]
@@ -441,20 +441,12 @@ x = x[,-c(1:5)]
 colnames(x) = sapply(strsplit(colnames(x), "Clone28-"), "[", 2)
 colnames(x) = sapply(strsplit(colnames(x), "\\."), "[", 1)
 
-sample.conditions = factor(sapply(strsplit(colnames(x), '-rep'), '[', 1), levels=c("0hour","05hour"))
+sample.conditions = factor(sapply(strsplit(colnames(x), '_'), '[', 3), levels=c("DMSO","dTAG"))
 rep = factor(sapply(strsplit(colnames(x), 'rep'), '[', 2))
 
-
-#deseq.counts.table = DESeqDataSetFromMatrix(countData = x,
-#                colData = cbind.data.frame(sample.conditions, rep), 
-#                design = ~ rep + sample.conditions)
-
-
 deseq.counts.table = DESeqDataSetFromMatrix(countData = x,
-                colData = as.data.frame(sample.conditions), 
-                design = ~ sample.conditions)
-
-
+                colData = cbind.data.frame(sample.conditions, rep), 
+                design = ~ rep + sample.conditions)
 
 deseq.counts.table 
 
@@ -462,8 +454,7 @@ dds = DESeq(deseq.counts.table)
 dds
 
 normalized.counts = counts(dds, normalized=TRUE)
-
-		
+	
 rld = rlog(dds, blind=TRUE)
 
 # plot principle components 
@@ -518,14 +509,12 @@ col.names =FALSE, row.names=FALSE, sep = "\t")
 
 ```
 
-```{r  out.width = "100%", echo=F, fig.align = "center", fig.cap="PCA Analysis"}
+```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="PCA Analysis"}
 library(knitr)
 knitr::include_graphics("Degron_lattice.png") 
 ```
 
-
-
-```{r  out.width = "100%", echo=F, fig.align = "center", fig.cap="MA plot"}
+```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="MA plot"}
 library(knitr)
 knitr::include_graphics("MA_plot_30min_TRPS1_degradation.png") 
 ```
@@ -557,7 +546,7 @@ cut -f 1 -d " " mast_hits_unchanged.txt | sort | uniq | grep -v "#" | wc -l
 wc -l  ATAC_unchanged_ZNF143_degron.bed
 ```
 
-```{r  out.width = "60%", echo=F, fig.align = "center", fig.cap="ZNF143 motif"}
+```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="ZNF143 motif"}
 library(knitr)
 knitr::include_graphics("logo_rc1.png") 
 ```
