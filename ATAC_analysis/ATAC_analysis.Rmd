@@ -548,5 +548,5 @@ wc -l  ATAC_unchanged_ZNF143_degron.bed
 
 ```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="ZNF143 motif"}
 library(knitr)
-knitr::include_graphics("logo.png") 
+knitr::include_graphics("logo1.png") 
 ```
