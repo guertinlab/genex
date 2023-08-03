@@ -46,6 +46,8 @@ We performed ChIP-seq of HA-tagged ZNF143 in HEK-293T cells with mock IP (no ant
 
 In this vignette, grey code chunks are performed in bash, blue code chunks are performed in R, and red code chunks are not to be run by you (either we already ran them or will run them using all samples).
 
+## Download your samples
+
 We already named the experiments with the trailing name being `PE1` or `PE2` for paired end data. You can retrieve the files by substituting you group number (1-8) for `XX` in the code below.
 
 ```{r engine='bash', eval=F, echo=TRUE}
