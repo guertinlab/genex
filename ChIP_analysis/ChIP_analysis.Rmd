@@ -206,6 +206,11 @@ do
     gzip ${name}_header_normalized.bedGraph
 done
 ```
+
+# Using the UCSC genome browser
+
+We will take the file `${name}_ucsc.bedGraph` and upload to UCSC.
+
 # Peak calling
 
 The next step is to use the aligned reads to call peaks. The code below will work if you have 1 replicate or many replicates. You will call peaks with your single replicate. We will combine the replicates and use the same command to get a peak set that uses all the replicates. We empirically found that this method typically captures the peaks of interest. If we were to call peaks in each replicate, we could combine peaks in various ways. The lower intensity peaks are the peaks that will change between replicates and these tend to be less important biologically. We believe it is important to have a single peak set per factor and we tend to be permissive with calling peaks and then try to determine which peaks to carry forward. Here we will determine an intensity threshold for peaks by only considering intensity quantiles of peaks that are enriched near genes that are changing expression when ZNF143 is degraded. In the past I have used the presence of a sequence motif or arbitrarily set a threshold for 2 orders of magnitude dynamic range to establish a threshold. 
@@ -244,10 +249,6 @@ do
    	slopBed -b 200 -i ${name}_summits_final.bed -g $sizes  | sort -k1,1 -k2,2n > ${name}_summit_400window.bed
 done
 ```
-
-# Using the UCSC genome browser
-
-We will take the file `${name}_header_normalized.bedGraph`, zip it and upload to UCSC.
 
 # *De novo* motif analysis at peaks
 
