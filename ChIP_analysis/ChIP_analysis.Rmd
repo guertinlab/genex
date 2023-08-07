@@ -281,6 +281,54 @@ knitr::include_graphics("THAP11_TOMTOM.png")
 #library(knitr)
 knitr::include_graphics("ZNF143_TOMTOM.png") 
 ```
+# Fraction of Reads in Peaks (FRiP) 
+
+A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let's go in depth about this metric. If we reduce the stringency of peak calling, then we have more genomic regions and FRiP increases—so we can have any number of FRiP score for one set of data. Also peak sets change between datasets. If we call peaks with two different replicates and call peaks in each, then we have two different peaks sets and it is not fair to compare FRiP between them. To avoid this we call a set of universal peaks for a factor; recall that we just use all `bam` files and perform one peak calling step. Next we count reads in this universal peak set for all replicates and we can directly compare FRiP between replicates.    
+
+## Counting reads in peaks 
+
+The `mapBed` subcommand from `bedtools` counts the BED file from the `seqOutBias` output in the 400 base window peak summits file. The `samtools` commands counts the number of paired end 1 reads that aligned in a concordant pair (the mate aligned nearby). The final output file contains these two values that we use to calculate FRiP.
+
+```{r engine='bash', eval=F, echo=TRUE}
+#We did this using the peaks called with all the samples (don't run this)
+name=ZNF143_ChIP
+sort -k1,1 -k2,2n ${name}_summit_400window.bed > ${name}_summit_window_sorted.bed
+intersectBed -u -a ZNF143_ChIP_summit_window_sorted.bed -b ZNF143_functional_peaks.bed > ZNF143_ChIP_functional_summit_window_sorted.bed
+
+#You can download the file here
+wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/ZNF143_ChIP_functional_summit_window_sorted.bed
+peaks=ZNF143_ChIP_functional_summit_window_sorted.bed
+
+for i in *_not_scaled.bed
+do
+	nm=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_not_scaled.bed" '{print $1}')
+	sort -k1,1 -k2,2n $i > ${nm}_sorted.bed
+	mapBed -null '0' -a $peaks -b ${nm}_sorted.bed > ${nm}_peak_counts.txt
+	mapBed -null '0' -a ZNF143_ChIP_summit_400window.bed > ZNF143_ChIP_summit_counts.bed
+done
+
+paste -d'\t' ZNF143_ChIP_summit_400window.bed ZNF143_ChIP_summit_counts.bed > ZNF143_ChIP_summit_400window_counts.bed
+
+for i in *_peak_counts.txt
+do
+	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_peak_counts.txt" '{print $1}')
+	echo $name > ${name}_FRiP.txt
+	awk '{print $NF}' ${name}_peak_counts.txt > ${name}_peak_counts_only.txt
+	RiP=$(awk '{sum+=$1;} END{print sum;}' ${name}_peak_counts_only.txt)
+	echo $name | cat - ${name}_peak_counts_only.txt > ${name}_peak_counts.txt
+	aligned_reads=$(samtools view -c -f 0x42 ${name}.bam)
+	FRiP=$(echo "scale=2 ; $RiP / $aligned_reads" | bc)
+	echo $FRiP >> ${name}_FRiP.txt
+	rm ${name}_peak_counts_only.txt
+done
+
+echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_counts.txt > Combined_ZNF143_peak_counts.txt
+echo -e "Name" > rowname.txt
+echo -e "FrIP" >> rowname.txt
+paste -d'\t' rowname.txt *.hg38_FRiP.txt > Combined_ZNF143_FRiP.txt
+rm rowname.txt
+```
+
 
 # Which ZNF143 peaks functionally regulate transcription?
 
@@ -320,13 +368,13 @@ library(ggplot2)
 library(limma)
 library(bigWig)
 
-peak.intensities = read.table('ZNF143_ChIP_summits_final.bed', header =FALSE)
+peak.intensities = read.table('ZNF143_ChIP_summit_400window_counts.bed', header =FALSE)
 
 chr = peak.intensities$V1
 start =	peak.intensities$V2
 end = peak.intensities$V3
 
-quantile(peak.intensities$V5, probs = seq(.05, 1.00, by = .05))
+quantile(peak.intensities$V6, probs = seq(.05, 1.00, by = .05))
 
 j =0 
 q=seq(.05, 1.00, by = .05)
@@ -494,47 +542,4 @@ knitr::include_graphics("heatmap_HA_ChIP_ZNF143_peaks1024_1.png")
 knitr::include_graphics("other_heatmap_HA_ChIP_ZNF143_peaks_scaled1024_1.png")
 ```
 
-# Fraction of Reads in Peaks (FRiP) 
 
-A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let's go in depth about this metric. If we reduce the stringency of peak calling, then we have more genomic regions and FRiP increases—so we can have any number of FRiP score for one set of data. Also peak sets change between datasets. If we call peaks with two different replicates and call peaks in each, then we have two different peaks sets and it is not fair to compare FRiP between them. To avoid this we call a set of universal peaks for a factor; recall that we just use all `bam` files and perform one peak calling step. Next we count reads in this universal peak set for all replicates and we can directly compare FRiP between replicates.    
-
-## Counting reads in peaks 
-
-The `mapBed` subcommand from `bedtools` counts the BED file from the `seqOutBias` output in the 400 base window peak summits file. The `samtools` commands counts the number of paired end 1 reads that aligned in a concordant pair (the mate aligned nearby). The final output file contains these two values that we use to calculate FRiP.
-
-```{r engine='bash', eval=F, echo=TRUE}
-#We did this using the peaks called with all the samples (don't run this)
-name=ZNF143_ChIP
-sort -k1,1 -k2,2n ${name}_summit_400window.bed > ${name}_summit_window_sorted.bed
-intersectBed -u -a ZNF143_ChIP_summit_window_sorted.bed -b ZNF143_functional_peaks.bed > ZNF143_ChIP_functional_summit_window_sorted.bed
-
-#You can download the file here
-wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/ZNF143_ChIP_functional_summit_window_sorted.bed
-peaks=ZNF143_ChIP_functional_summit_window_sorted.bed
-
-for i in *_not_scaled.bed
-do
-	nm=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_not_scaled.bed" '{print $1}')
-	sort -k1,1 -k2,2n $i > ${nm}_sorted.bed
-	mapBed -null '0' -a $peaks -b ${nm}_sorted.bed > ${nm}_peak_counts.txt 
-done
-
-for i in *_peak_counts.txt
-do
-	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_peak_counts.txt" '{print $1}')
-	echo $name > ${name}_FRiP.txt
-	awk '{print $NF}' ${name}_peak_counts.txt > ${name}_peak_counts_only.txt
-	RiP=$(awk '{sum+=$1;} END{print sum;}' ${name}_peak_counts_only.txt)
-	echo $name | cat - ${name}_peak_counts_only.txt > ${name}_peak_counts.txt
-	aligned_reads=$(samtools view -c -f 0x42 ${name}.bam)
-	FRiP=$(echo "scale=2 ; $RiP / $aligned_reads" | bc)
-	echo $FRiP >> ${name}_FRiP.txt
-	rm ${name}_peak_counts_only.txt
-done
-
-echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_counts.txt > Combined_ZNF143_peak_counts.txt
-echo -e "Name" > rowname.txt
-echo -e "FrIP" >> rowname.txt
-paste -d'\t' rowname.txt *.hg38_FRiP.txt > Combined_ZNF143_FRiP.txt
-rm rowname.txt
-```
