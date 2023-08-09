@@ -541,4 +541,24 @@ knitr::include_graphics("heatmap_HA_ChIP_ZNF143_peaks1024_1.png")
 knitr::include_graphics("other_heatmap_HA_ChIP_ZNF143_peaks_scaled1024_1.png")
 ```
 
+# `deeptools` heatmap of ZNF143 binding intensity around TSS's
 
+Remember from our CDFs that ZNF143 binding is also proximal to a subset of the genes that are activated by ZNF143 depletion. How could this be, if we're claiming that ZNF143 is an activator? One hypothesis that, at these activated genes, ZNF143 is binding downstream from the TSS, activating transcription that is interfering with transcription of the gene. Thus, loss of this transcriptional activation leads to an activation of the local gene. In contrast, we would predict that ZNF143 would bind upstream (in the promoter) from the genes repressed by ZNF143 depletion. Here we plot the ZNF143 binding intensity around the TSS's of activated and repressed genes. 
+
+```{r, engine='bash', eval=F, echo=T}
+#Make the matrix
+computeMatrix reference-point --referencePoint TSS -b 500 -a 500 -p 7 --missingDataAsZero \
+  -R treated_repressed_genes.bed treated_activated_genes.bed\
+  -S HEK293T_ZNF143.bigWig \
+  -o matrix_HA_ChIP_ZNF143_peaks_TSS.gz --outFileSortedRegions ZNF143_TSS_sorted_for_heatmap.bed
+  
+#Make the heatmap
+plotHeatmap -m matrix_HA_ChIP_ZNF143_peaks_TSS.gz -out heatmap_HA_ChIP_ZNF143_peaks_TSS.pdf --heatmapHeight 7 \
+	--regionsLabel "Repressed" "Activated" --xAxisLabel "Distance from TSS" --samplesLabel "ZNF143 ChIP Signal" \
+	--colorMap viridis -min 0 -max 700 --whatToShow "heatmap and colorbar" 
+```
+
+```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="ZNF143 binding intensity around TSS's for genes repressed and activated upon ZNF143 depletion"}
+library(knitr)
+knitr::include_graphics("heatmap_HA_ChIP_ZNF143_peaks_TSS.png") 
+```
