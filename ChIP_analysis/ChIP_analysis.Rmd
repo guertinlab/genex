@@ -501,6 +501,11 @@ awk -v cutoff=$cutoff -F"\t" '$5<=cutoff' ZNF143_ChIP_summits_final.bed > ZNF143
 # `deeptools` heatmap of ZNF143 functional and non-functional peaks
 
 ```{r, engine='bash', eval=F, echo=T}
+#Add deeptools commands to your path
+cp ~/miniconda/bin/computeMatrix /usr/local/bin/
+cp ~/miniconda/bin/plotHeatmap /usr/local/bin/
+cp ~/miniconda/bin/plotProfile /usr/local/bin/
+
 #Make the matrix (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_functional_peaks.bed \
