@@ -120,7 +120,7 @@ done
 ```
 ## Download your samples
 
-We already named the experiments with the trailing name being `PE1` or `PE2` for paired end data. You can retrieve the files by substituting you group number (1-8) for `XX` in the code below.
+We already named the experiments with the trailing name being `PE1` or `PE2` for paired end data. You can retrieve the files by substituting you group number (1-8) for `XX` in the code below. Actually I don't think these links work / we'll skip the steps you already performed in the ChIP-seq analysis and start with the differential accessibility analysis in R below.
 
 ```{r engine='bash', eval=F, echo=TRUE}
 # Make and navigate to the class directory (the -p means don't overwrite it if it already exists
@@ -365,6 +365,13 @@ echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_co
 
 # Differential accessibility 
 
+## Download the counts table
+```{r engine='bash', eval=F, echo=TRUE}
+mkdir -p ~/genex_ATAC_all
+cd ~/genex_ATAC_all
+wget https://raw.githubusercontent.com/guertinlab/genex/main/ATAC_analysis/Combined_ATAC_peak_counts.bed
+```
+
 ## Running `DESeq2` with ATAC data
 
 Update with a description of DESeq2.
@@ -447,7 +454,7 @@ plotPCAlattice <- function(df, file = 'PCA_lattice.pdf') {
 }
 
 # data processing and plotting
-
+setwd("~/genex_ATAC/")
 x = read.table('Combined_ATAC_peak_counts.txt', sep = "\t", check.names=FALSE, header=TRUE)
 rownames(x) = paste0(x[,1], ":", x[,2], "-", x[,3])
 peak_name = x[,4]
