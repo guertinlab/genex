@@ -372,7 +372,7 @@ echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_co
 ```{r engine='bash', eval=F, echo=TRUE}
 mkdir -p ~/genex_ATAC_all
 cd ~/genex_ATAC_all
-wget https://raw.githubusercontent.com/guertinlab/genex/main/ATAC_analysis/Combined_ATAC_peak_counts.bed
+wget https://raw.githubusercontent.com/guertinlab/genex/main/ATAC_analysis/Combined_ATAC_peak_counts.txt
 ```
 
 ## Running `DESeq2` with ATAC data
