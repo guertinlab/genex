@@ -300,6 +300,9 @@ should find the important peaks where we have the power to detect changes in
 accessibility. 
 
 ```{r engine='bash', eval=F, echo=TRUE}
+#Install macs2
+pip install MACS2
+
 #cp */*.hg38.bam ./
 mkdir temp_macs
 macs2 callpeak --call-summits -t *.hg38.bam -n ZNF143_degron_ATAC -g hs -q 0.01 --keep-dup all -f BAM --nomodel --shift -100 --extsize 200 --tempdir temp_macs
@@ -317,7 +320,7 @@ because we do not have a control data set. We can also remove peaks on non-canon
 wget https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz
 gunzip hg38-blacklist.v2.bed.gz
 blacklist=hg38-blacklist.v2.bed
-sizes=/home/FCAM/meds5420/genomes/hg38.chrom.sizes
+sizes=~/genex/genomes/hg38.chrom.sizes
 name=ZNF143_degron_ATAC
 
 grep -v "random" ${name}_summits.bed | grep -v "chrUn" | grep -v "chrEBV" | grep -v "chrM" | grep -v "alt" | intersectBed -v -a stdin -b $blacklist > ${name}_tmp.txt
@@ -363,7 +366,7 @@ echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_co
 #rm *_not_scaled.bed
 ```
 
-# Differential accessibility 
+# Differential accessibility (START HERE)
 
 ## Download the counts table
 ```{r engine='bash', eval=F, echo=TRUE}
