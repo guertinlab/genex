@@ -12,7 +12,7 @@
 <meta name="author" content="Thomas G. Scott" />
 <meta name="author" content="Michael J. Guertin" />
 
-<meta name="date" content="2023-08-10" />
+<meta name="date" content="2023-08-11" />
 
 <title>ATAC-seq analysis</title>
 
@@ -704,7 +704,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">ATAC-seq analysis</h1>
 <p class="author-name">Thomas G. Scott and Michael J. Guertin</p>
-<h4 class="date">2023-08-10</h4>
+<h4 class="date">2023-08-11</h4>
 
 </div>
 
@@ -729,7 +729,7 @@ function toggle_visibility(id1) {
 <li><a href="#removing-peaks-on-contigs-and-within-blacklisted-regions" id="toc-removing-peaks-on-contigs-and-within-blacklisted-regions"><span class="toc-section-number">5.1</span> Removing peaks on contigs and within blacklisted regions</a></li>
 </ul></li>
 <li><a href="#differential-reads-counts-with-mapbed" id="toc-differential-reads-counts-with-mapbed"><span class="toc-section-number">6</span> Differential reads counts with <code>mapBed</code></a></li>
-<li><a href="#differential-accessibility" id="toc-differential-accessibility"><span class="toc-section-number">7</span> Differential accessibility</a>
+<li><a href="#differential-accessibility-start-here" id="toc-differential-accessibility-start-here"><span class="toc-section-number">7</span> Differential accessibility (START HERE)</a>
 <ul>
 <li><a href="#download-the-counts-table" id="toc-download-the-counts-table"><span class="toc-section-number">7.1</span> Download the counts table</a></li>
 <li><a href="#running-deseq2-with-atac-data" id="toc-running-deseq2-with-atac-data"><span class="toc-section-number">7.2</span> Running <code>DESeq2</code> with ATAC data</a></li>
@@ -995,7 +995,10 @@ most biologically relevant peaks will be found by most peak callers, I
 am content with just a single peak calling using all the data. We
 should find the important peaks where we have the power to detect changes in
 accessibility.</p>
-<pre class="bash"><code>#cp */*.hg38.bam ./
+<pre class="bash"><code>#Install macs2
+pip install MACS2
+
+#cp */*.hg38.bam ./
 mkdir temp_macs
 macs2 callpeak --call-summits -t *.hg38.bam -n ZNF143_degron_ATAC -g hs -q 0.01 --keep-dup all -f BAM --nomodel --shift -100 --extsize 200 --tempdir temp_macs
 #rm *.hg38.bam</code></pre>
@@ -1009,7 +1012,7 @@ because we do not have a control data set. We can also remove peaks on non-canon
 <pre class="bash"><code>wget https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz
 gunzip hg38-blacklist.v2.bed.gz
 blacklist=hg38-blacklist.v2.bed
-sizes=/home/FCAM/meds5420/genomes/hg38.chrom.sizes
+sizes=~/genex/genomes/hg38.chrom.sizes
 name=ZNF143_degron_ATAC
 
 grep -v &quot;random&quot; ${name}_summits.bed | grep -v &quot;chrUn&quot; | grep -v &quot;chrEBV&quot; | grep -v &quot;chrM&quot; | grep -v &quot;alt&quot; | intersectBed -v -a stdin -b $blacklist &gt; ${name}_tmp.txt
@@ -1052,8 +1055,8 @@ echo -e &quot;chr\tstart\tend\tname\tqvalue&quot; | cat - $peaks | paste -d&#39;
 
 #rm *_not_scaled.bed</code></pre>
 </div>
-<div id="differential-accessibility" class="section level1" number="7">
-<h1><span class="header-section-number">7</span> Differential accessibility</h1>
+<div id="differential-accessibility-start-here" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Differential accessibility (START HERE)</h1>
 <div id="download-the-counts-table" class="section level2" number="7.1">
 <h2><span class="header-section-number">7.1</span> Download the counts table</h2>
 <pre class="bash"><code>mkdir -p ~/genex_ATAC_all
