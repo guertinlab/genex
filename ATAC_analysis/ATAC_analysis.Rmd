@@ -445,7 +445,7 @@ plotPCAlattice <- function(df, file = 'PCA_lattice.pdf') {
   }
   colpal = df$colpal
   df$name = gsub('_', ' ', df$name)
-  pdf(file, width=10, height=6, useDingbats=FALSE)
+  pdf(file, width=5, height=3, useDingbats=FALSE)
   print(xyplot(PC2 ~ PC1, groups = name, data=df,
                xlab = paste('PC1: ', perVar[1], '% variance', sep = ''),
                ylab = paste('PC2: ', perVar[2], '% variance', sep = ''),
@@ -489,7 +489,7 @@ pca.plot = plotPCA(rld, intgroup="sample.conditions", returnData=TRUE)
 
 pca.plot 
 
-plotPCAlattice(pca.plot, file = 'Degron_lattice.pdf')
+plotPCAlattice(pca.plot, file = 'PCA_plot_30min_ZNF143_degradation.pdf')
 		
 DE.results = results(dds)
 
@@ -533,7 +533,7 @@ col.names =FALSE, row.names=FALSE, sep = "\t")
 
 ```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="PCA Analysis"}
 library(knitr)
-knitr::include_graphics("Degron_lattice.png") 
+knitr::include_graphics("PCA_plot_30min_ZNF143_degradation.png") 
 ```
 
 ```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="MA plot"}
