@@ -411,7 +411,7 @@ ma.plot.lattice <- function(ma.df, filename = 'file.name',
 
 plotPCAlattice <- function(df, file = 'PCA_lattice.pdf') {  
   perVar = round(100 * attr(df, "percentVar"))
-  df = data.frame(cbind(df, sapply(strsplit(as.character(df$name), '-rep'), '[', 1)))
+  df = data.frame(cbind(df, sapply(strsplit(as.character(df$name), '_rep'), '[', 1)))
   colnames(df) = c(colnames(df)[1:(ncol(df)-1)], 'unique_condition')
   print(df)
   #get colors and take away the hex transparency
@@ -445,7 +445,7 @@ plotPCAlattice <- function(df, file = 'PCA_lattice.pdf') {
   }
   colpal = df$colpal
   df$name = gsub('_', ' ', df$name)
-  pdf(file, width=6, height=6, useDingbats=FALSE)
+  pdf(file, width=10, height=6, useDingbats=FALSE)
   print(xyplot(PC2 ~ PC1, groups = name, data=df,
                xlab = paste('PC1: ', perVar[1], '% variance', sep = ''),
                ylab = paste('PC2: ', perVar[2], '% variance', sep = ''),
@@ -462,11 +462,10 @@ x = read.table('Combined_ATAC_peak_counts.txt', sep = "\t", check.names=FALSE, h
 rownames(x) = paste0(x[,1], ":", x[,2], "-", x[,3])
 peak_name = x[,4]
 peak_qvalue = x[,5]
-x = x[,-c(1:5)]
-colnames(x) = sapply(strsplit(colnames(x), "Clone28-"), "[", 2)
-colnames(x) = sapply(strsplit(colnames(x), "\\."), "[", 1)
+x = x[,-c(1:6)]
+colnames(x) = sapply(strsplit(sapply(strsplit(colnames(x), "HEK293T_"), "[", 2), ".hg38"), "[", 1)
 
-sample.conditions = factor(sapply(strsplit(colnames(x), '_'), '[', 3), levels=c("DMSO","dTAG"))
+sample.conditions = factor(sapply(strsplit(colnames(x), '_'), '[', 1), levels=c("DMSO","DTAG"))
 rep = factor(sapply(strsplit(colnames(x), 'rep'), '[', 2))
 
 deseq.counts.table = DESeqDataSetFromMatrix(countData = x,
@@ -477,10 +476,12 @@ deseq.counts.table
 
 dds = DESeq(deseq.counts.table)
 dds
+save(dds, file = "genex_ATAC_dds.R")
 
 normalized.counts = counts(dds, normalized=TRUE)
 	
 rld = rlog(dds, blind=TRUE)
+save(rld, file = "genex_ATAC_rld.R")
 
 # plot principle components 
 
@@ -490,7 +491,6 @@ pca.plot
 
 plotPCAlattice(pca.plot, file = 'Degron_lattice.pdf')
 		
-
 DE.results = results(dds)
 
 head(DE.results)
@@ -501,12 +501,10 @@ DE.results.lattice =
 
 head(DE.results.lattice)
 
-
 repressed.all = DE.results.lattice[DE.results.lattice$response == 
                                              'ZNF143_degron_30min Repressed',]
 
 dim(repressed.all)
-
 
 ma.plot.lattice(DE.results.lattice, filename = '30min_ZNF143_degradation', 
         title.main = "Differential Accessibility")		
@@ -531,7 +529,6 @@ end.un = as.numeric(sapply(strsplit(rnge.un, "-"), "[", 2)) - 100
 
 write.table(cbind(chr.un, start.un, end.un), file = "ATAC_unchanged_ZNF143_degron.bed", quote = FALSE,
 col.names =FALSE, row.names=FALSE, sep = "\t")
-
 ```
 
 ```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="PCA Analysis"}
@@ -541,7 +538,7 @@ knitr::include_graphics("Degron_lattice.png")
 
 ```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="MA plot"}
 library(knitr)
-knitr::include_graphics("MA_plot_30min_TRPS1_degradation.png") 
+knitr::include_graphics("MA_plot_30min_ZNF143_degradation.png") 
 ```
 
 # De novo motif analysis of differentially accessible peaks
@@ -558,7 +555,7 @@ genome=~/genex/genomes/hg38.fa
 fastaFromBed -fi $genome -bed ATAC_decreased_ZNF143_degron.bed -fo ATAC_decreased_ZNF143_degron.fasta
 fastaFromBed -fi $genome -bed ATAC_unchanged_ZNF143_degron.bed -fo ATAC_unchanged_ZNF143_degron.fasta
 
-meme -oc ZNF143.meme_output -objfun classic -evt 0.01 -searchsize 0 -minw 5 -maxw 10 -revcomp -dna -markov_order 2 -maxsize 100000000 ATAC_decrease_ZNF143_degron.fasta
+meme -oc ZNF143.meme_output -objfun classic -evt 0.01 -searchsize 0 -minw 5 -maxw 15 -revcomp -dna -markov_order 2 -maxsize 100000000 ATAC_decreased_ZNF143_degron.fasta
 
 mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ATAC_decreased_ZNF143_degron.fasta > mast_hits_decreased.txt
 mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ATAC_unchanged_ZNF143_degron.fasta > mast_hits_unchanged.txt
