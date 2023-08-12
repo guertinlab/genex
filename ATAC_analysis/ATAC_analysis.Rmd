@@ -213,7 +213,8 @@ for i in *_PE1.chrM.fastq
 do
 	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1" '{print $1}')
 	echo $name
-	fastq_pair -t 1000000 ${name}_PE1.chrM.fastq ${name}_PE2_no_adapt.fastq 2>&1 | tee ${name}_fastq_pair.log
+	reads=$(wc -l ${name}_PE1.chrM.fastq | awk '{print $1/4}')
+	fastq_pair -t $reads ${name}_PE1.chrM.fastq ${name}_PE2_no_adapt.fastq 2>&1 | tee ${name}_fastq_pair.log
 done
 ```
 
@@ -284,6 +285,8 @@ do
 	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F".hg38.bam" '{print $1}')
 	echo $name
 	seqOutBias scale $table ${name}.hg38.bam --tallymer=$tallymer --no-scale --custom-shift=4,-4 --read-size=${readLength} 2>&1 | tee ${name}_seqOutBias.log
+	grep -v "random" ${name}.hg38_not_scaled.bed | grep -v "chrUn" | grep -v "chrEBV" | grep -v "alt" | sort -k1,1 -k2,2n > ${name}_tmp.txt && mv ${name}_tmp.txt ${name}_not_scaled.bed 
+	rm ${name}.hg38_not_scaled.bed
 done
 ```
 
