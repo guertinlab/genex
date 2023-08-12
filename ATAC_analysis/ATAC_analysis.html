@@ -827,8 +827,8 @@ found here: <a href="https://genome.cshlp.org/content/33/3/314.full#sec-16">ATAC
 <p>In this vignette, grey code chunks are performed in bash, blue code chunks are performed in R, and red code chunks are not to be run by you (either we already ran them or will run them using all samples).</p>
 <div id="renaming-ignore-this" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Renaming (ignore this)</h2>
-<pre class="bash bg-danger"><code>mkdir -p ~/genex_ATAC_all
-cd ~/genex_ATAC_all
+<pre class="bash bg-danger"><code>mkdir -p ~/genex_ATAC
+cd ~/genex_ATAC
 for i in *_R1_001.fastq.gz
 do
     name=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;_S&quot; &#39;{print $1}&#39;)
@@ -1062,8 +1062,8 @@ echo -e &quot;chr\tstart\tend\tname\tqvalue&quot; | cat - $peaks | paste -d&#39;
 <h1><span class="header-section-number">7</span> Differential accessibility (START HERE)</h1>
 <div id="download-the-counts-table" class="section level2" number="7.1">
 <h2><span class="header-section-number">7.1</span> Download the counts table</h2>
-<pre class="bash"><code>mkdir -p ~/genex_ATAC_all
-cd ~/genex_ATAC_all
+<pre class="bash"><code>mkdir -p ~/genex_ATAC
+cd ~/genex_ATAC
 wget https://raw.githubusercontent.com/guertinlab/genex/main/ATAC_analysis/Combined_ATAC_peak_counts.txt</code></pre>
 </div>
 <div id="running-deseq2-with-atac-data" class="section level2" number="7.2">
