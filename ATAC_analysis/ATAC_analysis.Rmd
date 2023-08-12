@@ -108,8 +108,8 @@ In this vignette, grey code chunks are performed in bash, blue code chunks are p
 ## Renaming (ignore this)
 
 ```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
-mkdir -p ~/genex_ATAC_all
-cd ~/genex_ATAC_all
+mkdir -p ~/genex_ATAC
+cd ~/genex_ATAC
 for i in *_R1_001.fastq.gz
 do
 	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_S" '{print $1}')
@@ -373,8 +373,8 @@ echo -e "chr\tstart\tend\tname\tqvalue" | cat - $peaks | paste -d'\t' - *peak_co
 
 ## Download the counts table
 ```{r engine='bash', eval=F, echo=TRUE}
-mkdir -p ~/genex_ATAC_all
-cd ~/genex_ATAC_all
+mkdir -p ~/genex_ATAC
+cd ~/genex_ATAC
 wget https://raw.githubusercontent.com/guertinlab/genex/main/ATAC_analysis/Combined_ATAC_peak_counts.txt
 ```
 
