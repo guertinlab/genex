@@ -509,8 +509,8 @@ cp ~/miniconda/bin/plotProfile /usr/local/bin/
 #Make the matrix (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_functional_peaks.bed \
-  -S HEK293T_ZNF143.bigWig \
-  HEK293T_Mock.bigWig \
+  -S HEK293T_ZNF143_repXX_normalized.bigWig \
+  HEK293T_Mock_repXX_normalized.bigWig.bigWig \
   -o matrix_HA_ChIP_ZNF143_peaks.gz --outFileSortedRegions ZNF143_peaks_sorted_for_heatmap.bed
   
 #Make the heatmap
@@ -521,8 +521,8 @@ plotHeatmap -m matrix_HA_ChIP_ZNF143_peaks.gz -out heatmap_HA_ChIP_ZNF143_peaks.
 #Make the matrix (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_other_peaks.bed \
-  -S HEK293T_ZNF143.bigWig \
-  HEK293T_Mock.bigWig \
+  -S HEK293T_ZNF143_repXX_normalized.bigWig \
+  HEK293T_Mock_repXX_normalized.bigWig \
   -o all_matrix_HA_ChIP_ZNF143_peaks.gz --outFileSortedRegions other_ZNF143_peaks_sorted_for_heatmap.bed
   
 #Make the heatmap
@@ -554,7 +554,7 @@ Remember from our CDFs that ZNF143 binding is also proximal to a subset of the g
 #Make the matrix
 computeMatrix reference-point --referencePoint TSS -b 500 -a 500 -p 7 --missingDataAsZero \
   -R treated_repressed_genes.bed treated_activated_genes.bed\
-  -S HEK293T_ZNF143.bigWig \
+  -S HEK293T_ZNF143_repXX_normalized.bigWig \
   -o matrix_HA_ChIP_ZNF143_peaks_TSS.gz --outFileSortedRegions ZNF143_TSS_sorted_for_heatmap.bed
   
 #Make the heatmap
