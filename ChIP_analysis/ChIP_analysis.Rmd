@@ -500,6 +500,8 @@ awk -v cutoff=$cutoff -F"\t" '$5<=cutoff' ZNF143_ChIP_summits_final.bed > ZNF143
 
 # `deeptools` heatmap of ZNF143 functional and non-functional peaks
 
+Note the scale bar differences in the plots. 
+
 ```{r, engine='bash', eval=F, echo=T}
 #Add deeptools commands to your path
 cp ~/miniconda/bin/computeMatrix /usr/local/bin/
@@ -507,6 +509,7 @@ cp ~/miniconda/bin/plotHeatmap /usr/local/bin/
 cp ~/miniconda/bin/plotProfile /usr/local/bin/
 
 #Make the matrix (this can be used for a composite profile as well)
+#swap in the XX for your replicate number
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_functional_peaks.bed \
   -S HEK293T_ZNF143_repXX_normalized.bigWig \
@@ -516,7 +519,7 @@ computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missi
 #Make the heatmap
 plotHeatmap -m matrix_HA_ChIP_ZNF143_peaks.gz -out heatmap_HA_ChIP_ZNF143_peaks.pdf --heatmapHeight 7 \
    --regionsLabel "ZNF143 peaks" --xAxisLabel "Distance from summit" \
-   --samplesLabel "ChIP" "Mock" --colorMap viridis -min 0 -max 700 --whatToShow "heatmap and colorbar" 
+   --samplesLabel "ChIP" "Mock" --colorMap viridis --whatToShow "heatmap and colorbar" 
       
 #Make the matrix (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
@@ -528,12 +531,9 @@ computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missi
 #Make the heatmap
 plotHeatmap -m all_matrix_HA_ChIP_ZNF143_peaks.gz -out other_heatmap_HA_ChIP_ZNF143_peaks.pdf --heatmapHeight 7 \
    --regionsLabel "ZNF143 peaks" --xAxisLabel "Distance from summit" \
-   --samplesLabel "ChIP" "Mock" --colorMap viridis -min 0 -max 700 --whatToShow "heatmap and colorbar" 
+   --samplesLabel "ChIP" "Mock" --colorMap viridis --whatToShow "heatmap and colorbar" 
 
-#so we can see peaks
-plotHeatmap -m all_matrix_HA_ChIP_ZNF143_peaks.gz -out other_heatmap_HA_ChIP_ZNF143_peaks_scaled.pdf --heatmapHeight 7 \
-   --regionsLabel "ZNF143 peaks" --xAxisLabel "Distance from summit" \
-   --samplesLabel "ChIP" "Mock" --colorMap viridis -min 0 -max 14 --whatToShow "heatmap and colorbar" 
+
 ```
 
 ```{r echo=F, fig.align = "center", out.width="50%", out.height="50%", fig.cap="Functional ZNF143 ChIP peaks"}
