@@ -12,7 +12,7 @@
 <meta name="author" content="Thomas G. Scott" />
 <meta name="author" content="Michael J. Guertin" />
 
-<meta name="date" content="2023-08-12" />
+<meta name="date" content="2023-08-16" />
 
 <title>ATAC-seq analysis</title>
 
@@ -704,7 +704,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">ATAC-seq analysis</h1>
 <p class="author-name">Thomas G. Scott and Michael J. Guertin</p>
-<h4 class="date">2023-08-12</h4>
+<h4 class="date">2023-08-16</h4>
 
 </div>
 
@@ -839,15 +839,19 @@ done</code></pre>
 </div>
 <div id="download-your-samples" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> Download your samples</h2>
-<p>We already named the experiments with the trailing name being <code>PE1</code> or <code>PE2</code> for paired end data. You can retrieve the files by substituting you group number (1-8) for <code>XX</code> in the code below. Actually I don’t think these links work / we’ll skip the steps you already performed in the ChIP-seq analysis and start with the differential accessibility analysis in R below.</p>
-<pre class="bash"><code># Make and navigate to the class directory (the -p means don&#39;t overwrite it if it already exists
-cd ~
+<p>We already named the experiments with the trailing name being <code>PE1</code> or <code>PE2</code> for paired end data. You can retrieve the files by substituting you group number (1-8) for <code>X</code> in the code below. Actually I don’t think these links work / we’ll skip the steps you already performed in the ChIP-seq analysis and start with the differential accessibility analysis in R below.</p>
+<pre class="bash"><code>#Make a variable for your group number
+rep=X
+
+#Make and navigate to the class directory (the -p means don&#39;t overwrite it if it already exists
 mkdir -p ~/genex_ATAC/
 cd ~/genex_ATAC/
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DMSO_repXX_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DMSO_repXX_PE2.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DTAG_repXX_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DTAG_repXX_PE2.fastq.gz</code></pre>
+
+#Download the data
+wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DMSO_rep${rep}_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DMSO_rep${rep}_PE2.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DTAG_rep${rep}_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DTAG_rep${rep}_PE2.fastq.gz</code></pre>
 </div>
 <div id="cut-off-the-adapter-with-cutadapt" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Cut off the adapter with <code>cutadapt</code></h2>
