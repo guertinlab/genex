@@ -48,15 +48,20 @@ In this vignette, grey code chunks are performed in bash, blue code chunks are p
 
 ## Download your samples
 
-We already named the experiments with the trailing name being `PE1` or `PE2` for paired end data. You can retrieve the files by substituting you group number (1-8) for `XX` in the code below.
+We already named the experiments with the trailing name being `PE1` or `PE2` for paired end data. You can retrieve the files by substituting you group number (1-8) for `X` in the code below.
 
 ```{r engine='bash', eval=F, echo=TRUE}
-# navigate to the class directory
+#Navigate to the class directory
 cd ~/genex/
-wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_repXX_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_repXX_PE2.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_ZNF143_repXX_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_ZNF143_repXX_PE2.fastq.gz
+
+#Make a variable for your group number
+rep=X
+
+#Download the data
+wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_rep${rep}_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_Mock_rep${rep}_PE2.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_ZNF143_rep${rep}_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_ZNF143_rep${rep}_PE2.fastq.gz
 ```
 
 ## Cut off the adapter with `cutadapt`
@@ -503,7 +508,7 @@ awk -v cutoff=$cutoff -F"\t" '$5<=cutoff' ZNF143_ChIP_summits_final.bed > ZNF143
 
 # `deeptools` heatmap of ZNF143 functional and non-functional peaks
 
-Note the scale bar differences in the plots. 
+Remember to update "X" to your group number. Note the scale bar differences in the plots. 
 
 ```{r, engine='bash', eval=F, echo=T}
 #Add deeptools commands to your path
@@ -511,32 +516,32 @@ cp ~/miniconda/bin/computeMatrix /usr/local/bin/
 cp ~/miniconda/bin/plotHeatmap /usr/local/bin/
 cp ~/miniconda/bin/plotProfile /usr/local/bin/
 
-#Make the matrix (this can be used for a composite profile as well)
-#swap in the XX for your replicate number
+#Make a variable for your group number
+rep=X
+
+#Make the matrix for the functional peaks (this can be used for a composite profile as well)
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_functional_peaks.bed \
-  -S HEK293T_ZNF143_repXX_normalized.bigWig \
-  HEK293T_Mock_repXX_normalized.bigWig.bigWig \
+  -S HEK293T_ZNF143_rep${rep}_normalized.bigWig \
+  HEK293T_Mock_rep${rep}_normalized.bigWig.bigWig \
   -o matrix_HA_ChIP_ZNF143_peaks.gz --outFileSortedRegions ZNF143_peaks_sorted_for_heatmap.bed
   
-#Make the heatmap
+#Make the heatmap for the functional peaks
 plotHeatmap -m matrix_HA_ChIP_ZNF143_peaks.gz -out heatmap_HA_ChIP_ZNF143_peaks.pdf --heatmapHeight 7 \
    --regionsLabel "ZNF143 peaks" --xAxisLabel "Distance from summit" \
    --samplesLabel "ChIP" "Mock" --colorMap viridis --whatToShow "heatmap and colorbar" 
       
-#Make the matrix (this can be used for a composite profile as well)
+#Make the matrix for the other peaks
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_other_peaks.bed \
-  -S HEK293T_ZNF143_repXX_normalized.bigWig \
-  HEK293T_Mock_repXX_normalized.bigWig \
+  -S HEK293T_ZNF143_rep${rep}_normalized.bigWig \
+  HEK293T_Mock_rep${rep}_normalized.bigWig \
   -o all_matrix_HA_ChIP_ZNF143_peaks.gz --outFileSortedRegions other_ZNF143_peaks_sorted_for_heatmap.bed
   
-#Make the heatmap
+#Make the heatmap for the other peaks
 plotHeatmap -m all_matrix_HA_ChIP_ZNF143_peaks.gz -out other_heatmap_HA_ChIP_ZNF143_peaks.pdf --heatmapHeight 7 \
    --regionsLabel "ZNF143 peaks" --xAxisLabel "Distance from summit" \
    --samplesLabel "ChIP" "Mock" --colorMap viridis --whatToShow "heatmap and colorbar" 
-
-
 ```
 
 ```{r echo=F, fig.align = "center", out.width="50%", out.height="50%", fig.cap="Functional ZNF143 ChIP peaks"}
@@ -557,7 +562,7 @@ Remember from our CDFs that ZNF143 binding is also proximal to a subset of the g
 #Make the matrix
 computeMatrix reference-point --referencePoint TSS -b 500 -a 500 -p 7 --missingDataAsZero \
   -R treated_repressed_genes.bed treated_activated_genes.bed\
-  -S HEK293T_ZNF143_repXX_normalized.bigWig \
+  -S HEK293T_ZNF143_rep${rep}_normalized.bigWig \
   -o matrix_HA_ChIP_ZNF143_peaks_TSS.gz --outFileSortedRegions ZNF143_TSS_sorted_for_heatmap.bed
   
 #Make the heatmap
