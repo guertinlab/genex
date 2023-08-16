@@ -120,17 +120,21 @@ done
 ```
 ## Download your samples
 
-We already named the experiments with the trailing name being `PE1` or `PE2` for paired end data. You can retrieve the files by substituting you group number (1-8) for `XX` in the code below. Actually I don't think these links work / we'll skip the steps you already performed in the ChIP-seq analysis and start with the differential accessibility analysis in R below.
+We already named the experiments with the trailing name being `PE1` or `PE2` for paired end data. You can retrieve the files by substituting you group number (1-8) for `X` in the code below. Actually I don't think these links work / we'll skip the steps you already performed in the ChIP-seq analysis and start with the differential accessibility analysis in R below.
 
 ```{r engine='bash', eval=F, echo=TRUE}
-# Make and navigate to the class directory (the -p means don't overwrite it if it already exists
-cd ~
+#Make a variable for your group number
+rep=X
+
+#Make and navigate to the class directory (the -p means don't overwrite it if it already exists
 mkdir -p ~/genex_ATAC/
 cd ~/genex_ATAC/
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DMSO_repXX_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DMSO_repXX_PE2.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DTAG_repXX_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DTAG_repXX_PE2.fastq.gz
+
+#Download the data
+wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DMSO_rep${rep}_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DMSO_rep${rep}_PE2.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DTAG_rep${rep}_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DTAG_rep${rep}_PE2.fastq.gz
 ```
 
 ## Cut off the adapter with `cutadapt`
