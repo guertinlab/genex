@@ -174,7 +174,7 @@ We perform alignments just as we have previously, but
 with many modifications. Mitochondrial DNA is preferentially
 targeted by transposase because it is more accessible, so we first
 align to `chrM`. However, we only need to align the PE1 read to `chrM`
-to save time, then we sort the file, and use `samtools` and the `-f`
+to save time, then we sort the file, use `samtools collate` to discard unpaired reads, and use `samtools` and the `-f`
 option with the flag `0x4` to output the reads that do NOT align to
 the mitochondrial genome.
 
