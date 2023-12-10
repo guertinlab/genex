@@ -1282,9 +1282,12 @@ rnge = sapply(strsplit(rownames(matched.all), &quot;:&quot;), &quot;[&quot;, 2)
 start = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 1)) +100
 end = as.numeric(sapply(strsplit(rnge, &quot;-&quot;), &quot;[&quot;, 2)) -100
 
-write.table(cbind(chr, start, end), file = &quot;ZNF143_degron_ATAC_matched.bed&quot;, quote = FALSE,
-col.names =FALSE, row.names=FALSE, sep = &quot;\t&quot;)
 
+matched.file = cbind(chr, start, end)
+matched.file = unique(matched.file)
+
+write.table(matched.file, file = &quot;ZNF143_degron_ATAC_matched.bed&quot;, quote = FALSE,
+col.names =FALSE, row.names=FALSE, sep = &quot;\t&quot;)
                                         #I made this chart manually with intersectBed-v outputs (need to automate)
 
 x = read.table(&#39;barchart_ATAC_overlap_ZNF143.txt&#39;, sep = &quot;\t&quot;, header=TRUE)
