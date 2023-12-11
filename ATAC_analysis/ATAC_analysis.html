@@ -1329,7 +1329,7 @@ value is meaningless without a comparison. We could compare to
 fastaFromBed -fi $genome -bed ZNF143_degron_ATAC_down.bed -fo ZNF143_degron_ATAC_down.fasta
 fastaFromBed -fi $genome -bed ZNF143_degron_ATAC_matched.bed -fo ZNF143_degron_ATAC_matched.fasta
 
-meme -oc ZNF143.meme_output -objfun classic -evt 0.01 -searchsize 0 -minw 5 -maxw 15 -revcomp -dna -markov_order 2 -maxsize 100000000 ZNF143_degron_ATAC_down.fasta
+meme -oc ZNF143.meme_output -objfun classic -nmotifs 2 -searchsize 0 -minw 5 -maxw 15 -revcomp -dna -markov_order 2 -maxsize 100000000 ZNF143_degron_ATAC_down.fasta
 
 mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ZNF143_degron_ATAC_down.fasta &gt; mast_hits_decreased.txt
 mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ZNF143_degron_ATAC_matched.fasta &gt; mast_hits_unchanged.txt
