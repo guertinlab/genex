@@ -499,7 +499,7 @@ ma.plot.lattice <- function(ma.df, filename = 'file.name',
                             col = c("grey80", "grey20" , "grey20", "#2290cf", "#ce228e"))
 {
     desired_order <- c("All Other Genes", "Matched to Activated", "Matched to Repressed", "Repressed", "Activated")
-    ma.df$category <- factor(DE.results.lattice$category, levels = desired_order)
+    ma.df$category <- factor(ma.df$category, levels = desired_order)
   pdf(paste("MA_plot_", filename, ".pdf", sep=''), 
       useDingbats = FALSE, width=3.83, height=3.83);
   print(xyplot(ma.df$log2FoldChange ~ log(ma.df$baseMean, base=10),
@@ -514,8 +514,9 @@ ma.plot.lattice <- function(ma.df, filename = 'file.name',
   }
 
 
+
 # data processing and plotting
-setwd("/Users/guertinlab/Desktop/ZNF143_ATAC/")
+setwd("~/ZNF143_ATAC/")
 x = read.table('Combined_ATAC_peak_counts.txt', sep = "\t", check.names=FALSE, header=TRUE)
 rownames(x) = paste0(x[,1], ":", x[,2], "-", x[,3])
 peak_name = x[,4]
@@ -557,7 +558,7 @@ head(DE.results)
 
 DE.results.lattice = categorize.DEseq.df(DE.results, changed.padj = 0.1)
 
-ma.plot.lattice(DE.results.lattice, filename = "ATAC_ZNF143_30min_accessiblity_MA.pdf")
+ma.plot.lattice(DE.results.lattice, filename = "ATAC_ZNF143_30min_accessiblity_MA")
 
 
 matched.all = DE.results.lattice[DE.results.lattice$category == 
@@ -618,12 +619,12 @@ plot.barchart(x, filename = "barchart_ATAC_overlap_ZNF143.pdf")
 
 ```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="PCA Analysis"}
 library(knitr)
-knitr::include_graphics("PCA_plot_30min_ZNF143_degradation.png") 
+knitr::include_graphics("ATAC_PCA_plot_30min_ZNF143_degradation.png") 
 ```
 
 ```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="MA plot"}
 library(knitr)
-knitr::include_graphics("MA_plot_30min_ZNF143_degradation.png") 
+knitr::include_graphics("MA_plot_ATAC_ZNF143_30min_accessiblity_MA.png") 
 ```
 
 # De novo motif analysis of differentially accessible peaks
@@ -637,13 +638,13 @@ value is meaningless without a comparison. We could compare to
 ```{r engine='bash', eval=F, echo=TRUE}
 genome=~/genex/genomes/hg38.fa
 
-fastaFromBed -fi $genome -bed ATAC_decreased_ZNF143_degron.bed -fo ATAC_decreased_ZNF143_degron.fasta
-fastaFromBed -fi $genome -bed ATAC_unchanged_ZNF143_degron.bed -fo ATAC_unchanged_ZNF143_degron.fasta
+fastaFromBed -fi $genome -bed ZNF143_degron_ATAC_down.bed -fo ZNF143_degron_ATAC_down.fasta
+fastaFromBed -fi $genome -bed ZNF143_degron_ATAC_matched.bed -fo ZNF143_degron_ATAC_matched.fasta
 
-meme -oc ZNF143.meme_output -objfun classic -evt 0.01 -searchsize 0 -minw 5 -maxw 15 -revcomp -dna -markov_order 2 -maxsize 100000000 ATAC_decreased_ZNF143_degron.fasta
+meme -oc ZNF143.meme_output -objfun classic -evt 0.01 -searchsize 0 -minw 5 -maxw 15 -revcomp -dna -markov_order 2 -maxsize 100000000 ZNF143_degron_ATAC_down.fasta
 
-mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ATAC_decreased_ZNF143_degron.fasta > mast_hits_decreased.txt
-mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ATAC_unchanged_ZNF143_degron.fasta > mast_hits_unchanged.txt
+mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ZNF143_degron_ATAC_down.fasta > mast_hits_decreased.txt
+mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ZNF143_degron_ATAC_matched.fasta > mast_hits_unchanged.txt
 
 cut -f 1 -d " " mast_hits_decreased.txt | sort | uniq | grep -v "#" > unique_mast_hits_decreased.txt 
 wc -l unique_mast_hits_decreased.txt
