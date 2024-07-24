@@ -269,9 +269,9 @@ do
 done
 ```
 
-# Call peaks with `macs2`
+# Call peaks with `macs32`
 
-We next call peaks with `macs2` using all the `*.hg38.bam` files. We
+We next call peaks with `macs3` using all the `*.hg38.bam` files. We
 already removed replicate duplicates, so any true duplicates arose
 independently. We could call peaks in individual replicates and take
 the union or intersect or there are many other ways to call
@@ -282,12 +282,9 @@ should find the important peaks where we have the power to detect changes in
 accessibility. 
 
 ```{r engine='bash', eval=F, echo=TRUE}
-#Install macs2
-pip install MACS2
-
 #cp */*.hg38.bam ./
 mkdir temp_macs
-macs2 callpeak --call-summits -t *.hg38.bam -n ZNF143_degron_ATAC -g hs -q 0.01 --keep-dup all -f BAM --nomodel --shift -100 --extsize 200 --tempdir temp_macs
+macs3 callpeak --call-summits -t *.hg38.bam -n ZNF143_degron_ATAC -g hs -q 0.01 --keep-dup all -f BAM --nomodel --shift -100 --extsize 200 --tempdir temp_macs
 #rm *.hg38.bam
 ```
 ## Removing peaks on contigs and within blacklisted regions
