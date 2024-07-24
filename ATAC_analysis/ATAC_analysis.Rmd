@@ -269,7 +269,7 @@ do
 done
 ```
 
-# Call peaks with `macs32`
+# Call peaks with `macs3`
 
 We next call peaks with `macs3` using all the `*.hg38.bam` files. We
 already removed replicate duplicates, so any true duplicates arose
