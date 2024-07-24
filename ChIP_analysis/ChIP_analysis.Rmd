@@ -221,14 +221,8 @@ We will take the file `${name}_ucsc.bedGraph` and upload to UCSC.
 The next step is to use the aligned reads to call peaks. The code below will work if you have 1 replicate or many replicates. You will call peaks with your single replicate. We will combine the replicates and use the same command to get a peak set that uses all the replicates. We empirically found that this method typically captures the peaks of interest. If we were to call peaks in each replicate, we could combine peaks in various ways. The lower intensity peaks are the peaks that will change between replicates and these tend to be less important biologically. We believe it is important to have a single peak set per factor and we tend to be permissive with calling peaks and then try to determine which peaks to carry forward. Here we will determine an intensity threshold for peaks by only considering intensity quantiles of peaks that are enriched near genes that are changing expression when ZNF143 is degraded. In the past I have used the presence of a sequence motif or arbitrarily set a threshold for 2 orders of magnitude dynamic range to establish a threshold. 
 
 ```{r engine='bash', eval=F, echo=TRUE}
-# this is to activate the macs2 module on the CSHL computers
-conda activate macs2
-# make a directory to store temporary files
-mkdir temp_macs
 # call peaks 
-macs2 callpeak --call-summits -t HEK293T_ZNF143_rep*.sorted.hg38.bam -c HEK293T_Mock_rep*.sorted.hg38.bam -n ZNF143_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs
-# deactivate the module
-conda deactivate
+macs3 callpeak --call-summits -t HEK293T_ZNF143_rep*.sorted.hg38.bam -c HEK293T_Mock_rep*.sorted.hg38.bam -n ZNF143_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs
 ```
 ## Removing peaks on contigs and within blacklisted regions
 
@@ -511,11 +505,6 @@ awk -v cutoff=$cutoff -F"\t" '$5<=cutoff' ZNF143_ChIP_summits_final.bed > ZNF143
 Remember to update "X" to your group number. Note the scale bar differences in the plots. 
 
 ```{r, engine='bash', eval=F, echo=T}
-#Add deeptools commands to your path
-cp ~/miniconda/bin/computeMatrix /usr/local/bin/
-cp ~/miniconda/bin/plotHeatmap /usr/local/bin/
-cp ~/miniconda/bin/plotProfile /usr/local/bin/
-
 #Make a variable for your group number
 rep=X
 
