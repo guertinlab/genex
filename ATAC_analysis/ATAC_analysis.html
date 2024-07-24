@@ -13,7 +13,7 @@
 <meta name="author" content="Jinhong Dong" />
 <meta name="author" content="Michael J. Guertin" />
 
-<meta name="date" content="2023-12-11" />
+<meta name="date" content="2024-07-24" />
 
 <title>ATAC-seq analysis</title>
 
@@ -705,7 +705,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">ATAC-seq analysis</h1>
 <p class="author-name">Thomas G. Scott, Jinhong Dong and Michael J. Guertin</p>
-<h4 class="date">2023-12-11</h4>
+<h4 class="date">2024-07-24</h4>
 
 </div>
 
@@ -724,7 +724,7 @@ function toggle_visibility(id1) {
 <li><a href="#align-to-the-human-genome" id="toc-align-to-the-human-genome"><span class="toc-section-number">4.5</span> Align to the human genome</a></li>
 <li><a href="#convert-aligned-data-to-a-bed-file" id="toc-convert-aligned-data-to-a-bed-file"><span class="toc-section-number">4.6</span> Convert aligned data to a <code>bed</code> file</a></li>
 </ul></li>
-<li><a href="#call-peaks-with-macs2" id="toc-call-peaks-with-macs2"><span class="toc-section-number">5</span> Call peaks with <code>macs2</code></a>
+<li><a href="#call-peaks-with-macs32" id="toc-call-peaks-with-macs32"><span class="toc-section-number">5</span> Call peaks with <code>macs32</code></a>
 <ul>
 <li><a href="#removing-peaks-on-contigs-and-within-blacklisted-regions" id="toc-removing-peaks-on-contigs-and-within-blacklisted-regions"><span class="toc-section-number">5.1</span> Removing peaks on contigs and within blacklisted regions</a></li>
 </ul></li>
@@ -969,9 +969,9 @@ do
 done</code></pre>
 </div>
 </div>
-<div id="call-peaks-with-macs2" class="section level1" number="5">
-<h1><span class="header-section-number">5</span> Call peaks with <code>macs2</code></h1>
-<p>We next call peaks with <code>macs2</code> using all the <code>*.hg38.bam</code> files. We
+<div id="call-peaks-with-macs32" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Call peaks with <code>macs32</code></h1>
+<p>We next call peaks with <code>macs3</code> using all the <code>*.hg38.bam</code> files. We
 already removed replicate duplicates, so any true duplicates arose
 independently. We could call peaks in individual replicates and take
 the union or intersect or there are many other ways to call
@@ -980,12 +980,9 @@ most biologically relevant peaks will be found by most peak callers, I
 am content with just a single peak calling using all the data. We
 should find the important peaks where we have the power to detect changes in
 accessibility.</p>
-<pre class="bash"><code>#Install macs2
-pip install MACS2
-
-#cp */*.hg38.bam ./
+<pre class="bash"><code>#cp */*.hg38.bam ./
 mkdir temp_macs
-macs2 callpeak --call-summits -t *.hg38.bam -n ZNF143_degron_ATAC -g hs -q 0.01 --keep-dup all -f BAM --nomodel --shift -100 --extsize 200 --tempdir temp_macs
+macs3 callpeak --call-summits -t *.hg38.bam -n ZNF143_degron_ATAC -g hs -q 0.01 --keep-dup all -f BAM --nomodel --shift -100 --extsize 200 --tempdir temp_macs
 #rm *.hg38.bam</code></pre>
 <div id="removing-peaks-on-contigs-and-within-blacklisted-regions" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Removing peaks on contigs and within blacklisted regions</h2>
