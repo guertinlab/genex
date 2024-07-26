@@ -222,7 +222,7 @@ The next step is to use the aligned reads to call peaks. The code below will wor
 
 ```{r engine='bash', eval=F, echo=TRUE}
 # call peaks  
-macs3 callpeak --call-summits -t HEK293T_ZNF143_rep*.sorted.hg38.bam -c HEK293T_Mock_rep*.sorted.hg38.bam -n ZNF143_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel --tempdir temp_macs
+macs3 callpeak --call-summits -t HEK293T_ZNF143_rep*.sorted.hg38.bam -c HEK293T_Mock_rep*.sorted.hg38.bam -n ZNF143_ChIP -g hs -q 0.01 --keep-dup all -f BAMPE --nomodel
 ```
 ## Removing peaks on contigs and within blacklisted regions
 
