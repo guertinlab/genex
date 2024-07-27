@@ -397,6 +397,11 @@ We degraded ZNF143 for 30 minutes and performed PRO-seq. We can use these data t
 Download the activated, repressed, and matched files from `https://github.com/guertinlab/genex/tree/main/ChIP_analysis`. Concatenate these files into a list of activated and repressed genes that change upon ZNF143 depletion and their matched genes.
 
 ```{r engine='bash', eval=F, echo=TRUE}
+wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/treated_activated_genes.bed
+wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/treated_repressed_genes.bed
+wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/treated_activated_matched_genes.bed
+wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/treated_repressed_matched_genes.bed
+
 cat treated_activated_genes.bed treated_activated_matched_genes.bed treated_repressed_genes.bed treated_repressed_matched_genes.bed > /Users/admin/genex/HEK_ZNF143_gene_annotations.bed
 ```
 
