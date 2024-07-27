@@ -292,6 +292,7 @@ The `mapBed` subcommand from `bedtools` counts the BED file from the `seqOutBias
 #We did this using the peaks called with all the samples (don't run this)
 name=ZNF143_ChIP
 sort -k1,1 -k2,2n ${name}_summit_400window.bed > ${name}_summit_window_sorted.bed
+wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/ZNF143_functional_peaks.bed
 intersectBed -u -a ZNF143_ChIP_summit_window_sorted.bed -b ZNF143_functional_peaks.bed > ZNF143_ChIP_functional_summit_window_sorted.bed
 
 #You can download the file here
