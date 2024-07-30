@@ -59,7 +59,7 @@ rep=X
 
 #Download the data
 wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_Mock_rep${rep}_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/cshl_2024//HEK293T_Mock_rep${rep}_PE2.fastq.gz
+wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_Mock_rep${rep}_PE2.fastq.gz
 wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_ZNF143_rep${rep}_PE1.fastq.gz
 wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_ZNF143_rep${rep}_PE2.fastq.gz
 ```
