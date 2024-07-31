@@ -261,11 +261,11 @@ fastaFromBed -fi $genome -bed ${name}_summit_100window.bed -fo ${name}_summit_10
 
 meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -searchsize 0 -minw 10 -maxw 15 -revcomp -dna -markov_order 3 -maxsize 100000000 ${name}_summit_100window.fasta
 
-#Just did the top 2000 peaks to make it faster
+#I just did the top 2000 peaks to make it faster
 sort -nrk5,5 ${name}_summit_100window.bed | head -n 2000 > ${name}_top2000_summit_100window.bed
 name=${name}_top2000
 fastaFromBed -fi $genome -bed ${name}_summit_100window.bed -fo ${name}_summit_100window.fasta
-meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -searchsize 0 -minw 10 -maxw 15 -revcomp -dna -markov_order 3 -maxsize 100000000 ${name}_summit_100window.fasta
+meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -searchsize 0 -minw 10 -maxw 30 -revcomp -dna -markov_order 3 -maxsize 100000000 ${name}_summit_100window.fasta
 ```
 
 When we did this with the top 2000 most significant peaks using all replicates, we found 2 motifs, both of which match with the ZNF143 motif:
