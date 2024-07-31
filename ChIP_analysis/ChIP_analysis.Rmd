@@ -270,7 +270,7 @@ meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -sea
 
 When we did this with the top 2000 most significant peaks using all replicates, we found 2 motifs, both of which match with the ZNF143 motif:
 
-```{r echo=F, fig.align = "center", out.width="50%", out.height="50%", fig.cap="First de novo identified motif matched to the THAP11 motif with TOMTOM"}
+```{r echo=F, fig.align = "center", out.width="300px", fig.cap="First de novo identified motif matched to the THAP11 motif with TOMTOM"}
 #library(knitr)
 knitr::include_graphics("THAP11_TOMTOM.png") 
 ```
