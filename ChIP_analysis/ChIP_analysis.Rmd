@@ -189,8 +189,6 @@ data is weighted twice as much in the final visualization. We will perform this 
 #!/bin/bash
 sizes=~/genex/genomes/hg38.chrom.sizes
 
-#conda install -c bioconda ucsc-bigwigmerge
-
 for i in *rep1_PE1.fastq.gz
 do
     nm=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_PE1.fastq.gz" '{print $1}')
@@ -214,7 +212,7 @@ done
 
 # Using the UCSC genome browser
 
-We will take the file `${name}_ucsc.bedGraph` and upload to UCSC.
+We will take the file `${name}_header_normalized.bedGraph` and upload to UCSC.
 
 # Peak calling
 
