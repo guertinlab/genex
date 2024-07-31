@@ -48,7 +48,7 @@ In this vignette, grey code chunks are performed in bash, blue code chunks are p
 
 ## Download your samples
 
-We already named the experiments with the trailing name being `PE1` or `PE2` for paired end data. You can retrieve the files by substituting you group number (1-8) for `X` in the code below.
+We already named the experiments with the trailing name being `PE1` or `PE2` for paired end data. You can retrieve the files by substituting you group number (1-8) for `X` in the code below. 
 
 ```{r engine='bash', eval=F, echo=TRUE}
 #Navigate to the class directory
