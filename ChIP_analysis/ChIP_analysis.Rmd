@@ -427,7 +427,7 @@ source('https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/cd
 col.lines = c("#FF0000", "grey60")
 
 gene.file=read.table(file = "/Users/admin/genex/HEK_ZNF143_gene_annotations.bed", sep="\t", header=FALSE)
-cat = "Repressed"
+cat = "Down"
 
 for (chip.peak in Sys.glob(file.path("/Users/admin/genex/quantile*bed"))) {
     print(chip.peak)
@@ -459,8 +459,8 @@ plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorR
 quantiles = quantile(peak.intensities$V5, probs = seq(.05, 1.00, by = .05))
 write.table(quantiles[16][[1]], file = "cutoff.txt", col.names = F, row.names = F, quote = F)
 
-#Activated genes
-cat = "Activated"
+#Up genes
+cat = "Up"
 
 for (chip.peak in Sys.glob(file.path("/Users/admin/genex/quantile*bed"))) {
     print(chip.peak)
@@ -489,6 +489,11 @@ levels = levels(factor(df.cdf$status))
 levels = c(levels[grepl("Matched", levels)], levels[!grepl("Matched", levels)])
 df.cdf$status = factor(df.cdf$status, levels = levels)
 plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(18), colorRampPalette(c("blue", "light blue"))(2)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
+
+df.up = cdf.deseq.df(genes = gene.file, chip.peaks=read.table("ZNF143_ChIP_summits_final.bed", header=FALSE), cat = "Up")
+df.down = cdf.deseq.df(genes = gene.file, chip.peaks=read.table("ZNF143_ChIP_summits_final.bed", header=FALSE), cat = "Down")
+df.up.down = rbind(df.up, df.down)
+plot_cdf(df.act.rep, tf = "ZNF143", cat = "")
 ```
 
 ```{r echo=F, fig.align = "center", out.width="400px", out.height="100%", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
