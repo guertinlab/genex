@@ -36,7 +36,7 @@ pre[class] {
 
 # ChIP-seq experiments
 
-ChIP-seq measures protein abundance on DNA and one can quantify protein modifications if an antibody to the modification is available. 
+ChIP-seq measures protein abundance on DNA and one can quantify protein modifications if an antibody to the modification is available.  
 
 # ChIP-seq experimental design
 
