@@ -273,15 +273,11 @@ meme -oc ${name}_motif.meme_output -nmotifs 2 -objfun classic -csites 20000 -sea
 
 When we did this with the top 2000 most significant peaks using all replicates, we found 2 motifs, both of which match with the ZNF143 motif:
 
-```{r echo=F, fig.align = "center", out.width="300px", fig.cap="First de novo identified motif matched to the THAP11 motif with TOMTOM"}
+```{r echo=F, fig.align = "center", out.width="400px", fig.cap="First de novo identified motif matched to the THAP11 motif with TOMTOM"}
 #library(knitr)
 knitr::include_graphics("ZNF143_course.png") 
 ```
 
-```{r echo=F, fig.align = "center", out.width="50%", out.height="50%", fig.cap="Second de novo identified motif matched to the ZNF143 motif with TOMTOM"}
-#library(knitr)
-knitr::include_graphics("ZNF143_course.png") 
-```
 # Fraction of Reads in Peaks (FRiP) 
 
 A common metric to assess the quality of ChIP-seq data is fraction of reads in peaks. This can be informative, but let's go in depth about this metric. If we reduce the stringency of peak calling, then we have more genomic regions and FRiP increases—so we can have any number of FRiP score for one set of data. Also peak sets change between datasets. If we call peaks with two different replicates and call peaks in each, then we have two different peaks sets and it is not fair to compare FRiP between them. To avoid this we call a set of universal peaks for a factor; recall that we just use all `bam` files and perform one peak calling step. Next we count reads in this universal peak set for all replicates and we can directly compare FRiP between replicates.    
