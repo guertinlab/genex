@@ -574,12 +574,12 @@ plotHeatmap -m matrix_HA_ChIP_ZNF143_peaks_TSS.gz -out heatmap_HA_ChIP_ZNF143_pe
 plotProfile -m matrix_HA_ChIP_ZNF143_peaks_TSS.gz -out profile_HA_ChIP_ZNF143_peaks_TSS.pdf --regionsLabel "Down" "Up" --samplesLabel "ZNF143 ChIP Signal"
 ```
 
-```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="Heatmap of ZNF143 binding intensity around TSS's for genes repressed and activated upon ZNF143 depletion"}
+```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="Heatmap of ZNF143 binding intensity around TSS's for down and up genes upon ZNF143 depletion"}
 library(knitr)
 knitr::include_graphics("heatmap_HA_ChIP_ZNF143_peaks_TSS.png") 
 ```
 
-```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="Profile of ZNF143 binding intensity around TSS's for genes repressed and activated upon ZNF143 depletion"}
+```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="Profile of ZNF143 binding intensity around TSS's for down and up genes upon ZNF143 depletion"}
 library(knitr)
 knitr::include_graphics("profile_HA_ChIP_ZNF143_peaks_TSS.png") 
 ```
