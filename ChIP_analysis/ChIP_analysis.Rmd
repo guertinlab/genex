@@ -255,7 +255,7 @@ The coordinate `bed` file is converted to a sequence `fasta` file, then we perfo
 ```{r, engine='bash', eval=F, echo=T}
 name=ZNF143_ChIP
 genome=~/genex/genomes/hg38.fa
-sizes=~/genex/genomes/hg38.chrom.sizes
+sizes=~/genex/genomes/hg38.chrom.sizes 
 
 fastaFromBed -fi $genome -bed ${name}_summit_100window.bed -fo ${name}_summit_100window.fasta
 
