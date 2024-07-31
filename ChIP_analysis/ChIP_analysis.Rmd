@@ -567,11 +567,11 @@ computeMatrix reference-point --referencePoint TSS -b 500 -a 500 -p 7 --missingD
   
 #Make the heatmap
 plotHeatmap -m matrix_HA_ChIP_ZNF143_peaks_TSS.gz -out heatmap_HA_ChIP_ZNF143_peaks_TSS.pdf --heatmapHeight 7 \
-	--regionsLabel "Repressed" "Activated" --xAxisLabel "Distance from TSS" --samplesLabel "ZNF143 ChIP Signal" \
+	--regionsLabel "Down" "Up" --xAxisLabel "Distance from TSS" --samplesLabel "ZNF143 ChIP Signal" \
 	--colorMap viridis -min 0 --whatToShow "heatmap and colorbar" --linesAtTickMarks
 
 #Plot the profile
-plotProfile -m matrix_HA_ChIP_ZNF143_peaks_TSS.gz -out profile_HA_ChIP_ZNF143_peaks_TSS.pdf --regionsLabel "Repressed" "Activated" --samplesLabel "ZNF143 ChIP Signal"
+plotProfile -m matrix_HA_ChIP_ZNF143_peaks_TSS.gz -out profile_HA_ChIP_ZNF143_peaks_TSS.pdf --regionsLabel "Down" "Up" --samplesLabel "ZNF143 ChIP Signal"
 ```
 
 ```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="Heatmap of ZNF143 binding intensity around TSS's for genes repressed and activated upon ZNF143 depletion"}
