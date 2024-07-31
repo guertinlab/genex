@@ -334,22 +334,22 @@ More appropriately, the following analyses provide a range of intensity values o
 
 Navigate to your `/Users/admin/genex` folder and open `R`. We performed PRO-seq after 30 minutes of ZNF143 degradation and identified activated and repressed genes. We also found comparable genes that are unchanged, but matched for the expression levels. We are going to ask "for each of these genes sets, how far away do we have to move from the transcription start site to find the first ZNF143 peaks in each quantile?"
 
-```{r echo=F, fig.align = "center", out.width="50%", out.height="50%", fig.cap="TFs tend to act near their gene targets"}
+```{r echo=F, fig.align = "center", out.width="400px", fig.cap="TFs tend to act near their gene targets"}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX.png") 
 ```
 
-```{r echo=F, fig.align = "center", out.width="50%", out.height="50%", fig.cap="The CDF metric quantifies how far away we need to go from the class of genes to find the first TF binding site and plots the cumulative distribution."}
+```{r echo=F, fig.align = "center", out.width="400px", fig.cap="The CDF metric quantifies how far away we need to go from the class of genes to find the first TF binding site and plots the cumulative distribution."}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX_2.png") 
 ```
 
-```{r echo=F, fig.align = "center", out.width="50%", out.height="50%", fig.cap="TF binding sites are closer to their direct gene targets."}
+```{r echo=F, fig.align = "center", out.width="400px", fig.cap="TF binding sites are closer to their direct gene targets."}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX_3.png") 
 ```
 
-```{r echo=F, fig.align = "center", out.width="50%", out.height="50%", fig.cap="A classic example is the Estrogen receptor, which is an activator that is stimulated by the addition of estrogen. "}
+```{r echo=F, fig.align = "center", out.width="400px",  fig.cap="A classic example is the Estrogen receptor, which is an activator that is stimulated by the addition of estrogen. "}
 #library(knitr)
 knitr::include_graphics("230731_CSHL_GeneX_4.png") 
 ```
