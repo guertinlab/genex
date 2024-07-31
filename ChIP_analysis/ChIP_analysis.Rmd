@@ -488,14 +488,17 @@ for (chip.peak in Sys.glob(file.path("/Users/admin/genex/quantile*bed"))) {
 levels = levels(factor(df.cdf$status))
 levels = c(levels[grepl("Matched", levels)], levels[!grepl("Matched", levels)])
 df.cdf$status = factor(df.cdf$status, levels = levels)
-plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(20)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
+plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(18), colorRampPalette(c("blue", "light blue"))(2)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
 ```
 
-```{r echo=F, fig.align = "center", out.width="100%", out.height="100%", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
+```{r echo=F, fig.align = "center", out.width="400px", out.height="100%", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
 #library(knitr)
 knitr::include_graphics("ZNF143_FIG_cdf_compare_Reg_classes_Repressed.png") 
 ```
-
+```{r echo=F, fig.align = "center", out.width="400px", out.height="100%", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
+#library(knitr)
+knitr::include_graphics("ZNF143_FIG_cdf_compare_Reg_classes_Repressed.png") 
+```
 ## Look at the plots and decide a peak threshold
 
 You can employ a Kolmogorov–Smirnov, which is an overused statistical test that will provide a test statistic p-value for pairwise comparison of CDF curves. However, in this course we will just decide on a threshold by looking at the plots one by one. 
