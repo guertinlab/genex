@@ -544,14 +544,14 @@ plotHeatmap -m all_matrix_HA_ChIP_ZNF143_peaks.gz -out other_heatmap_HA_ChIP_ZNF
    --samplesLabel "ChIP" "Mock" --colorMap viridis --whatToShow "heatmap and colorbar" 
 ```
 
-```{r echo=F, fig.align = "center", out.width="50%", out.height="50%", fig.cap="Functional ZNF143 ChIP peaks"}
+```{r echo=F, fig.align = "center", out.width="500px", fig.cap="More likely to be functional ZNF143 ChIP peaks"}
 #library(knitr)
-knitr::include_graphics("heatmap_HA_ChIP_ZNF143_peaks1024_1.png") 
+knitr::include_graphics("heatmap_HA_ChIP_ZNF143_peaks.png") 
 ```
 
-```{r echo=F, fig.align = "center", out.width="50%", out.height="50%", fig.cap="Non-functional ZNF143 ChIP peaks (note the color range)"}
+```{r echo=F, fig.align = "center", out.width="500px", fig.cap="Less likely to be functional ZNF143 ChIP peaks (note the color range)"}
 #library(knitr)
-knitr::include_graphics("other_heatmap_HA_ChIP_ZNF143_peaks_scaled1024_1.png")
+knitr::include_graphics("other_heatmap_HA_ChIP_ZNF143_peaks.png")
 ```
 
 # `deeptools` heatmap of ZNF143 binding intensity around TSS's
