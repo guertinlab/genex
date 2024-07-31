@@ -40,7 +40,7 @@ ChIP-seq measures protein abundance on DNA and one can quantify protein modifica
 
 # ChIP-seq experimental design
 
-We performed ChIP-seq of HA-tagged ZNF143 in HEK-293T cells with mock IP (no antibody) as a control. 
+We performed ChIP-seq of HA-tagged ZNF143 in HEK-293T cells with mock IP (no antibody) as a control.  
 
 # ChIP-seq analysis
 
