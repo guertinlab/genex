@@ -183,7 +183,8 @@ read-depth normalize before we combine the signal from each
 replicate. Otherwise, we would be weighting replicates differently;
 for example, if a library is sequenced to twice the read depth and we
 combine first then read depth normalize, then the more high coverage
-data is weighted twice as much in the final visualization. We will perform this step for the class, since you are all operating on your individual replicates independently.
+data is weighted twice as much in the final visualization. We will perform this step for the class, since you are all operating on your individual replicates independently. 
+
 
 ```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 #!/bin/bash
@@ -212,7 +213,7 @@ done
 
 # Using the UCSC genome browser
 
-We will take the file `${name}_header_normalized.bedGraph` and upload to UCSC.
+We will take the file `${name}_header_normalized.bedGraph` and upload to UCSC. We can only upload `bedGraph` files with 50 million lines to UCSC, so I truncated the files. There is missing data for `chr7`, `chr8`, and `chr9`.
 
 # Peak calling
 
