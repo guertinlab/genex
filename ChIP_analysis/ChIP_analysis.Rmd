@@ -501,13 +501,17 @@ df.up.down = rbind(df.up, df.down)
 plot_cdf(df.act.rep, tf = "ZNF143", cat = "")
 ```
 
-```{r echo=F, fig.align = "center", out.width="400px", out.height="100%", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
+```{r echo=F, fig.align = "center", out.width="400px", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
 #library(knitr)
-knitr::include_graphics("ZNF143_FIG_cdf_compare_Reg_classes_Repressed.png") 
+knitr::include_graphics("ZNF143_FIG_cdf_compare_Reg_classes_Down.png") 
 ```
-```{r echo=F, fig.align = "center", out.width="400px", out.height="100%", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
+```{r echo=F, fig.align = "center", out.width="400px", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
 #library(knitr)
-knitr::include_graphics("ZNF143_FIG_cdf_compare_Reg_classes_Activated.png") 
+knitr::include_graphics("ZNF143_FIG_cdf_compare_Reg_classes_Up.png") 
+```
+```{r echo=F, fig.align = "center", out.width="400px", fig.cap="ZNF143 ChIP peaks are more likely to be close to up and down genes"}
+#library(knitr)
+knitr::include_graphics("ZNF143_FIG_cdf_compare_Reg_classes_.png") 
 ```
 ## Look at the plots and decide a peak threshold
 
