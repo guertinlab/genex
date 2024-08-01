@@ -498,7 +498,7 @@ plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorR
 df.up = cdf.deseq.df(genes = gene.file, chip.peaks=read.table("ZNF143_ChIP_summits_final.bed", header=FALSE), cat = "Up")
 df.down = cdf.deseq.df(genes = gene.file, chip.peaks=read.table("ZNF143_ChIP_summits_final.bed", header=FALSE), cat = "Down")
 df.up.down = rbind(df.up, df.down)
-plot_cdf(df.act.rep, tf = "ZNF143", cat = "")
+plot_cdf(df.up.down, tf = "ZNF143", cat = "")
 ```
 
 ```{r echo=F, fig.align = "center", out.width="400px", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
