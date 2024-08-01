@@ -2,6 +2,7 @@
 title: ChIP-seq analysis 
 author:
 - Thomas G. Scott
+- Jinhong Dong
 - Michael J. Guertin
 header-includes:
 - \usepackage{color}
