@@ -454,6 +454,9 @@ for (chip.peak in Sys.glob(file.path("/Users/admin/genex/quantile*bed"))) {
     #plot_cdf(df.all, tf = quantile)
     }
 
+levels = levels(factor(df.cdf$status))
+levels = c(levels[grepl("Matched", levels)], levels[!grepl("Matched", levels)])
+df.cdf$status = factor(df.cdf$status, levels = levels)
 plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(16),colorRampPalette(c("blue", "light blue"))(4)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
 #plot_cdf(df.cdf, tf = "ZNF143", cat = cat, col.lines = c(rep("grey60",20),colorRampPalette(c("red","pink"))(20)), line.type = c(rep(2, 20), rep(1,20)), cex = 0.25)
 
