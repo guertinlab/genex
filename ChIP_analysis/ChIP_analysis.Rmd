@@ -500,6 +500,9 @@ df.down = cdf.deseq.df(genes = gene.file, chip.peaks=read.table("ZNF143_ChIP_sum
 df.up.down = rbind(df.up, df.down)
 plot_cdf(df.up.down, tf = "ZNF143", cat = "")
 ```
+## Look at the plots and decide a peak threshold
+
+You can employ a Kolmogorov–Smirnov, which is an overused statistical test that will provide a test statistic p-value for pairwise comparison of CDF curves. However, in this course we will just decide on a threshold by looking at the plots one by one. 
 
 ```{r echo=F, fig.align = "center", out.width="400px", fig.cap="More intense ZNF143 ChIP peaks are more likely to be close to ZNF143-regulated genes"}
 #library(knitr)
@@ -513,9 +516,6 @@ knitr::include_graphics("ZNF143_FIG_cdf_compare_Reg_classes_Up.png")
 #library(knitr)
 knitr::include_graphics("ZNF143_FIG_cdf_compare_Reg_classes_.png") 
 ```
-## Look at the plots and decide a peak threshold
-
-You can employ a Kolmogorov–Smirnov, which is an overused statistical test that will provide a test statistic p-value for pairwise comparison of CDF curves. However, in this course we will just decide on a threshold by looking at the plots one by one. 
 
 We can use `awk` to parse the peak file to only include peaks with intensities above are threshold.
 
