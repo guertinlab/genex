@@ -405,6 +405,8 @@ wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/treat
 wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/treated_repressed_matched_genes.bed
 
 cat treated_activated_genes.bed treated_activated_matched_genes.bed treated_repressed_genes.bed treated_repressed_matched_genes.bed > /Users/admin/genex/HEK_ZNF143_gene_annotations.bed
+sed -i.bak 's/Activated/Up/g' HEK_ZNF143_gene_annotations.bed
+sed -i.bak 's/Repressed/Down/g' HEK_ZNF143_gene_annotations.bed
 ```
 
 ## Making CDF plots
