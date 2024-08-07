@@ -453,8 +453,8 @@ plot.barchart <- function(df.barchart, filename = "barchart_jinhong.pdf") {
 categorize.DEseq.df <- function(DE.results, unchanged.padj = 0.02, changed.padj = 0.1) {
     DE.results.lattice = DE.results
 
-    activated = DE.results[DE.results$padj < 0.1 & !is.na(DE.results$padj) & DE.results$log2FoldChange > 0,]
-    unchanged.act = DE.results[!is.na(DE.results$padj) & DE.results$padj > 0.1 & abs(DE.results$log2FoldChange) < unchanged.padj,]
+    activated = DE.results[DE.results$padj < changed.padj & !is.na(DE.results$padj) & DE.results$log2FoldChange > 0,]
+    unchanged.act = DE.results[!is.na(DE.results$padj) & DE.results$padj > unchanged.padj & abs(DE.results$log2FoldChange) < unchanged.padj,]
     unchanged.act$treatment = 0
     activated$treatment = 1
     df.deseq.effects.lattice = rbind(unchanged.act, activated)
@@ -476,8 +476,8 @@ categorize.DEseq.df <- function(DE.results, unchanged.padj = 0.02, changed.padj 
         "Repressed",
         DE.results.lattice$category
     )
-    unchanged.rep = DE.results.lattice[!is.na(DE.results.lattice$padj) & DE.results.lattice$padj > 0.1 & abs(DE.results.lattice$log2FoldChange) < unchanged.padj & DE.results.lattice$category == "All Other Genes",]
-    repressed = DE.results.lattice[DE.results.lattice$padj < 0.1 & !is.na(DE.results.lattice$padj) & DE.results.lattice$log2FoldChange < 0,]
+    unchanged.rep = DE.results.lattice[!is.na(DE.results.lattice$padj) & DE.results.lattice$padj > unchanged.padj & abs(DE.results.lattice$log2FoldChange) < unchanged.padj & DE.results.lattice$category == "All Other Genes",]
+    repressed = DE.results.lattice[DE.results.lattice$padj < changed.padj & !is.na(DE.results.lattice$padj) & DE.results.lattice$log2FoldChange < 0,]
     unchanged.rep$treatment = 0
     repressed$treatment = 1
     df.deseq.effects.lattice.2 = rbind(unchanged.rep, repressed)
