@@ -13,7 +13,7 @@
 <meta name="author" content="Jinhong Dong" />
 <meta name="author" content="Michael J. Guertin" />
 
-<meta name="date" content="2024-07-24" />
+<meta name="date" content="2024-08-07" />
 
 <title>ATAC-seq analysis</title>
 
@@ -705,7 +705,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">ATAC-seq analysis</h1>
 <p class="author-name">Thomas G. Scott, Jinhong Dong and Michael J. Guertin</p>
-<h4 class="date">2024-07-24</h4>
+<h4 class="date">2024-08-07</h4>
 
 </div>
 
@@ -1142,8 +1142,8 @@ plot.barchart &lt;- function(df.barchart, filename = &quot;barchart_jinhong.pdf&
 categorize.DEseq.df &lt;- function(DE.results, unchanged.padj = 0.02, changed.padj = 0.1) {
     DE.results.lattice = DE.results
 
-    activated = DE.results[DE.results$padj &lt; 0.1 &amp; !is.na(DE.results$padj) &amp; DE.results$log2FoldChange &gt; 0,]
-    unchanged.act = DE.results[!is.na(DE.results$padj) &amp; DE.results$padj &gt; 0.1 &amp; abs(DE.results$log2FoldChange) &lt; unchanged.padj,]
+    activated = DE.results[DE.results$padj &lt; changed.padj &amp; !is.na(DE.results$padj) &amp; DE.results$log2FoldChange &gt; 0,]
+    unchanged.act = DE.results[!is.na(DE.results$padj) &amp; DE.results$padj &gt; unchanged.padj &amp; abs(DE.results$log2FoldChange) &lt; unchanged.padj,]
     unchanged.act$treatment = 0
     activated$treatment = 1
     df.deseq.effects.lattice = rbind(unchanged.act, activated)
@@ -1165,8 +1165,8 @@ categorize.DEseq.df &lt;- function(DE.results, unchanged.padj = 0.02, changed.pa
         &quot;Repressed&quot;,
         DE.results.lattice$category
     )
-    unchanged.rep = DE.results.lattice[!is.na(DE.results.lattice$padj) &amp; DE.results.lattice$padj &gt; 0.1 &amp; abs(DE.results.lattice$log2FoldChange) &lt; unchanged.padj &amp; DE.results.lattice$category == &quot;All Other Genes&quot;,]
-    repressed = DE.results.lattice[DE.results.lattice$padj &lt; 0.1 &amp; !is.na(DE.results.lattice$padj) &amp; DE.results.lattice$log2FoldChange &lt; 0,]
+    unchanged.rep = DE.results.lattice[!is.na(DE.results.lattice$padj) &amp; DE.results.lattice$padj &gt; unchanged.padj &amp; abs(DE.results.lattice$log2FoldChange) &lt; unchanged.padj &amp; DE.results.lattice$category == &quot;All Other Genes&quot;,]
+    repressed = DE.results.lattice[DE.results.lattice$padj &lt; changed.padj &amp; !is.na(DE.results.lattice$padj) &amp; DE.results.lattice$log2FoldChange &lt; 0,]
     unchanged.rep$treatment = 0
     repressed$treatment = 1
     df.deseq.effects.lattice.2 = rbind(unchanged.rep, repressed)
