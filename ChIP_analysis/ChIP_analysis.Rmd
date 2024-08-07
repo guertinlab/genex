@@ -336,19 +336,6 @@ knitr::include_graphics("FrIP_scores.png")
 More appropriately, the following analyses provide a range of intensity values of peaks that have the potential to regulate gene expression. Stated differently, we are empirically determining a threshold that we can use that is the lower bound of a potentially _functional_ peak. Please keep in mind that many of the peaks above this threshold may not functionally regulate gene expression because they are not proximal to genes or other biological reasons. However, we can be fairly confident that peaks below this threshold are not regulating an appreciable amount of transcription.  
 
 
-
-First we will move the `closestBed` software into a specific directory so that `R` functions know where to look.
-
-```{r, engine='bash', eval=F, echo=T}
-which closestBed
-```
-
-Now take the output that printed to the screen and substitute the text below:
-
-```{r, engine='bash', eval=F, echo=T}
-mv /output/that/printed/to/screen/closestBed /usr/local/bin/
-```
-
 Navigate to your `/Users/admin/genex` folder and open `R`. We performed PRO-seq after 30 minutes of ZNF143 degradation and identified activated and repressed genes. We also found comparable genes that are unchanged, but matched for the expression levels. We are going to ask "for each of these genes sets, how far away do we have to move from the transcription start site to find the first ZNF143 peaks in each quantile?"
 
 ```{r echo=F, fig.align = "center", out.width="400px", fig.cap="TFs tend to act near their gene targets"}
