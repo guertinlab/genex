@@ -652,7 +652,10 @@ cut -f 1 -d " " mast_hits_unchanged.txt | sort | uniq | grep -v "#" | wc -l
 wc -l  ATAC_unchanged_ZNF143_degron.bed
 ```
 
-```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="ZNF143 motif"}
-library(knitr)
+
+```{r echo=F, fig.align = "center", out.width="400px", fig.cap="ZNF143 motif"}
+#library(knitr)
 knitr::include_graphics("logo1.png") 
 ```
+
+
