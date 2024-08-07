@@ -537,7 +537,7 @@ rep=X
 computeMatrix reference-point --referencePoint center -b 500 -a 500 -p 2 --missingDataAsZero \
   -R ZNF143_functional_peaks.bed \
   -S HEK293T_ZNF143_rep${rep}_normalized.bigWig \
-  HEK293T_Mock_rep${rep}_normalized.bigWig.bigWig \
+  HEK293T_Mock_rep${rep}_normalized.bigWig \
   -o matrix_HA_ChIP_ZNF143_peaks.gz --outFileSortedRegions ZNF143_peaks_sorted_for_heatmap.bed
   
 #Make the heatmap for the functional peaks
