@@ -50,7 +50,8 @@ high-throughput sequencing. The ATAC-seq methods
 [https://doi.org/10.1002%2F0471142727.mb2129s109](https://doi.org/10.1002%2F0471142727.mb2129s109) paper presents the
 figure below.
 
-```{r  out.width = "100%", out.height = "100%", echo=F, fig.align = "center", fig.cap="ATAC-seq molecular biology"}
+
+```{r  out.width="400px", echo=F, fig.align = "center", fig.cap="ATAC-seq molecular biology"}
 library(knitr)
 knitr::include_graphics("ATAC_seq_CPMB.png") 
 ```
