@@ -640,15 +640,15 @@ fastaFromBed -fi $genome -bed ZNF143_degron_ATAC_matched.bed -fo ZNF143_degron_A
 
 meme -oc ZNF143.meme_output -objfun classic -nmotifs 2 -searchsize 0 -minw 5 -maxw 15 -revcomp -dna -markov_order 2 -maxsize 100000000 ZNF143_degron_ATAC_down.fasta
 
-mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ZNF143_degron_ATAC_down.fasta > mast_hits_decreased.txt
-mast ZNF143.meme_output/meme.txt -mt 0.001 -hit_list ZNF143_degron_ATAC_matched.fasta > mast_hits_unchanged.txt
+mast ZNF143.meme_output/meme.txt -mt 0.0001 -hit_list ZNF143_degron_ATAC_down.fasta > mast_hits_decreased.txt
+mast ZNF143.meme_output/meme.txt -mt 0.0001 -hit_list ZNF143_degron_ATAC_matched.fasta > mast_hits_unchanged.txt
 
 cut -f 1 -d " " mast_hits_decreased.txt | sort | uniq | grep -v "#" > unique_mast_hits_decreased.txt 
 wc -l unique_mast_hits_decreased.txt
-wc -l ATAC_decreased_ZNF143_degron.bed
+wc -l ZNF143_degron_ATAC_down.bed
 
 cut -f 1 -d " " mast_hits_unchanged.txt | sort | uniq | grep -v "#" | wc -l
-wc -l  ATAC_unchanged_ZNF143_degron.bed
+wc -l  ZNF143_degron_ATAC_matched.bed
 ```
 
 
