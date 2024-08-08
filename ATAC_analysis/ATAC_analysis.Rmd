@@ -51,7 +51,7 @@ high-throughput sequencing. The ATAC-seq methods
 figure below.
 
 
-```{r  out.width="400px", echo=F, fig.align = "center", fig.cap="ATAC-seq molecular biology"}
+```{r  out.width="600px", echo=F, fig.align = "center", fig.cap="ATAC-seq molecular biology"}
 library(knitr)
 knitr::include_graphics("ATAC_seq_CPMB.png") 
 ```
