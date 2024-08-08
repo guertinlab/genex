@@ -1210,9 +1210,7 @@ peak_name = x[,4]
 peak_qvalue = x[,5]
 x = x[,-c(1:5)]
 
-colnames(x) = sapply(strsplit(sapply(strsplit(colnames(x), &quot;HEK293T_&quot;), &quot;[&quot;, 2), &quot;.&quot;), &quot;[&quot;, 1)
-
-sample.conditions = factor(sapply(strsplit(colnames(x), &#39;_&#39;), &#39;[&#39;, 1), levels=c(&quot;DMSO&quot;,&quot;DTAG&quot;))
+sample.conditions = factor(sapply(strsplit(colnames(x), &#39;_&#39;), &#39;[&#39;, 3), levels=c(&quot;DMSO&quot;,&quot;DTAG&quot;))
 rep = factor(sapply(strsplit(colnames(x), &#39;rep&#39;), &#39;[&#39;, 2))
 
 deseq.counts.table = DESeqDataSetFromMatrix(countData = x,
