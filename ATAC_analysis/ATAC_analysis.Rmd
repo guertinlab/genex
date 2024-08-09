@@ -640,14 +640,14 @@ plot.barchart(y, filename = "barchart_ATAC_overlap_ZNF143.pdf")
 
 ```
 
-```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="PCA Analysis"}
+```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="PCA Analysis"}
 library(knitr)
-knitr::include_graphics("ATAC_PCA_plot_30min_ZNF143_degradation.png") 
+knitr::include_graphics("ATAC_PCA_plot_30min_ZNF143_degradation_24.png") 
 ```
 
-```{r  out.width = "50%", out.height = "50%", echo=F, fig.align = "center", fig.cap="MA plot"}
+```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="MA plot"}
 library(knitr)
-knitr::include_graphics("MA_plot_ATAC_ZNF143_30min_accessiblity_MA.png") 
+knitr::include_graphics("MA_plot_ATAC_ZNF143_30min_accessiblity_MA_geneX.png") 
 ```
 
 # De novo motif analysis of differentially accessible peaks
@@ -680,7 +680,7 @@ wc -l  ZNF143_degron_ATAC_matched.bed
 
 ```{r echo=F, fig.align = "center", out.width="400px", fig.cap="ZNF143 motif"}
 #library(knitr)
-knitr::include_graphics("logo1.png") 
+knitr::include_graphics("logo1_24.png") 
 ```
 
 
