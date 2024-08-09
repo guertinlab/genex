@@ -606,8 +606,34 @@ x = read.table('barchart_ATAC_overlap_ZNF143.txt', sep = "\t", header=TRUE)
 #                     levels = rev(sort(unique(x$factor))),
 #                     ordered = TRUE)
 
+```
 
-plot.barchart(x, filename = "barchart_ATAC_overlap_ZNF143.pdf")
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
+#retrieve ZNF143 motifs
+wget https://raw.githubusercontent.com/guertinlab/znf143_degron/main/ChIP_analysis/ZNF143strict_comp29_inferredSites_peakIntensities_unique.bed
+
+intersectBed -v -a ZNF143_degron_ATAC_down.bed -b ZNF143strict_comp29_inferredSites_peakIntensities_unique.bed | wc -l
+intersectBed -a ZNF143_degron_ATAC_down.bed -b ZNF143strict_comp29_inferredSites_peakIntensities_unique.bed | wc -l
+wc -l ZNF143_degron_ATAC_down.bed
+
+intersectBed -v -a ZNF143_degron_ATAC_up.bed -b ZNF143strict_comp29_inferredSites_peakIntensities_unique.bed | wc -l
+intersectBed -a ZNF143_degron_ATAC_up.bed -b ZNF143strict_comp29_inferredSites_peakIntensities_unique.bed | wc -l
+wc -l ZNF143_degron_ATAC_up.bed
+
+intersectBed -v -a ZNF143_degron_ATAC_matched.bed -b ZNF143strict_comp29_inferredSites_peakIntensities_unique.bed | wc -l
+intersectBed -a ZNF143_degron_ATAC_matched.bed -b ZNF143strict_comp29_inferredSites_peakIntensities_unique.bed | wc -l
+wc -l ZNF143_degron_ATAC_matched.bed
+```
+
+
+```{r class.source="bg-info", engine='R', eval=F, echo=T}
+
+y= as.data.frame(matrix(c(5, 1, 53, 620, 634, 45, rep('Increased ATAC', 2), rep('Decreased ATAC', 2), rep('Matched', 2), 0.8333333, 0.1666667,  0.0787519,  0.9212481,  0.9337261, 0.0662739, rep(c('b','a'), 3)), ncol=4, byrow=FALSE))
+ 
+# specify the column names and row names of dataframe
+colnames(y) = c('num','factor','fraction','p_n')
+
+plot.barchart(y, filename = "barchart_ATAC_overlap_ZNF143.pdf")
 
 
                                         # no longer atac
