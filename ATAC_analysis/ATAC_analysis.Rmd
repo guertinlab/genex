@@ -37,7 +37,7 @@ pre[class] {
 
 # ATAC-seq experiments
 
-ATAC-seq is an assay that measures chromatin accessibility. In short,
+ATAC-seq is an assay that measures chromatin accessibility. In short, 
 cells are treated with detergents to disrupt the cell and nuclear
 membranes, then treated with Tn5 transposase, which targets DNA that
 is accessible. Targeting includes cleaving the DNA and ligating DNA to
