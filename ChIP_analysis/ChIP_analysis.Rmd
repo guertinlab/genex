@@ -295,14 +295,17 @@ intersectBed -u -a ZNF143_ChIP_summit_window_sorted.bed -b ZNF143_functional_pea
 #You can download the file here
 wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/ZNF143_ChIP_functional_summit_window_sorted.bed
 peaks=ZNF143_ChIP_functional_summit_window_sorted.bed
+sizes=~/genex/genomes/hg38.chrom.sizes 
+sort -k1,1 -k2,2n $sizes > ~/genex/genomes/hg38.chrom.sizes.sorted
+sortedsizes=~/genex/genomes/hg38.chrom.sizes.sorted
 sort -k1,1 -k2,2n ZNF143_ChIP_summit_400window.bed > ZNF143_ChIP_summit_400window_sorted.bed
 summitWin=ZNF143_ChIP_summit_400window_sorted.bed
 for i in *_not_scaled.bed
 do
 	nm=$(echo $i | awk -F"/" '{print $NF}' | awk -F"_not_scaled.bed" '{print $1}')
 	sort -k1,1 -k2,2n $i > ${nm}_sorted.bed
-	mapBed -null '0' -a $peaks -b ${nm}_sorted.bed > ${nm}_peak_counts.txt
-	mapBed -null '0' -a $summitWin -b ${nm}_sorted.bed > ZNF143_ChIP_summit_counts.bed
+	mapBed -null '0' -g $sortedsizes -a $peaks -b ${nm}_sorted.bed > ${nm}_peak_counts.txt
+	mapBed -null '0' -g $sortedsizes -a $summitWin -b ${nm}_sorted.bed > ZNF143_ChIP_summit_counts.bed
 done
 
 for i in *_peak_counts.txt
