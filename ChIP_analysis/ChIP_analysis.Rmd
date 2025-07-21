@@ -58,10 +58,10 @@ cd ~/genex/
 rep=X
 
 #Download the data
-wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_Mock_rep${rep}_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_Mock_rep${rep}_PE2.fastq.gz
-wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_ZNF143_rep${rep}_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_ZNF143_rep${rep}_PE2.fastq.gz
+wget http://guertinlab.cam.uchc.edu/cshl_2025/HEK293T_Mock_rep${rep}_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/cshl_2025/HEK293T_Mock_rep${rep}_PE2.fastq.gz
+wget http://guertinlab.cam.uchc.edu/cshl_2025/HEK293T_ZNF143_rep${rep}_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/cshl_2025/HEK293T_ZNF143_rep${rep}_PE2.fastq.gz
 ```
 
 ## Cut off the adapter with `cutadapt`
@@ -115,6 +115,9 @@ cd ~/genex/genomes
 #download the genome file
 wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
 
+#download a file that lists the size of chromosomes
+wget -P ~/genex/genomes/ https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
+
 #unzip
 gunzip hg38.fa.gz
 
@@ -147,10 +150,6 @@ table=~/genex/genomes/hg38_40.4.2.2.tbl
 
 ncore=7
 readLength=40
-
-#download a file that lists the size of chromosomes
-wget -P ~/genex/genomes/ https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
-
 cd ~/genex/
 for i in *_PE1_no_adapt.fastq
 do
