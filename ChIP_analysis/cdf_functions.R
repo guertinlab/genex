@@ -16,7 +16,7 @@ cdf.deseq.df <- function(genes = gene.file, chip.peaks = chip.peaks, cat = "Repr
   return(df.all)
 }
 
-bedTools.closest <- function(functionstring="/usr/local/bin/closestBed",bed1,bed2,opt.string="") {
+bedTools.closest <- function(functionstring="/opt/homebrew/bin/closestBed",bed1,bed2,opt.string="") {
   options(scipen =99) # not to use scientific notation when writing out
   
   #write bed formatted dataframes to tempfile
