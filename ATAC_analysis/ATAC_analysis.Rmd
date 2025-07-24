@@ -519,7 +519,7 @@ ma.plot.lattice <- function(ma.df, filename = 'file.name',
 
 
 # data processing and plotting
-setwd("~/ZNF143_ATAC/")
+setwd("~/genex_ATAC/")
 x = read.table('Combined_ATAC_peak_counts.txt', sep = "\t", check.names=FALSE, header=TRUE)
 rownames(x) = paste0(x[,1], ":", x[,2], "-", x[,3])
 peak_name = x[,4]
