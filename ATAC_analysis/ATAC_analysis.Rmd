@@ -133,10 +133,10 @@ mkdir -p ~/genex_ATAC/
 cd ~/genex_ATAC/
 
 #Download the data
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DMSO_rep${rep}_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DMSO_rep${rep}_PE2.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DTAG_rep${rep}_PE1.fastq.gz
-wget http://guertinlab.cam.uchc.edu/HEK293T_ATAC_DTAG_rep${rep}_PE2.fastq.gz
+wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_ATAC_DMSO_rep${rep}_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_ATAC_DMSO_rep${rep}_PE2.fastq.gz
+wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_ATAC_DTAG_rep${rep}_PE1.fastq.gz
+wget http://guertinlab.cam.uchc.edu/cshl_2024/HEK293T_ATAC_DTAG_rep${rep}_PE2.fastq.gz
 ```
 
 ## Cut off the adapter with `cutadapt`
