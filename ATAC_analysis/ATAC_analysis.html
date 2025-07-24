@@ -951,7 +951,7 @@ it is best practice to exclude reads from regions that are not
 uniquely mappable, because the true origin of the read cannot be
 determined. The last line removes chromosomes that are incomplete
 contigs and the Epstein-Barr Virus genome.</p>
-<pre class="bash bg-danger"><code>tallymer=~/genex/genomes/hg38.tal_40.gtTxt.gz
+<pre class="bash bg-danger"><code>mer=~/genex/genomes/hg38.tal_40.gtTxt.gz
 table=~/genex/genomes/hg38_40.4.2.2.tbl
 readLength=40
 
@@ -959,7 +959,11 @@ readLength=40
 
 seqOutBias seqtable hg38.fa --read-size=40</code></pre>
 <p>Convert BAM to bed for counting (previously created the tallymer with <code>seqOutBias seqtable</code>)</p>
-<pre class="bash"><code>for i in *.hg38.bam
+<pre class="bash"><code>mer=~/genex/genomes/hg38.tal_40.gtTxt.gz
+table=~/genex/genomes/hg38_40.4.2.2.tbl
+readLength=40
+
+for i in *.hg38.bam
 do
     name=$(echo $i | awk -F&quot;/&quot; &#39;{print $NF}&#39; | awk -F&quot;.hg38.bam&quot; &#39;{print $1}&#39;)
     echo $name
