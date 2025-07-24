@@ -248,7 +248,7 @@ determined. The last line removes chromosomes that are incomplete
 contigs and the Epstein-Barr Virus genome. 
 
 ```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
-tallymer=~/genex/genomes/hg38.tal_40.gtTxt.gz
+mer=~/genex/genomes/hg38.tal_40.gtTxt.gz
 table=~/genex/genomes/hg38_40.4.2.2.tbl
 readLength=40
 
@@ -260,6 +260,10 @@ seqOutBias seqtable hg38.fa --read-size=40
 Convert BAM to bed for counting (previously created the tallymer with `seqOutBias seqtable`)
 
 ```{r engine='bash', eval=F, echo=TRUE}
+mer=~/genex/genomes/hg38.tal_40.gtTxt.gz
+table=~/genex/genomes/hg38_40.4.2.2.tbl
+readLength=40
+
 for i in *.hg38.bam
 do
 	name=$(echo $i | awk -F"/" '{print $NF}' | awk -F".hg38.bam" '{print $1}')
