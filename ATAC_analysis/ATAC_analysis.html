@@ -1207,7 +1207,7 @@ ma.plot.lattice &lt;- function(ma.df, filename = &#39;file.name&#39;,
 
 
 # data processing and plotting
-setwd(&quot;~/ZNF143_ATAC/&quot;)
+setwd(&quot;~/genex_ATAC/&quot;)
 x = read.table(&#39;Combined_ATAC_peak_counts.txt&#39;, sep = &quot;\t&quot;, check.names=FALSE, header=TRUE)
 rownames(x) = paste0(x[,1], &quot;:&quot;, x[,2], &quot;-&quot;, x[,3])
 peak_name = x[,4]
