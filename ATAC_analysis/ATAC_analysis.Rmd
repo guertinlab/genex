@@ -371,6 +371,7 @@ library(dplyr)
 library(ggplot2)
 library(limma)
 library(MatchIt)
+library(optmatch)
 
 # functions on github
 source('https://raw.githubusercontent.com/mjg54/znf143_pro_seq_analysis/master/docs/ZNF143_functions.R')
