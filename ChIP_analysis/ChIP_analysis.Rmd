@@ -62,6 +62,7 @@ wget http://guertinlab.cam.uchc.edu/cshl_2025/HEK293T_Mock_rep${rep}_PE1.fastq.g
 wget http://guertinlab.cam.uchc.edu/cshl_2025/HEK293T_Mock_rep${rep}_PE2.fastq.gz
 wget http://guertinlab.cam.uchc.edu/cshl_2025/HEK293T_ZNF143_rep${rep}_PE1.fastq.gz
 wget http://guertinlab.cam.uchc.edu/cshl_2025/HEK293T_ZNF143_rep${rep}_PE2.fastq.gz
+
 ```
 
 ## Cut off the adapter with `cutadapt`
@@ -100,6 +101,7 @@ do
     gunzip ${name}_PE2.fastq.gz
     cutadapt -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT -j 8 -m 10 -O 1 -o ${name}_PE1_no_adapt.fastq -p ${name}_PE2_no_adapt.fastq ${name}_PE1.fastq ${name}_PE2.fastq 2>&1 | tee ${name}_cutadapt.log
 done
+
 ```
 ## Align to the human genome
 
