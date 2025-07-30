@@ -338,6 +338,13 @@ paste -d'\t' rowname.txt *.hg38_FRiP.txt > Combined_ZNF143_FRiP.txt
 rm rowname.txt
 ```
 
+<!-- 
+x = t(read.table('~/Desktop/Combined_ZNF143_FRiP.txt', header=TRUE)[,c(2:17)])
+row.names(x) = gsub("\\.hg38", "", rownames(x))
+barchart(x, horizontal =FALSE, scales = list(x = list(rot = 45)), ylab = "Fraction of Reads in Peaks", col = "grey", main = "Bar Chart of FRiP values", xlab = "sample")
+-->
+
+
 ```{r echo=F, fig.align = "center", out.width="400px", fig.cap="Fraction of Reads in Peaks"}
 #library(knitr)
 knitr::include_graphics("FrIP_scores.png") 
