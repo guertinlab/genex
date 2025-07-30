@@ -214,7 +214,8 @@ done
 
 # Using the UCSC genome browser
 
-We will take the file `${name}_header_normalized.bedGraph` and upload to UCSC. We can only upload `bedGraph` files with 50 million lines to UCSC, so I truncated the files. There is missing data several chromosomes. You can visualize the merged data here: https://genome.ucsc.edu/s/Mike%20Guertin/GeneX_ChIP_2024
+We will take the file `${name}_header_normalized.bedGraph` and upload to UCSC. We can only upload `bedGraph` files with 50 million lines to UCSC, so I truncated the files. There is missing data several chromosomes. You can visualize the merged data here:
+https://genome.ucsc.edu/s/Mike%20Guertin/GeneX_ChIP_2025
 
 # Peak calling
 
