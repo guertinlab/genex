@@ -44,11 +44,11 @@ We performed ChIP-seq of HA-tagged ZNF143 in HEK-293T cells with mock IP (no ant
 
 # ChIP-seq analysis
 
-In this vignette, grey code chunks are performed in bash, blue code chunks are performed in R, and red code chunks are not to be run by you (either we already ran them or will run them using all samples).
+In this vignette, grey code chunks are performed in bash, blue code chunks are performed in R, and  code chunks are not to be run by you (either we already ran them or will run them using all samples).
 
 ## Download your samples
 
-We already named the experiments with the trailing name being `PE1` or `PE2` for paired end data. You can retrieve the files by substituting you group number (1-8) for `X` in the code below. 
+We already named the experiments with the trailing name being `PE1` or `PE2` for pai end data. You can retrieve the files by substituting you group number (1-8) for `X` in the code below. 
 
 ```{r engine='bash', eval=F, echo=TRUE}
 #Navigate to the class directory
@@ -287,13 +287,20 @@ A common metric to assess the quality of ChIP-seq data is fraction of reads in p
 
 The `mapBed` subcommand from `bedtools` counts the BED file from the `seqOutBias` output in the 400 base window peak summits file. The `samtools` commands counts the number of paired end 1 reads that aligned in a concordant pair (the mate aligned nearby). The final output file contains these two values that we use to calculate FRiP.
 
-```{r engine='bash', eval=F, echo=TRUE}
+We ran `macs3` on all the combined `BAM` files to get the universal peak set.
+
+```{r engine='bash', class.source="bg-danger", eval=F, echo=TRUE}
 #We did this using the peaks called with all the samples (don't run this)
+
 name=ZNF143_ChIP
 sort -k1,1 -k2,2n ${name}_summit_400window.bed > ${name}_summit_window_sorted.bed
 wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/ZNF143_functional_peaks.bed
 intersectBed -u -a ZNF143_ChIP_summit_window_sorted.bed -b ZNF143_functional_peaks.bed > ZNF143_ChIP_functional_summit_window_sorted.bed
+```
 
+You can retrieve this peak set and calculate the FrIP score for your ChIP sample.
+
+```{r engine='bash', eval=F, echo=TRUE}
 #You can download the file here
 wget https://raw.githubusercontent.com/guertinlab/genex/main/ChIP_analysis/ZNF143_ChIP_functional_summit_window_sorted.bed
 peaks=ZNF143_ChIP_functional_summit_window_sorted.bed
