@@ -361,7 +361,7 @@ wget https://raw.githubusercontent.com/guertinlab/genex/main/ATAC_analysis/Combi
 
 ## Running `DESeq2` with ATAC data
 
-Update with a description of DESeq2.
+to do: Update with a description of DESeq2.
 
 ```{r class.source="bg-info", engine='R', eval=F, echo=T}
 # libraries
@@ -544,7 +544,11 @@ normalized.counts = counts(dds, normalized=TRUE)
     
 rld = rlog(dds, blind=TRUE)
 save(rld, file = "genex_ATAC_rld.Rdata")
+```
 
+## Plot principle components
+
+```{r class.source="bg-info", engine='R', eval=F, echo=T}
 # plot principle components 
 
 pca.plot = plotPCA(rld, intgroup="sample.conditions", returnData=TRUE)
@@ -552,7 +556,17 @@ pca.plot = plotPCA(rld, intgroup="sample.conditions", returnData=TRUE)
 pca.plot 
 
 plotPCAlattice(pca.plot, file = 'ATAC_PCA_plot_30min_ZNF143_degradation.pdf')
+```
 
+```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="PCA Analysis"}
+library(knitr)
+knitr::include_graphics("ATAC_PCA_plot_30min_ZNF143_degradation25.png") 
+```
+
+
+## Generate the MA plot figure.
+
+```{r class.source="bg-info", engine='R', eval=F, echo=T}
 DE.results = results(dds)
 
 head(DE.results)
@@ -604,7 +618,17 @@ write.table(matched.file, file = "ZNF143_degron_ATAC_matched.bed", quote = FALSE
 col.names =FALSE, row.names=FALSE, sep = "\t")
 ```
 
-Count for the barchart
+
+
+
+```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="MA plot"}
+library(knitr)
+knitr::include_graphics("MA_plot_ATAC_ZNF143_30min_accessiblity_MA25.png") 
+```
+
+
+
+## Count for the barchart
 
 ```{r engine='bash', eval=F, echo=TRUE}
 #retrieve ZNF143 motifs
@@ -623,7 +647,7 @@ intersectBed -a ZNF143_degron_ATAC_matched.bed -b ZNF143strict_comp29_inferredSi
 wc -l ZNF143_degron_ATAC_matched.bed
 ```
 
-Plot the barchart
+### Plot the barchart
 
 ```{r class.source="bg-info", engine='R', eval=F, echo=T}
 
@@ -634,19 +658,16 @@ colnames(y) = c('num','factor','fraction','p_n')
 
 plot.barchart(y, filename = "barchart_ATAC_overlap_ZNF143.pdf")
 
-
-
 ```
 
-```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="PCA Analysis"}
-library(knitr)
-knitr::include_graphics("ATAC_PCA_plot_30min_ZNF143_degradation25.png") 
-```
+
 
 ```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="MA plot"}
 library(knitr)
 knitr::include_graphics("MA_plot_ATAC_ZNF143_30min_accessiblity_MA25.png") 
 ```
+
+
 
 # De novo motif analysis of differentially accessible peaks
 
