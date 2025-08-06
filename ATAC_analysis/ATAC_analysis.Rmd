@@ -430,7 +430,7 @@ plot.barchart <- function(df.barchart, filename = "barchart_jinhong.pdf") {
   pdf(filename, width=4, height=4)
 
   polycol <- trellis.par.get("superpose.polygon")
-  polycol$col <- c("#2290cf", "grey80", "#ce228e", "grey80", "#ce228e", "grey80")
+  polycol$col <- c("grey20", "grey90", "#ce228e", "grey80", "#ce228e", "grey80")
   trellis.par.set("superpose.polygon",polycol)
 
   print(barchart(as.numeric(as.character(fraction))~factor, data = df.barchart, groups=p_n,
