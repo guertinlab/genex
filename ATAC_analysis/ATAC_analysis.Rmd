@@ -699,7 +699,7 @@ wc -l  ZNF143_degron_ATAC_matched.bed
 
 ```{r echo=F, fig.align = "center", out.width="400px", fig.cap="ZNF143 motif"}
 #library(knitr)
-knitr::include_graphics("logo1_24.png") 
+knitr::include_graphics("logo1_25.png") 
 ```
 
 
