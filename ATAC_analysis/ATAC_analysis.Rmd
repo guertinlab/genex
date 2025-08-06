@@ -664,7 +664,7 @@ plot.barchart(y, filename = "barchart_ATAC_overlap_ZNF143.pdf")
 
 ```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="MA plot"}
 library(knitr)
-knitr::include_graphics("MA_plot_ATAC_ZNF143_30min_accessiblity_MA25.png") 
+knitr::include_graphics("barchart_ATAC_overlap_ZNF14325.png") 
 ```
 
 
