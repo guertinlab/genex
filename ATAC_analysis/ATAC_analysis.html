@@ -1118,7 +1118,7 @@ plot.barchart &lt;- function(df.barchart, filename = &quot;barchart_jinhong.pdf&
   pdf(filename, width=4, height=4)
 
   polycol &lt;- trellis.par.get(&quot;superpose.polygon&quot;)
-  polycol$col &lt;- c(&quot;#2290cf&quot;, &quot;grey80&quot;, &quot;#ce228e&quot;, &quot;grey80&quot;, &quot;#ce228e&quot;, &quot;grey80&quot;)
+  polycol$col &lt;- c(&quot;grey20&quot;, &quot;grey90&quot;, &quot;#ce228e&quot;, &quot;grey80&quot;, &quot;#ce228e&quot;, &quot;grey80&quot;)
   trellis.par.set(&quot;superpose.polygon&quot;,polycol)
 
   print(barchart(as.numeric(as.character(fraction))~factor, data = df.barchart, groups=p_n,
