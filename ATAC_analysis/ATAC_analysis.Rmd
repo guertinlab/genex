@@ -184,8 +184,7 @@ To fix: instead of printing the alignment statistics to the screen and to the lo
 
 ```{r engine='bash', eval=F, echo=TRUE}
 #If you need to build the mitochondrial genome
-wget https://hgdownload.cse.ucsc.edu/goldenpath/hg38/chromosomes/chrM.fa.gz
-gunzip chrM.fa.gz
+wget https://raw.githubusercontent.com/guertinlab/genex/refs/heads/main/ATAC_analysis/chrM.fa
 bowtie2-build chrM.fa chrM
 
 #Align to chrM first and remove aligned and unpaired reads
