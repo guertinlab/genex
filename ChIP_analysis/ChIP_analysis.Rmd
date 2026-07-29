@@ -10,7 +10,7 @@ header-includes:
 date: "`r Sys.Date()`"
 output:
   bookdown::html_document2:
-    toc: true 
+    toc: true
 fontsize: 14pt
 geometry: margin=1in
 ---
