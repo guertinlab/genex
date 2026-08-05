@@ -559,7 +559,7 @@ plotPCAlattice(pca.plot, file = 'ATAC_PCA_plot_30min_ZNF143_degradation.pdf')
 
 ```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="PCA Analysis"}
 library(knitr)
-knitr::include_graphics("ATAC_PCA_plot_30min_ZNF143_degradation25.png") 
+knitr::include_graphics("ATAC_PCA_plot_30min_ZNF143_degradation26.png") 
 ```
 
 
@@ -622,7 +622,7 @@ col.names =FALSE, row.names=FALSE, sep = "\t")
 
 ```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="MA plot"}
 library(knitr)
-knitr::include_graphics("MA_plot_ATAC_ZNF143_30min_accessiblity_MA25.png") 
+knitr::include_graphics("MA_plot_ATAC_ZNF143_30min_accessiblity_MA26.png") 
 ```
 
 
@@ -663,7 +663,7 @@ plot.barchart(y, filename = "barchart_ATAC_overlap_ZNF143.pdf")
 
 ```{r  out.width = "500px", echo=F, fig.align = "center", fig.cap="MA plot"}
 library(knitr)
-knitr::include_graphics("barchart_ATAC_overlap_ZNF14325.png") 
+knitr::include_graphics("barchart_ATAC_overlap_ZNF14326.png") 
 ```
 
 
@@ -698,7 +698,7 @@ wc -l  ZNF143_degron_ATAC_matched.bed
 
 ```{r echo=F, fig.align = "center", out.width="400px", fig.cap="ZNF143 motif"}
 #library(knitr)
-knitr::include_graphics("logo1_25.png") 
+knitr::include_graphics("logo1_26.png") 
 ```
 
 
