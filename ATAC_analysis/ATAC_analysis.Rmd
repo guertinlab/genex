@@ -4,7 +4,7 @@ author:
 - Thomas G. Scott
 - Jinhong Dong
 - Michael J. Guertin 
-header-includes:
+header-includes: 
 - \usepackage{color}
 - \usepackage{float}
 - \DeclareUnicodeCharacter{2212}{-}
